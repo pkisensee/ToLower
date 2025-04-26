@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// 5) lower
+// lower4.cpp
 //
 // Notes: 
 //    * uses std::string_view C++17 -- more flexible
@@ -14,7 +14,7 @@
 #include <ranges>
 #include <string>
 
-void lower( std::string_view s )
+void lower4( std::string_view s )
 {
   /*
   // can't modify a string_view -- it's a view!

@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// 9) lowerav
+// lowerd.cpp
 //
 // Notes: 
 //    * AVX2 vectorized solution
@@ -15,7 +15,7 @@ static constexpr char kMask = 0b0010'0000;
 static const __m256i kBit5Set = _mm256_set1_epi8( kMask );
 static const size_t kAVX2bytes = sizeof( __m256i );
 
-void lowerav( std::string& s )
+void lowerd( std::string& s )
 { 
   // doesn't handle @, [, ], ^, _, and '\'
   size_t len = s.size(); 

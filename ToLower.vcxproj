@@ -80,7 +80,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
       <CallingConvention>StdCall</CallingConvention>
-      <DisableSpecificWarnings>5045</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4710; 4711; 5045</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -99,7 +99,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
       <CallingConvention>StdCall</CallingConvention>
-      <DisableSpecificWarnings>5045</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4710; 4711; 5045</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -118,7 +118,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
       <CallingConvention>StdCall</CallingConvention>
-      <DisableSpecificWarnings>5045</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4710; 4711; 5045</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,7 +137,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
       <CallingConvention>StdCall</CallingConvention>
-      <DisableSpecificWarnings>5045</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4710; 4711; 5045</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,17 +147,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="1_lower.cpp" />
-    <ClCompile Include="2_lower.cpp" />
-    <ClCompile Include="3_lower.cpp" />
-    <ClCompile Include="4_lower.cpp" />
-    <ClCompile Include="5_lower.cpp" />
-    <ClCompile Include="6_lower.h" />
-    <ClCompile Include="7_lower.cpp" />
-    <ClCompile Include="8_lower.cpp" />
-    <ClCompile Include="9_lower.cpp" />
-    <ClCompile Include="a_lower.cpp" />
-    <ClCompile Include="b_lower.cpp" />
+    <ClCompile Include="lower0.cpp" />
+    <ClCompile Include="lower1.cpp" />
+    <ClCompile Include="lower2.cpp" />
+    <ClCompile Include="lower3.cpp" />
+    <ClCompile Include="lower4.cpp" />
+    <ClCompile Include="lower.h" />
+    <ClCompile Include="lower9.cpp" />
+    <ClCompile Include="lowera.cpp" />
+    <ClCompile Include="lowerb.cpp" />
+    <ClCompile Include="lowerc.cpp" />
+    <ClCompile Include="lowerd.cpp" />
+    <ClCompile Include="RandomStr.cpp" />
     <ClCompile Include="ToLower.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

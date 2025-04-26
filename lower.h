@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// 6) lower
+// lower.h (5, 6, 7, 8)
 //
 // Notes: 
 //    * flexibility; works with string& or std::span<char> or char*
@@ -15,7 +15,7 @@
 #include <string>
 
 template<typename S> // S is anything string-like that can be modified in place
-void tlower1( S&& s )
+void lower5( S&& s )
 {
   std::ranges::transform( s, std::begin( s ), []( unsigned char c )
     {
@@ -25,7 +25,7 @@ void tlower1( S&& s )
 }
 
 template<typename S>
-S&& tlower2( S&& s ) // return reference
+S&& lower6( S&& s ) // return reference
 {
   std::ranges::transform( s, std::begin( s ), []( unsigned char c )
     {
@@ -36,7 +36,7 @@ S&& tlower2( S&& s ) // return reference
 }
 
 template<typename S>
-constexpr S&& tlower3( S&& s ) noexcept // constexpr, noexcept
+constexpr S&& lower7( S&& s ) noexcept // constexpr, noexcept
 {
   std::ranges::transform( s, std::begin( s ), []( unsigned char c )
     {
@@ -47,7 +47,7 @@ constexpr S&& tlower3( S&& s ) noexcept // constexpr, noexcept
 }
 
 template<typename S, typename ExecPolicy>
-constexpr S&& tlower4( S&& s, ExecPolicy&& ep ) noexcept // execution policy
+constexpr S&& lower8( S&& s, ExecPolicy&& ep ) noexcept // execution policy
 {
   std::transform( ep, std::begin( s ), std::end( s ), std::begin( s ), []( unsigned char c ) // can't use std::ranges
     {

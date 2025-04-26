@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// 4) lower
+// lower3.cpp
 //
 // Notes: 
 //    * uses std::string
@@ -18,7 +18,7 @@
 #include <ranges>
 #include <string>
 
-void lower( std::string& s )
+void lower3( std::string& s )
 {
   std::ranges::transform( s, std::begin( s ), []( unsigned char c )
     {

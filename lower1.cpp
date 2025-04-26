@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// 2) lower
+// lower1.cpp
 //
 // Notes: 
 //    * checks for nullptr (good)
@@ -14,7 +14,7 @@
 
 #include <cctype>
 
-void lower( char* s, size_t count )
+void lower1( char* s, size_t count )
 {
   if( s == nullptr )
     return;

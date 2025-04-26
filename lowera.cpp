@@ -1,10 +1,10 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// 8) lowert
+// lowera.cpp
 //
 // Notes: 
-//    * LUT solution
-//    * only 255 bytes
+//    * LUT solution -- very fast
+//    * only 256 bytes
 //
 // Issues:
 //    * doesn't scale to larger size characters, such as 16-bit values
@@ -15,14 +15,14 @@
 #include <ranges>
 #include <string>
 
-// Compile-time generated table
-// All characters are lower case
+// Compile-time generated ASCII table where all chars are lower case
 static constexpr size_t kAsciiTableSize = 256;
 using LowerCaseAsciiTable = std::array<char, kAsciiTableSize>;
 static constexpr LowerCaseAsciiTable kLowerCaseAsciiTable = []
   {
+    // Generate standard ASCII table
     LowerCaseAsciiTable lut;
-    std::ranges::iota( lut, char{}); // std ASCII table
+    std::ranges::iota( lut, char{});
 
     // Replace upper case with lower case
     auto begin = std::begin( lut ) + 'A';
@@ -32,7 +32,7 @@ static constexpr LowerCaseAsciiTable kLowerCaseAsciiTable = []
     return lut;
   }();
 
-void lowert( std::string& s )
+void lowera( std::string& s )
 {
   std::ranges::transform( s, std::begin( s ), []( unsigned char c )
     {

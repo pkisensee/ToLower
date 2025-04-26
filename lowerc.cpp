@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// 9) lowerv
+// lowerc.cpp
 //
 // Notes: 
 //    * vectorized solution
@@ -15,7 +15,7 @@ static const __m128i kAAAAs = _mm_set1_epi8( 'A' - 1 ); // no mm_cmpgte, so offs
 static const __m128i kZZZZs = _mm_set1_epi8( 'Z' + 1 ); // no mm_cmplte, so offset +1
 static const __m128i kCaseOffset = _mm_set1_epi8( 'a' - 'A' ); // from upper to lower
 static const size_t kSSEbytes = sizeof(__m128i);
-void lowerv( std::string& s )
+void lowerc( std::string& s )
 {
   // Convert each kSSEbyte block
   size_t len = s.size();
