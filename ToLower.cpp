@@ -41,10 +41,11 @@ void lower2( std::span<char> );   // lower2.cpp
 void lower3( std::string& );      // lower3.cpp
 void lower4( std::string_view );  // lower4.cpp
 void lower9( std::string& );      // lower9.cpp
-void lowera( std::string& );      // lowera.cpp
+std::string& lowera( std::string& ) noexcept; // lowera.cpp
 void lowerb( std::string& );      // lowerb.cpp
 void lowerc( std::string& );      // lowerc.cpp
 void lowerd( std::string& );      // lowerd.cpp
+void lowere( std::string& );      // lowere.cpp
 
 std::string getRandomStr( size_t ); // RandomStr.cpp
 
@@ -75,6 +76,11 @@ std::ostream& operator<<( std::ostream& os, const std::span<T,N>& sp )
   return os;
 }
 
+void VerifyEqual( std::string_view lhs, std::string_view rhs )
+{
+  test( std::ranges::equal( lhs, rhs ) );
+}
+
 void Verify( std::string_view original, std::string_view lower )
 {
   test( original.size() == lower.size() );
@@ -92,6 +98,7 @@ void Verify( std::string_view original, std::string_view lower )
     ++orig;
   }
 }
+
 
 #define MEASURE( name, function ) \
 { \
@@ -118,7 +125,7 @@ int main()
   // lower0
   char a1[] = "AbCdEf";
   char a2[] = "AbCdEf";
-  Verify( a1, "abcdef" );
+  VerifyEqual( lower0( a1 ), "abcdef" );
   std::cout << lower0( a2 ) << '\n';
   // lower0( nullptr ); // crash!
 
@@ -126,7 +133,7 @@ int main()
   char b1[] = "AbCdEf";
   char b2[] = "AbCdEf";
   lower1( b1, strlen( b1 ) );
-  Verify( b1, "abcdef" );
+  VerifyEqual( b1, "abcdef" );
   lower1( b2, strlen( b2 ) );
   std::cout << b2 << '\n';
   lower1( nullptr, 0 ); // safe
@@ -135,7 +142,7 @@ int main()
   char c1[] = "AbCdEf";
   char c2[] = "AbCdEf";
   lower2( std::span{ c1 } );
-  Verify( c1, "abcdef" );
+  VerifyEqual( c1, "abcdef" );
   lower2( c2 ); // note: c2 automatically converted to span
   std::cout << b2 << '\n';
   lower2( std::span<char>() ); // safe
@@ -144,7 +151,7 @@ int main()
   std::string d1{ "AbCdEf" };
   std::string d2{ "AbCdEf" };
   lower3( d1 );
-  Verify( d1, "abcdef" );
+  VerifyEqual( d1, "abcdef" );
   lower3( d2 );
   std::cout << d2 << '\n';
 
@@ -152,7 +159,7 @@ int main()
   std::string_view e1{ "AbCdEf" };
   std::string_view e2{ "AbCdEf" };
   lower4( e1 );
-  //Verify( e1, "abcdef" );
+  //VerifyEqual( e1, "abcdef" );
   lower4( e2 );
   //std::cout << e2 << '\n';
 
@@ -167,12 +174,12 @@ int main()
   //lower5( f1 ); // compiler error; can't modify string_view (it's a view!)
   //lower5( f2 ); // compiler error; f2 is const char*
   lower5( f3 );
-  Verify( f3, "abcdef" );
+  VerifyEqual( f3, "abcdef" );
   lower5( f5 );
-  Verify( std::string_view{ f5.data(), f5.size()-1 }, "abcdef" );
+  VerifyEqual( std::string_view{ f5.data(), f5.size()-1 }, "abcdef" );
   std::cout << f5 << '\n';
   lower5( f6 );
-  Verify( f6, "abcdef" );
+  VerifyEqual( f6, "abcdef" );
   std::cout << f6 << '\n';
   // std::cout << lower5( f6 ) << '\n'; // compiler error; lower5 doesn't return anything
 
@@ -183,9 +190,9 @@ int main()
   std::string g6{ "AbCdEf" };
 
   lower6( g3 );
-  Verify( g3, "abcdef" );
+  VerifyEqual( g3, "abcdef" );
   lower6( g5 );
-  Verify( std::string_view{ g5.data(), g5.size()-1 }, "abcdef" );
+  VerifyEqual( std::string_view{ g5.data(), g5.size()-1 }, "abcdef" );
   std::cout << g5 << '\n';
   std::cout << lower6( g6 ) << '\n'; // OK, this works
 
@@ -196,9 +203,9 @@ int main()
   std::string h6{ "AbCdEf" };
 
   lower7( h3 );
-  Verify( h3, "abcdef" );
+  VerifyEqual( h3, "abcdef" );
   lower7( h5 );
-  Verify( std::string_view{ h5.data(), h5.size()-1 }, "abcdef" );
+  VerifyEqual( std::string_view{ h5.data(), h5.size()-1 }, "abcdef" );
   std::cout << h5 << '\n';
   std::cout << lower7( h6 ) << '\n';
 
@@ -209,9 +216,9 @@ int main()
   std::string j6{ "AbCdEf" };
 
   lower8( j3, std::execution::par_unseq );
-  Verify( j3, "abcdef" );
+  VerifyEqual( j3, "abcdef" );
   lower8( j5, std::execution::par_unseq );
-  Verify( std::string_view{ j5.data(), j5.size()-1 }, "abcdef" );
+  VerifyEqual( std::string_view{ j5.data(), j5.size()-1 }, "abcdef" );
   std::cout << j5 << '\n';
   std::cout << lower8( j6, std::execution::par_unseq ) << '\n';
 
@@ -219,7 +226,7 @@ int main()
   std::string k1{ "AbCdEf" };
   std::string k2{ "AbCdEf" };
   lower9( k1 );
-  Verify( k1, "abcdef" );
+  VerifyEqual( k1, "abcdef" );
   lower9( k2 );
   std::cout << k2 << '\n';
 
@@ -227,15 +234,14 @@ int main()
   std::string m1{ "AbCdEf" };
   std::string m2{ "AbCdEf" };
   lowera( m1 );
-  Verify( m1, "abcdef" );
-  lowera( m2 );
-  std::cout << m2 << '\n';
+  VerifyEqual( m1, "abcdef" );
+  std::cout << lowera(m2) << '\n';
 
   // lowerb
   std::string n1{ "AbCdEf" };
   std::string n2{ "AbCdEf" };
   lowerb( n1 );
-  Verify( n1, "abcdef" );
+  VerifyEqual( n1, "abcdef" );
   lowerb( n2 );
   std::cout << n2 << '\n';
 
@@ -243,17 +249,25 @@ int main()
   std::string p1{ "ABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string p2{ "ABCdEfGhIjKlMnOpQrStUvWxYz" };
   lowerc( p1 );
-  Verify( p1, "abcdefghijklmnopqrstuvwxyz" );
+  VerifyEqual( p1, "abcdefghijklmnopqrstuvwxyz" );
   lowerc( p2 );
   std::cout << p2 << '\n';
 
-  // B)
+  // lowerd
   std::string q1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string q2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   lowerd( q1 );
-  Verify( q1, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
+  VerifyEqual( q1, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
   lowerd( q2 );
   std::cout << q2 << '\n';
+
+  // lowere
+  std::string r1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
+  std::string r2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
+  lowere( r1 );
+  VerifyEqual( r1, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
+  lowere( r2 );
+  std::cout << r2 << '\n';
 
   // C multithreaded SIMD
   // D CUDA or GPU solutions
@@ -273,6 +287,7 @@ int main()
   { // lower0
     std::string tmp = rs;
     Timer timer;
+    // This is super slow because of repeated calls to strlen; commented out for now
     //lower0( tmp.data() );
     //std::cout << "lower0: NOT IMPLEMENTED " << timer.getElapsedMicroseconds() << " microSec\n";
     //Verify( rs, tmp );
@@ -298,5 +313,6 @@ int main()
   MEASURE( "lowerb", lowerb );
   MEASURE( "lowerc", lowerc );
   MEASURE( "lowerd", lowerd );
+  MEASURE( "lowere", lowere );
 
 }

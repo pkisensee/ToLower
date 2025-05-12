@@ -8,6 +8,7 @@
 //
 // Issues:
 //    * doesn't scale to larger size characters, such as 16-bit values
+//    * TODO what about extended characters?
 
 #include <algorithm>
 #include <cctype>
@@ -25,17 +26,19 @@ static constexpr LowerCaseAsciiTable kLowerCaseAsciiTable = []
     std::ranges::iota( lut, char{});
 
     // Replace upper case with lower case
-    auto begin = std::begin( lut ) + 'A';
-    auto end = std::begin(lut) + 'Z' + 1;
-    std::iota( begin, end, 'a' );
+    auto upperA = std::begin( lut ) + 'A';
+    auto oneBeyondUpperZ = std::begin(lut) + 'Z' + 1;
+    std::iota( upperA, oneBeyondUpperZ, 'a' );
 
     return lut;
   }();
 
-void lowera( std::string& s )
+// TODO can this be constexpr?
+std::string& lowera( std::string& s ) noexcept
 {
   std::ranges::transform( s, std::begin( s ), []( unsigned char c )
     {
       return kLowerCaseAsciiTable[c];
     } );
+  return s;
 }

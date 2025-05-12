@@ -8,8 +8,9 @@ std::string getRandomStr( size_t len )
   std::uniform_int_distribution<int> distributionAscii( ' ', '~' );
   std::string s;
   s.resize( len );
-  std::ranges::transform( s, s.begin(), [&]( unsigned char ) {
+  std::ranges::transform( s, s.begin(), [&]( unsigned char )
+  {
     return static_cast<char>( distributionAscii( randGenerator ) );
-    } );
+  } );
   return s;
 }

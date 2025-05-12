@@ -11,8 +11,26 @@
 // Issues:
 //    * C-like; doesn't use C++ standard libraries
 //    * caller has to pass the length -- prone to error
+//
+// ChatGPT suggests this (safer, faster and more readable), 
+// but note the call to strlen, then the traversal of the string: O(2N)
+
+/*
+char* lower0( char* s ) {
+  if( !s ) return nullptr;  // null check
+
+  size_t len = std::strlen( s );
+  for( size_t i = 0; i < len; ++i ) {
+    // std::tolower returns int; ensure safe conversion
+    unsigned char c = static_cast<unsigned char>( s[i] );
+    s[i] = static_cast<char>( std::tolower( c ) );
+  }
+  return s;
+}
+*/
 
 #include <cctype>
+#include <cstring>
 
 void lower1( char* s, size_t count )
 {

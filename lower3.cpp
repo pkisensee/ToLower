@@ -12,6 +12,7 @@
 //
 // Issues:
 //    * still needed to know that tolower requires unsigned input
+//    * TODO std::basic_string for flexibility?
 
 #include <algorithm>
 #include <cctype>

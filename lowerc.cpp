@@ -7,6 +7,8 @@
 //
 // Issues:
 //    * hard to read
+//
+// TODO: diagram algorithm
 
 #include <emmintrin.h>
 #include <string>

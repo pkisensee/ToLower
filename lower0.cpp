@@ -9,7 +9,7 @@
 //    * Returns a pointer, which is confusing because it's not obvious to the caller what the return value represents, e.g. does the caller need to free the result?
 //    * Calls strlen every loop iteration, which is order n^2. Testing with 1MB string -> 5 minutes
 //    * Not const correct (by design); changes the input value
-//    * Can't be used with const strings
+//    * Non-obvious that s itself is converted
 //    * UB to call tolower() without first converting the input to unsigned char (https://en.cppreference.com/w/cpp/string/byte/tolower)
 
 #include <cctype>
@@ -20,8 +20,8 @@
 
 char* lower0( char* s )
 {
-  for( int i = 0; i < strlen( s ); ++i ) // '<': signed/unsigned mismatch
-    s[i] = std::tolower( s[i] );         // '=': conversion from int to char
+  for( int i = 0; i < std::strlen( s ); ++i ) // '<': signed/unsigned mismatch
+    s[i] = std::tolower( s[i] );              // '=': conversion from int to char
   return s;
 }
 
