@@ -15,8 +15,12 @@
     <ClCompile Include="lowerd.cpp" />
     <ClCompile Include="RandomStr.cpp" />
     <ClCompile Include="lowere.cpp" />
+    <ClCompile Include="lowerf.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lower.cl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="OpenCL.h" />
   </ItemGroup>
 </Project>

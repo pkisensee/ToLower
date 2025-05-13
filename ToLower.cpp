@@ -46,6 +46,7 @@ void lowerb( std::string& );      // lowerb.cpp
 void lowerc( std::string& );      // lowerc.cpp
 void lowerd( std::string& );      // lowerd.cpp
 void lowere( std::string& );      // lowere.cpp
+void lowerf( std::string& );      // lowerf.cpp
 
 std::string getRandomStr( size_t ); // RandomStr.cpp
 
@@ -88,10 +89,12 @@ void Verify( std::string_view original, std::string_view lower )
   for( auto low : lower )
   {
     // If original was upper case, verify that conversion happened and that inverse is also true
-    if( std::isupper( *orig ) )
+    if( std::isupper( static_cast<unsigned char>(*orig) ) )
     {
-      test( low == std::tolower( *orig ) );
-      test( std::toupper( low ) == *orig );
+      auto toLower = std::tolower( static_cast<unsigned char>( *orig ) );
+      test( low == toLower );
+      auto toUpper = std::toupper( static_cast<unsigned char>( low ) );
+      test( toUpper == *orig );
     }
     else
       test( low = *orig ); // should be unchanged
@@ -269,6 +272,14 @@ int main()
   lowere( r2 );
   std::cout << r2 << '\n';
 
+  // lowerf
+  std::string s1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
+  std::string s2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
+  lowerf( s1 );
+  VerifyEqual( s1, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
+  lowerf( s2 );
+  std::cout << s2 << '\n';
+
   // C multithreaded SIMD
   // D CUDA or GPU solutions
   // https://lemire.me/blog/2024/08/03/converting-ascii-strings-to-lower-case-at-crazy-speeds-with-avx-512/
@@ -314,5 +325,6 @@ int main()
   MEASURE( "lowerc", lowerc );
   MEASURE( "lowerd", lowerd );
   MEASURE( "lowere", lowere );
+  MEASURE( "lowerf", lowerf );
 
 }
