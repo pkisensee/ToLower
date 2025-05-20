@@ -23,13 +23,10 @@ __constant char kLowerCaseAsciiTable[256] = {
 };
 
 // CPU: 1400 us
-// GPU: 4700 us   <-- tied for fastest GPU
+// GPU: 4600 us   <-- tied for fastest GPU
 __kernel void lowerLUT( __global char* s, unsigned long len )
 {
   size_t i = get_global_id( 0 );
-  if( i >= len )
-    return;
-
   unsigned char c = s[i];
   s[i] = kLowerCaseAsciiTable[c];
 }
@@ -38,11 +35,8 @@ __kernel void lowerLUT( __global char* s, unsigned long len )
 // GPU: 15500 us
 __kernel void lowerBranch( __global char* s, unsigned long len )
 {
-  size_t i = get_global_id( 0 );
-  if( i >= len )
-    return;
-
   // ChatGPT suggestion, but branches are costly
+  size_t i = get_global_id( 0 );
   char c = s[i];
   if( c >= 'A' && c <= 'Z' ) 
     s[i] = c + 'a' - 'A';
@@ -52,11 +46,8 @@ __kernel void lowerBranch( __global char* s, unsigned long len )
 // GPU: 4700 us   <-- tied for fastest GPU
 __kernel void lowerBranchless( __global char* s, unsigned long len )
 {
-  size_t i = get_global_id( 0 );
-  if( i >= len )
-    return;
-
   // Branchless version using math
+  size_t i = get_global_id( 0 );
   s[i] = s[i] + ((s[i] >= 'A' && s[i] <= 'Z') ? 'a'-'A' : 0);
 }
 
@@ -65,11 +56,8 @@ __kernel void lowerBranchless( __global char* s, unsigned long len )
 __kernel void lower5thBit( __global char* s, unsigned long len )
 {
   size_t i = get_global_id( 0 );
-  if( i >= len )
-    return;
-
   const unsigned char kBit5Set = 0x20;
-  s[i] = s[i] | kBit5Set;
+  s[i] |= kBit5Set;
 }
 
 // CPU: 2500 us

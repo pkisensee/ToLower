@@ -74,7 +74,7 @@ public:
 
   void ToLower( std::string& s )
   {
-    cl::Buffer stringDataBuffer( context_, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, s.size(), s.data() );
+    cl::Buffer stringDataBuffer( context_, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, s.size(), s.data());
 
     // void lower( __global char* s, unsigned long len )
     kernel_.setArg( 0, stringDataBuffer );  // s
@@ -102,3 +102,4 @@ private:
 
 };
 
+///////////////////////////////////////////////////////////////////////////////

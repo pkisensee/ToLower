@@ -4,7 +4,7 @@
 //
 // Notes: 
 //    * OpenCL GPU solution
-//    * Performs a one-time compilation of the OpenCL kernel
+//    * Performs a one-time compilation of an OpenCL kernel
 //    * Uses fastest GPU method with lookup table
 //
 // Issues:

@@ -280,8 +280,8 @@ int main()
   lowerf( s2 );
   std::cout << s2 << '\n';
 
-  // C multithreaded SIMD
-  // D CUDA or GPU solutions
+  // multithreaded SIMD
+  // CUDA, Vulkan, Halide
   // https://lemire.me/blog/2024/08/03/converting-ascii-strings-to-lower-case-at-crazy-speeds-with-avx-512/
 
   // Bit 5 trick visualization
