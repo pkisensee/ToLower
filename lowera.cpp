@@ -11,6 +11,7 @@
 //    * TODO what about extended characters?
 
 #include <algorithm>
+#include <array>
 #include <cctype>
 #include <numeric>
 #include <ranges>
@@ -33,7 +34,7 @@ static constexpr LowerCaseAsciiTable kLowerCaseAsciiTable = []
     return lut;
   }();
 
-// TODO can this be constexpr?
+// Note: function can't be constexpr because modifies input parameter
 std::string& lowera( std::string& s ) noexcept
 {
   std::ranges::transform( s, std::begin( s ), []( unsigned char c )

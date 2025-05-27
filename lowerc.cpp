@@ -3,12 +3,10 @@
 // lowerc.cpp
 //
 // Notes: 
-//    * vectorized solution
+//    * vectorized solution, 16 characters at a time
 //
 // Issues:
 //    * hard to read
-//
-// TODO: diagram algorithm
 
 #include <emmintrin.h>
 #include <string>
@@ -27,14 +25,14 @@ std::string& lowerc( std::string& s )
     // Example: "AaBb!_Zz" -> 0x41 0x61 0x42 0x62 0x21 0x5D 0x5A 0x7A 
     //
     //              0  1  2  3  4  5  6  7
-    // -------------------------------------
+    // -----------------------------------
     // input        A  a  B  b  !  _  Z  z
     // input (hex) 41 61 42 62 21 5D 5A 7A
     // gteA        FF FF FF FF  0 FF FF FF // 'A' == 0x41
     // lteZ        FF  0 FF  0 FF  0 FF  0 // 'Z' == 0x5A
-    // isUpper     FF  0 FF  0  0  0 FF  0
-    // caseAdd     20  0 20  0  0  0 20  0
-    // lower (hex) 61 61 62 62 21 5D 7A 7A
+    // isUpper     FF  0 FF  0  0  0 FF  0 // gteA & lteZ
+    // caseAdd     20  0 20  0  0  0 20  0 // isUpper & kCaseOffset
+    // lower (hex) 61 61 62 62 21 5D 7A 7A // input + caseAdd
     // lower        a  a  b  b  !  _  z  z
     //
     // gteA = ( input >= 'A' ) ? 0xFF : 0x0;

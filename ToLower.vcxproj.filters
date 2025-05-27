@@ -16,6 +16,7 @@
     <ClCompile Include="RandomStr.cpp" />
     <ClCompile Include="lowere.cpp" />
     <ClCompile Include="lowerf.cpp" />
+    <ClCompile Include="lowerg.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lower.cl" />

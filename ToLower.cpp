@@ -33,7 +33,7 @@
 #define test(e) static_cast<void>( (e) || ( __debugbreak(), 0 ) )
 #endif
 
-#include "lower.h"                // lower.h (4-8)
+#include "lower.h"                // lower.h (5-8)
 
 char* lower0( char* );                        // lower0.cpp
 char* lower1( char*, size_t );                // lower1.cpp
@@ -47,6 +47,7 @@ std::string& lowerc( std::string& );          // lowerc.cpp
 std::string& lowerd( std::string& );          // lowerd.cpp
 std::string& lowere( std::string& );          // lowere.cpp
 std::string& lowerf( std::string& );          // lowerf.cpp
+std::string lowerg( const std::string& ) noexcept; // lowerg.cpp
 
 std::string getRandomStr( size_t ); // RandomStr.cpp
 
@@ -77,12 +78,12 @@ std::ostream& operator<<( std::ostream& os, const std::span<T,N>& sp )
   return os;
 }
 
-void VerifyEqual( std::string_view lhs, std::string_view rhs )
+static void VerifyEqual( std::string_view lhs, std::string_view rhs )
 {
   test( std::ranges::equal( lhs, rhs ) );
 }
 
-void Verify( std::string_view original, std::string_view lower )
+static void Verify( std::string_view original, std::string_view lower )
 {
   test( original.size() == lower.size() );
   auto orig = std::begin( original );
@@ -120,6 +121,14 @@ void Verify( std::string_view original, std::string_view lower )
   Verify( rs, tmp ); \
 }
 
+#define MEASURE_BYVAL( name, function ) \
+{ \
+  Timer timer; \
+  std::string tmp = function( rs ); \
+  std::cout << name << ": " << timer.getElapsedMicroseconds() << " microSec\n"; \
+  Verify( tmp, rs ); \
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 int main()
@@ -142,8 +151,7 @@ int main()
   char c1[] = "AbCdEf";
   char c2[] = "AbCdEf";
   VerifyEqual( lower2( std::span{ c1 } ), "abcdef" );
-  lower2( c2 ); // TODO put this inline and evaluate warning C4866 // note: c2 automatically converted to span
-  std::cout << c2 << '\n'; 
+  std::cout << lower2( c2 ) << '\n';
   lower2( std::span<char>() ); // safe
 
   // lower3
@@ -258,20 +266,26 @@ int main()
   VerifyEqual( lowerf( s1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
   std::cout << lowerf( s2 ) << '\n';
 
+  // lowerg
+  std::string t1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
+  std::string t2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
+  VerifyEqual( lowerg( t1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
+  std::cout << lowerg( t2 ) << '\n';
+
   // multithreaded SIMD
   // CUDA, Vulkan, Halide
   // https://lemire.me/blog/2024/08/03/converting-ascii-strings-to-lower-case-at-crazy-speeds-with-avx-512/
 
   // Bit 5 trick visualization
   std::string z1;
-  z1.resize( 127 - ' ' );
+  z1.resize( 127uz - ' ' );
   std::ranges::iota( z1, ' ' );
   std::cout << z1 << '\n';
   lower9( z1 );
   std::cout << z1 << '\n';
 
   // Timing runs
-  std::string rs = getRandomStr( 1024 * 1024 * 10 ); // 10MB
+  std::string rs = getRandomStr( 1024uz * 1024uz * 10uz ); // 10MB
 
   { // lower0
     std::string tmp = rs;
@@ -304,5 +318,6 @@ int main()
   MEASURE( "lowerd", lowerd );
   MEASURE( "lowere", lowere );
   MEASURE( "lowerf", lowerf );
+  MEASURE_BYVAL( "lowerg", lowerg );
 
 }
