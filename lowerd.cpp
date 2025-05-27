@@ -15,7 +15,7 @@ static constexpr char kMask = 0b0010'0000;
 static const __m256i kBit5Set = _mm256_set1_epi8( kMask );
 static const size_t kAVX2bytes = sizeof( __m256i );
 
-void lowerd( std::string& s )
+std::string& lowerd( std::string& s )
 { 
   // doesn't handle @, [, ], ^, _, and '\'
   size_t len = s.size(); 
@@ -33,4 +33,5 @@ void lowerd( std::string& s )
     auto lower = *data | kMask;
     *data = static_cast<char>( lower );
   }
+  return s;
 }

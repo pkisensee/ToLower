@@ -13,8 +13,8 @@
 
 #include "OpenCL.h"
 
-void lowerf( std::string& s )
+std::string& lowerf( std::string& s )
 {
   static OpenCL openCL( CL_DEVICE_TYPE_CPU, "lowerBranchless" );
-  openCL.ToLower( s );
+  return openCL.ToLower( s );
 }

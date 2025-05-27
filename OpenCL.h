@@ -72,7 +72,7 @@ public:
     assert( kernel_.get() != nullptr );
   }
 
-  void ToLower( std::string& s )
+  std::string& ToLower( std::string& s )
   {
     cl::Buffer stringDataBuffer( context_, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, s.size(), s.data());
 
@@ -90,6 +90,7 @@ public:
     // Read results back into s
     cl_bool blocking = CL_TRUE;
     queue_.enqueueReadBuffer( stringDataBuffer, blocking, 0, s.size(), s.data() );
+    return s;
   }
 
 private:

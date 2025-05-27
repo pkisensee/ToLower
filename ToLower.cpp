@@ -35,18 +35,18 @@
 
 #include "lower.h"                // lower.h (4-8)
 
-char* lower0( char* );            // lower0.cpp
-void lower1( char*, size_t );     // lower1.cpp
-void lower2( std::span<char> );   // lower2.cpp
-void lower3( std::string& );      // lower3.cpp
-void lower4( std::string_view );  // lower4.cpp
-void lower9( std::string& );      // lower9.cpp
+char* lower0( char* );                        // lower0.cpp
+char* lower1( char*, size_t );                // lower1.cpp
+char* lower2( std::span<char> );              // lower2.cpp
+std::string& lower3( std::string& );          // lower3.cpp
+std::string_view lower4( std::string_view );  // lower4.cpp
+std::string& lower9( std::string& );          // lower9.cpp
 std::string& lowera( std::string& ) noexcept; // lowera.cpp
-void lowerb( std::string& );      // lowerb.cpp
-void lowerc( std::string& );      // lowerc.cpp
-void lowerd( std::string& );      // lowerd.cpp
-void lowere( std::string& );      // lowere.cpp
-void lowerf( std::string& );      // lowerf.cpp
+std::string& lowerb( std::string& );          // lowerb.cpp
+std::string& lowerc( std::string& );          // lowerc.cpp
+std::string& lowerd( std::string& );          // lowerd.cpp
+std::string& lowere( std::string& );          // lowere.cpp
+std::string& lowerf( std::string& );          // lowerf.cpp
 
 std::string getRandomStr( size_t ); // RandomStr.cpp
 
@@ -102,7 +102,6 @@ void Verify( std::string_view original, std::string_view lower )
   }
 }
 
-
 #define MEASURE( name, function ) \
 { \
   std::string tmp = rs; \
@@ -135,36 +134,29 @@ int main()
   // lower1
   char b1[] = "AbCdEf";
   char b2[] = "AbCdEf";
-  lower1( b1, strlen( b1 ) );
-  VerifyEqual( b1, "abcdef" );
-  lower1( b2, strlen( b2 ) );
-  std::cout << b2 << '\n';
+  VerifyEqual( lower1( b1, strlen( b1 ) ), "abcdef");
+  std::cout << lower1( b2, strlen( b2 ) ) << '\n';
   lower1( nullptr, 0 ); // safe
 
   // lower2
   char c1[] = "AbCdEf";
   char c2[] = "AbCdEf";
-  lower2( std::span{ c1 } );
-  VerifyEqual( c1, "abcdef" );
-  lower2( c2 ); // note: c2 automatically converted to span
-  std::cout << b2 << '\n';
+  VerifyEqual( lower2( std::span{ c1 } ), "abcdef" );
+  lower2( c2 ); // TODO put this inline and evaluate warning C4866 // note: c2 automatically converted to span
+  std::cout << c2 << '\n'; 
   lower2( std::span<char>() ); // safe
 
   // lower3
   std::string d1{ "AbCdEf" };
   std::string d2{ "AbCdEf" };
-  lower3( d1 );
-  VerifyEqual( d1, "abcdef" );
-  lower3( d2 );
-  std::cout << d2 << '\n';
+  VerifyEqual( lower3( d1 ), "abcdef" );
+  std::cout << lower3( d2 ) << '\n';
 
   // lower4
   std::string_view e1{ "AbCdEf" };
   std::string_view e2{ "AbCdEf" };
-  lower4( e1 );
-  //VerifyEqual( e1, "abcdef" );
-  lower4( e2 );
-  //std::cout << e2 << '\n';
+  // VerifyEqual( lower4( e1 ), "abcdef" ); // nope; can't modify string_view
+  // std::cout << lower4( e2 ) << '\n'; // mixed case output
 
   // lower5
   std::string_view f1{ "AbCdEf" };
@@ -192,8 +184,7 @@ int main()
   std::span g5{ g4 };
   std::string g6{ "AbCdEf" };
 
-  lower6( g3 );
-  VerifyEqual( g3, "abcdef" );
+  VerifyEqual( lower6( g3 ), "abcdef");
   lower6( g5 );
   VerifyEqual( std::string_view{ g5.data(), g5.size()-1 }, "abcdef" );
   std::cout << g5 << '\n';
@@ -218,8 +209,7 @@ int main()
   std::span j5{ j4 };
   std::string j6{ "AbCdEf" };
 
-  lower8( j3, std::execution::par_unseq );
-  VerifyEqual( j3, "abcdef" );
+  VerifyEqual( lower8( j3, std::execution::par_unseq ), "abcdef" );
   lower8( j5, std::execution::par_unseq );
   VerifyEqual( std::string_view{ j5.data(), j5.size()-1 }, "abcdef" );
   std::cout << j5 << '\n';
@@ -228,10 +218,8 @@ int main()
   // lower9
   std::string k1{ "AbCdEf" };
   std::string k2{ "AbCdEf" };
-  lower9( k1 );
-  VerifyEqual( k1, "abcdef" );
-  lower9( k2 );
-  std::cout << k2 << '\n';
+  VerifyEqual( lower9( k1 ), "abcdef" );
+  std::cout << lower9( k2 ) << '\n';
 
   // lowera
   std::string m1{ "AbCdEf" };
@@ -243,42 +231,32 @@ int main()
   // lowerb
   std::string n1{ "AbCdEf" };
   std::string n2{ "AbCdEf" };
-  lowerb( n1 );
-  VerifyEqual( n1, "abcdef" );
-  lowerb( n2 );
-  std::cout << n2 << '\n';
+  VerifyEqual( lowerb( n1 ), "abcdef" );
+  std::cout << lowerb( n2 ) << '\n';
 
   // lowerc
   std::string p1{ "ABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string p2{ "ABCdEfGhIjKlMnOpQrStUvWxYz" };
-  lowerc( p1 );
-  VerifyEqual( p1, "abcdefghijklmnopqrstuvwxyz" );
-  lowerc( p2 );
-  std::cout << p2 << '\n';
+  VerifyEqual( lowerc( p1 ), "abcdefghijklmnopqrstuvwxyz" );
+  std::cout << lowerc( p2 ) << '\n';
 
   // lowerd
   std::string q1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string q2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
-  lowerd( q1 );
-  VerifyEqual( q1, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
-  lowerd( q2 );
-  std::cout << q2 << '\n';
+  VerifyEqual( lowerd( q1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
+  std::cout << lowerd( q2 ) << '\n';
 
   // lowere
   std::string r1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string r2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
-  lowere( r1 );
-  VerifyEqual( r1, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
-  lowere( r2 );
-  std::cout << r2 << '\n';
+  VerifyEqual( lowere( r1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
+  std::cout << lowere( r2 ) << '\n';
 
   // lowerf
   std::string s1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string s2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
-  lowerf( s1 );
-  VerifyEqual( s1, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
-  lowerf( s2 );
-  std::cout << s2 << '\n';
+  VerifyEqual( lowerf( s1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
+  std::cout << lowerf( s2 ) << '\n';
 
   // multithreaded SIMD
   // CUDA, Vulkan, Halide

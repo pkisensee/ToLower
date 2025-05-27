@@ -14,7 +14,7 @@
 #include <ranges>
 #include <string>
 
-void lower4( std::string_view s )
+std::string_view lower4( std::string_view s )
 {
   /*
   // can't modify a string_view -- it's a view!
@@ -24,5 +24,5 @@ void lower4( std::string_view s )
       return static_cast<std::string::value_type>( lower );
     } );
   */
-  (void)s;
+  return s;
 }

@@ -24,7 +24,7 @@
 #include <ranges>
 #include <string>
 
-void lower9( std::string& s )
+std::string& lower9( std::string& s )
 {
   static constexpr unsigned char kBit5Set = 0b0010'0000;
   std::ranges::transform( s, std::begin( s ), []( unsigned char c )
@@ -32,4 +32,5 @@ void lower9( std::string& s )
       auto lower = c | kBit5Set;
       return static_cast<std::string::value_type>( lower );
     } );
+  return s;
 }

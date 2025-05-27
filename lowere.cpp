@@ -13,8 +13,8 @@
 
 #include "OpenCL.h"
 
-void lowere( std::string& s )
+std::string& lowere( std::string& s )
 {
   static OpenCL openCL( CL_DEVICE_TYPE_GPU, "lowerLUT" );
-  openCL.ToLower(s);
+  return openCL.ToLower( s );
 }

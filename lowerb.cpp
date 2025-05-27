@@ -16,7 +16,7 @@
 #include <thread>
 #include <vector>
 
-void lowerb(std::string& s)
+std::string& lowerb(std::string& s)
 { 
   auto toLowerWorker = []( std::span<char> substr )
     {
@@ -44,4 +44,5 @@ void lowerb(std::string& s)
   pool[threadCount - 1] = std::jthread( toLowerWorker, substr );
 
   // jthreads automatically join, so conversion is complete upon function return
+  return s;
 }

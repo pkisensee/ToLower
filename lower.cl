@@ -48,7 +48,13 @@ __kernel void lowerBranchless( __global char* s, unsigned long len )
 {
   // Branchless version using math
   size_t i = get_global_id( 0 );
+  // TODO test +=
   s[i] = s[i] + ((s[i] >= 'A' && s[i] <= 'Z') ? 'a'-'A' : 0);
+
+  // TODO test the following:
+  //const unsigned char kCase Offset = 'a' - 'A';
+  //uchar isUpper = (s[i] >= 'A' && s[i] <= 'Z') ? 0xFF : 0;
+  //s[i] += isUpper & kCaseOffset;
 }
 
 // CPU: 1300 us <-- tied for fastest CPU

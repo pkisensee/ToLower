@@ -32,10 +32,10 @@ char* lower0( char* s ) {
 #include <cctype>
 #include <cstring>
 
-void lower1( char* s, size_t count )
+char* lower1( char* s, size_t count )
 {
   if( s == nullptr )
-    return;
+    return nullptr;
   
   for( size_t i = 0; s[i] != '\0' && i < count; ++i )
   {
@@ -43,4 +43,5 @@ void lower1( char* s, size_t count )
     auto lower = std::tolower( u );
     s[i] = static_cast<char>( lower );
   }
+  return s;
 }

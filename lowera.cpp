@@ -23,12 +23,12 @@ static constexpr LowerCaseAsciiTable kLowerCaseAsciiTable = []
   {
     // Generate standard ASCII table
     LowerCaseAsciiTable lut;
-    std::ranges::iota( lut, char{});
+    std::ranges::iota( lut, char{} );
 
     // Replace upper case with lower case
     auto upperA = std::begin( lut ) + 'A';
-    auto oneBeyondUpperZ = std::begin(lut) + 'Z' + 1;
-    std::iota( upperA, oneBeyondUpperZ, 'a' );
+    auto upperZ = std::begin( lut ) + 'Z';
+    std::iota( upperA, upperZ + 1, 'a' );
 
     return lut;
   }();

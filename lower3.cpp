@@ -19,11 +19,12 @@
 #include <ranges>
 #include <string>
 
-void lower3( std::string& s )
+std::string& lower3( std::string& s )
 {
   std::ranges::transform( s, std::begin( s ), []( unsigned char c )
     {
       auto lower = std::tolower( c );
       return static_cast<std::string::value_type>( lower );
     } );
+  return s;
 }

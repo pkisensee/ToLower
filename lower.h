@@ -14,6 +14,7 @@
 #include <ranges>
 #include <string>
 
+// Return nothing
 template<typename S> // S is anything string-like that can be modified in place
 void lower5( S&& s )
 {

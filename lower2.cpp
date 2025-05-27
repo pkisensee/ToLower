@@ -17,7 +17,7 @@
 #include <cctype>
 #include <span>
 
-void lower2( std::span<char> s )
+char* lower2( std::span<char> s )
 {
   size_t i = 0;
   for( char c : s )
@@ -26,4 +26,5 @@ void lower2( std::span<char> s )
     auto lower = std::tolower( u );
     s[i++] = static_cast<char>( lower );
   }
+  return s.data();
 }
