@@ -38,6 +38,7 @@
 #include "toLower3.h"
 #include "toLower4.h"
 #include "toLower5.h"
+#include "toLower6.h"
 #include "lower5678.h"
 #include "lower9.h"
 #include "lowera.h"
@@ -186,17 +187,17 @@ int main()
   std::cout << f6 << '\n';
   // std::cout << toLower5( f6 ) << '\n'; // compiler error; toLower5 doesn't return anything
 
-  // lower6
+  // toLower6
   char g3[] = "AbCdEf";
   char g4[] = "AbCdEf";
   std::span g5{ g4 };
   std::string g6{ "AbCdEf" };
 
-  VerifyEqual( lower6( g3 ), "abcdef");
-  lower6( g5 );
+  VerifyEqual( toLower6( g3 ), "abcdef");
+  toLower6( g5 );
   VerifyEqual( std::string_view{ g5.data(), g5.size()-1 }, "abcdef" );
   std::cout << g5 << '\n';
-  std::cout << lower6( g6 ) << '\n'; // OK, this works
+  std::cout << toLower6( g6 ) << '\n'; // OK, this works
 
   // lower7
   char h3[] = "AbCdEf";
@@ -321,7 +322,7 @@ int main()
   MEASURE( "toLower3", toLower3 );
   //MEASURE( "toLower4", toLower4 ); // doesn't do anything, so no need to measure
   MEASURE( "toLower5", toLower5 );
-  MEASURE( "lower6", lower6 );
+  MEASURE( "toLower6", toLower6 );
   MEASURE( "lower7", lower7 );
   MEASURE1( "lower8", lower8, std::execution::par_unseq );
   MEASURE( "lower9", lower9 );

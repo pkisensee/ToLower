@@ -26,16 +26,6 @@ inline char toLowerChar( char c )
 }
 
 template<typename S>
-S&& lower6( S&& s ) // return reference
-{
-  std::ranges::transform( s, std::begin( s ), []( auto c )
-    {
-      return toLowerChar( c );
-    } );
-  return std::forward<S>( s );
-}
-
-template<typename S>
 constexpr S&& lower7( S&& s ) noexcept // constexpr, noexcept
 {
   std::ranges::transform( s, std::begin( s ), []( auto c )
