@@ -37,6 +37,7 @@
 #include "lower2.h"
 #include "toLower3.h"
 #include "toLower4.h"
+#include "toLower5.h"
 #include "lower5678.h"
 #include "lower9.h"
 #include "lowera.h"
@@ -165,7 +166,7 @@ int main()
   //VerifyEqual( toLower4( e1 ), "abcdef" ); // nope; can't modify string_view
   //std::cout << toLower4( e2 ) << '\n'; // mixed case output
 
-  // lower5
+  // toLower5
   std::string_view f1{ "AbCdEf" };
   std::span f2{ "AbCdEf" };
   char f3[] = "AbCdEf";
@@ -173,17 +174,17 @@ int main()
   std::span f5{ f4 };
   std::string f6{ "AbCdEf" };
 
-  //lower5( f1 ); // compiler error; can't modify string_view (it's a view!)
-  //lower5( f2 ); // compiler error; f2 is const char*
-  lower5( f3 );
+  // toLower5( f1 ); // compiler error; can't modify string_view (it's a view!)
+  // toLower5( f2 ); // compiler error; f2 is const char*
+  toLower5( f3 );
   VerifyEqual( f3, "abcdef" );
-  lower5( f5 );
+  toLower5( f5 );
   VerifyEqual( std::string_view{ f5.data(), f5.size()-1 }, "abcdef" );
   std::cout << f5 << '\n';
-  lower5( f6 );
+  toLower5( f6 );
   VerifyEqual( f6, "abcdef" );
   std::cout << f6 << '\n';
-  // std::cout << lower5( f6 ) << '\n'; // compiler error; lower5 doesn't return anything
+  // std::cout << toLower5( f6 ) << '\n'; // compiler error; toLower5 doesn't return anything
 
   // lower6
   char g3[] = "AbCdEf";
@@ -319,7 +320,7 @@ int main()
   MEASURE( "lower2", lower2 );
   MEASURE( "toLower3", toLower3 );
   //MEASURE( "toLower4", toLower4 ); // doesn't do anything, so no need to measure
-  MEASURE( "lower5", lower5 );
+  MEASURE( "toLower5", toLower5 );
   MEASURE( "lower6", lower6 );
   MEASURE( "lower7", lower7 );
   MEASURE1( "lower8", lower8, std::execution::par_unseq );

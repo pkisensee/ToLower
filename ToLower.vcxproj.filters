@@ -25,6 +25,7 @@
   <ItemGroup>
     <ClInclude Include="OpenCL.h" />
     <ClInclude Include="getLowerChar.h" />
+    <ClInclude Include="toLower5.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="digipenCode.txt" />

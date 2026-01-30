@@ -25,16 +25,6 @@ inline char toLowerChar( char c )
   return static_cast<char>( lowered );
 }
 
-// Return nothing
-template<typename S> // S is anything string-like that can be modified in place
-void lower5( S&& s )
-{
-  std::ranges::transform( s, std::begin( s ), []( auto c )
-    {
-      return toLowerChar( c );
-    } );
-}
-
 template<typename S>
 S&& lower6( S&& s ) // return reference
 {
