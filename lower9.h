@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// lower9.cpp
+// lower9.h
 //
 // Notes: 
 //    * clever ASCII designers created an easy conversion; for all upper case
@@ -19,18 +19,22 @@
 //      0x5F _ -> 0x7F  
 //    * doesn't work for much of extended ASCII (>0x7F)
 
+#pragma once
+
 #include <algorithm>
 #include <cctype>
 #include <ranges>
 #include <string>
 
-std::string& lower9( std::string& s )
+constexpr auto&& lower9( auto&& s ) noexcept
 {
   static constexpr unsigned char kBit5Set = 0b0010'0000;
   std::ranges::transform( s, std::begin( s ), []( unsigned char c )
     {
       auto lower = c | kBit5Set;
-      return static_cast<std::string::value_type>( lower );
+      return static_cast<char>( lower );
     } );
-  return s;
+  return std::forward<decltype( s )>( s );
 }
+
+///////////////////////////////////////////////////////////////////////////////

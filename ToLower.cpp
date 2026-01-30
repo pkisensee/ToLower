@@ -17,32 +17,31 @@
 #include <cassert>
 #include <chrono>
 #include <clocale>
-// #include <debugging> requires C++26
 #include <execution>
 #include <functional>
 #include <iostream>
 #include <span>
 #include <string>
+#include <utility>
 
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifdef _DEBUG
 #define test(e) assert(e)
 #else
-// #define test(e) static_cast<void>( (e) || ( std::breakpoint(), 0 ) ) // requires C++26
-#define test(e) static_cast<void>( (e) || ( __debugbreak(), 0 ) )
+#define test(e) static_cast<void>( (e) || ( std::unreachable(), 0 ) )
 #endif
 
-#include "lower.h"                // lower.h (5-8)
+#include "lower5678.h"
+#include "lower9.h"
+#include "lowera.h"
 
 char* lower0( char* );                        // lower0.cpp
 char* lower1( char*, size_t );                // lower1.cpp
 char* lower2( std::span<char> );              // lower2.cpp
 std::string& lower3( std::string& );          // lower3.cpp
 std::string_view lower4( std::string_view );  // lower4.cpp
-std::string& lower9( std::string& );          // lower9.cpp
-std::string& lowera( std::string& ) noexcept; // lowera.cpp
-std::string& lowerb( std::string& );          // lowerb.cpp
+std::string& lowerb( std::string& ) noexcept; // lowerb.cpp
 std::string& lowerc( std::string& );          // lowerc.cpp
 std::string& lowerd( std::string& );          // lowerd.cpp
 std::string& lowere( std::string& );          // lowere.cpp
@@ -211,6 +210,19 @@ int main()
   std::cout << h5 << '\n';
   std::cout << lower7( h6 ) << '\n';
 
+  // lower7a
+  char ah3[] = "AbCdEf";
+  char ah4[] = "AbCdEf";
+  std::span ah5{ ah4 };
+  std::string ah6{ "AbCdEf" };
+
+  lower7a( ah3 );
+  VerifyEqual( ah3, "abcdef" );
+  lower7a( ah5 );
+  VerifyEqual( std::string_view{ ah5.data(), ah5.size() - 1 }, "abcdef" );
+  std::cout << ah5 << '\n';
+  std::cout << lower7a( ah6 ) << '\n';
+
   // lower8
   char j3[] = "AbCdEf";
   char j4[] = "AbCdEf";
@@ -232,9 +244,9 @@ int main()
   // lowera
   std::string m1{ "AbCdEf" };
   std::string m2{ "AbCdEf" };
-  lowera( m1 );
+  toLowerA( m1 );
   VerifyEqual( m1, "abcdef" );
-  std::cout << lowera(m2) << '\n';
+  std::cout << toLowerA(m2) << '\n';
 
   // lowerb
   std::string n1{ "AbCdEf" };
@@ -312,7 +324,7 @@ int main()
   MEASURE( "lower7", lower7 );
   MEASURE1( "lower8", lower8, std::execution::par_unseq );
   MEASURE( "lower9", lower9 );
-  MEASURE( "lowera", lowera );
+  MEASURE( "toLowerA", toLowerA );
   MEASURE( "lowerb", lowerb );
   MEASURE( "lowerc", lowerc );
   MEASURE( "lowerd", lowerd );

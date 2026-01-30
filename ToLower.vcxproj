@@ -31,6 +31,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>true</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -38,12 +39,14 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>true</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>true</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -51,6 +54,7 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>true</EnableASAN>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -93,6 +97,7 @@
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
       <CallingConvention>StdCall</CallingConvention>
       <DisableSpecificWarnings>4514; 4710; 4711; 4820; 4866; 5045</DisableSpecificWarnings>
+      <AdditionalOptions>/analyze %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -115,6 +120,7 @@
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
       <CallingConvention>StdCall</CallingConvention>
       <DisableSpecificWarnings>4514; 4710; 4711; 4820; 4866; 5045</DisableSpecificWarnings>
+      <AdditionalOptions>/analyze %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,6 +143,7 @@
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
       <CallingConvention>StdCall</CallingConvention>
       <DisableSpecificWarnings>4514; 4710; 4711; 4820; 4866; 5045</DisableSpecificWarnings>
+      <AdditionalOptions>/analyze %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -159,6 +166,7 @@
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
       <CallingConvention>StdCall</CallingConvention>
       <DisableSpecificWarnings>4514; 4710; 4711; 4820; 4866; 5045</DisableSpecificWarnings>
+      <AdditionalOptions>/analyze %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -176,9 +184,9 @@
     <ClCompile Include="lower2.cpp" />
     <ClCompile Include="lower3.cpp" />
     <ClCompile Include="lower4.cpp" />
-    <ClCompile Include="lower.h" />
-    <ClCompile Include="lower9.cpp" />
-    <ClCompile Include="lowera.cpp" />
+    <ClCompile Include="lower5678.h" />
+    <ClCompile Include="lower9.h" />
+    <ClCompile Include="lowera.h" />
     <ClCompile Include="lowerb.cpp" />
     <ClCompile Include="lowerc.cpp" />
     <ClCompile Include="lowerd.cpp" />
@@ -189,10 +197,15 @@
     <ClCompile Include="ToLower.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Tantalon\digipen\index.html" />
     <None Include="lower.cl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OpenCL.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="digipenCode.txt" />
+    <Text Include="digipenLessons.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

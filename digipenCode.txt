@@ -1,0 +1,157 @@
+//-----------------------------------------------------------------------------
+// Lesson 0: code refactoring
+
+#include <cctype>
+#include <cstdio>
+#include <cstring>
+
+// Existing code from real world shipping product
+char* lower( char* s )
+{
+  for( int i = 0; i < std::strlen( s ); ++i )
+    s[i] = std::tolower( s[i] );
+  return s;
+}
+
+int main()
+{
+  char abc[] = "AbC";
+  printf( "%s\n", lower(abc) );
+}
+
+GCC/Clang: -std=c++26
+MSVC: /std:c++latest
+
+//-----------------------------------------------------------------------------
+// Lesson 1: add warnings
+
+GCC/Clang: -std=c++26 -Wall -Wextra -Wconversion -Wwrite-strings -pedantic -Werror
+MSVC: /std:c++latest /Wall /WX /wd5045
+
+//-----------------------------------------------------------------------------
+// Lesson 2: add tests, read docs
+
+#include <iostream>
+
+  char xyz[] = "xyz";
+  std::cout << lower(xyz) << '\n';
+
+  char empty[] = "";
+  std::cout << lower(empty) << '\n';
+
+  std::cout << lower(nullptr) << '\n';
+
+  char* np = lower(nullptr);
+  if( np == nullptr )
+    std::cout << "nullptr\n";
+
+  char alpha[] = "ZYXWVUTSRQPONMLKJIHGFEDCBA";
+  std::cout << lower(alpha) << '\n';
+
+//-----------------------------------------------------------------------------
+// Lesson 3: more tools
+
+/analyze
+
+//-----------------------------------------------------------------------------
+// Lesson 4: perf, part 1
+
+  auto len = std::strlen(s);
+  for( size_t i = 0; i < len; ++i )
+
+  for( size_t i = 0; s[i] != '\0'; ++i )
+
+  for( char* curr = s; *curr != '\0'; ++curr )
+  {
+    auto uchar = static_cast<unsigned char>( *curr );
+    int lowered = std::tolower( uchar );
+    *curr = static_cast<char>( lowered );
+  }
+
+char getLowerChar( char c )
+{
+  auto uchar = static_cast<unsigned char>( c );
+  auto lowered = std::tolower( uchar );
+  return static_cast<char>( lowered );
+}
+
+//-----------------------------------------------------------------------------
+// Lesson 5: interface
+
+/*
+std::string lower( const std::string& );
+std::string lower( std::string& );
+std::string& lower( std::string& );
+const std::string& lower( std::string& );
+void lower( std::string& );
+
+std::string lower( std::string_view );
+std::string_view&( std::string_view& );
+void lower( std::string_view );
+
+// std::span<char>?
+// std::vector<char>?
+*/
+
+const std::string& toLower( std::string& );
+// Convert string to lower case in place. Returns new string.
+
+//-----------------------------------------------------------------------------
+// Lesson 6: modern loops
+
+std::string& toLower( std::string& s )
+{
+  for( auto itr = std::begin(s); itr != std::end(s); ++itr )
+    *itr = getLowerChar( *itr );
+  return s;
+}
+
+std::string& toLower( std::string& s )
+{
+  for( auto& c : s ) // range-based for
+    c = getLowerChar(c);
+  return s;
+}
+
+//-----------------------------------------------------------------------------
+// Lesson 7: algorithms
+
+#include <algorithm>
+#include <ranges>
+
+  auto opLower = []( char& c ) // lambda
+  {
+    c = getLowerChar(c);
+  };
+
+  std::ranges::for_each( s, opLower );
+
+  auto opLower = []( char c )
+  {
+    return getLowerChar(c);
+  };
+
+  std::ranges::transform( s, std::begin( s ), opLower );
+
+//-----------------------------------------------------------------------------
+// Lesson 8: flexibility
+
+#include <vector>
+
+  char mno[] = "MNO";
+  std::cout << toLower( mno ) << '\n';
+
+  std::vector<char> pqr = { 'P', 'Q', 'R' };
+  toLower( pqr );
+  std::cout << std::string( pqr.begin(), pqr.end() ) << '\n';
+
+// Convert char sequence to lower case in place. Returns modified sequence.
+auto&& toLower( auto&& s )
+
+  return std::forward< decltype(s) >( s );
+
+constexpr auto&& toLower( auto&& s ) noexcept
+constexpr char getLowerChar( char c ) noexcept
+
+  char uvw[] = "uVw";
+  printf( "%s\n", toLower(uvw) );

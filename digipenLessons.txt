@@ -1,0 +1,162 @@
+//-----------------------------------------------------------------------------
+// Setup
+
+PowerPoint
+Godbolt: mostly empty
+Notepad: digipenCode.txt
+Cppreference: strlen
+MS Forms: https://forms.office.com/Pages/DesignPageV2.aspx?origin=NeoPortalPage&subpage=design&id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAIBAABpgh1UNllIM0lPVE5PMVNDTzVVNE1YWVg3STNNNC4u&analysis=true
+[Claude]
+[Visual Studio]
+
+//-----------------------------------------------------------------------------
+// Introductions
+
+PowerPoint
+Series Goal: mindset of a professional SWE; reinforce & augment classroom/projects
+Imagine: new job, manager: important first task -- refactoring
+
+//-----------------------------------------------------------------------------
+// Lesson 0: code refactoring
+
+Code customers/consumers: team, professor, you, AI, company, compiler, tools
+Godbolt
+Compile with GCC, Clang: -std=c++26
+Compile with MSVC: /std:c++latest
+
+Issues: 
+* UB if input null
+* strlen unsafe; buffer overflow attacks
+* Return value confusing, e.g. does caller need to free?
+* strlen every loop iteration, order n^2; 1MB string -> 5 minutes
+* Non-obvious that s itself is converted
+* tolower() could UB without first converting input to uchar
+* Doesn't handle locales; only ASCII
+
+//-----------------------------------------------------------------------------
+// Lesson 1: add warnings
+
+Compile with full warnings
+Compiler with warnings as errors
+size_t: unsigned, platform-dependent, result of sizeof()
+If sizeof(size_t) > sizeof(int) && strlen is huge? UB: signed int overflow
+
+Lessons:
+* Enable all warnings
+* Fix all warnings
+* Prefer size_t to int
+* UB is bad
+
+//-----------------------------------------------------------------------------
+// Lesson 2: add tests, read docs
+
+* lower(nullptr) = Crash!
+* Review documentation for strlen: no nullptr input
+* Review documentation for tolower: arg should be converted to unsigned char
+
+Lessons:
+* Simple test framework
+* Read the documentation
+
+//-----------------------------------------------------------------------------
+// Lesson 3: more tools
+
+* Multiple compilers
+* Latest version of compilers
+* Clang-Tidy
+* Cppcheck
+* PC-lint
+* ReSharper
+* PVS-Studio
+
+Lessons:
+* Use all the syntax and bug checking tools at your disposal
+* Use the latest version of compilers, compiling for latest standards --
+        even if it's just to find more errors
+* Daily build
+
+//-----------------------------------------------------------------------------
+// Lesson 4: perf, part 1
+
+Discuss:
+* Consider for loop; how often is strlen() called?
+
+* How often is each character visited?
+* Eliminate strlen()
+
+* Eliminate index altogether
+
+Lessons:
+* Code inspection
+* Avoid unnecessary data traversals
+* Prefer iteration to indices
+
+//-----------------------------------------------------------------------------
+// Lesson 5: interface
+
+* Raw pointers: code smell
+* Options?
+
+* string_view won't work -- view can't be modified
+* span<char>/vector<char> = code smell; non-obvious what is happening
+* discuss returning std::string or std::string&
+
+* Function name?
+
+Lessons:
+* std::string_view is ideal for non-modifying views
+* std::span is ideal for any pointer/length values
+* std::span<char> and std::vector<char> are code smells
+* document code smells
+* use verb-based function names when they modify data
+* for performance, modify in place -- don't return a string
+
+//-----------------------------------------------------------------------------
+// Lesson 6: modern loops
+
+* Iteration options?
+* char*, operator[], iterators, range-based for, algorithms: for_each, transform
+
+* Sidebar: what's the value type (std::string::value_type) of std::string? char
+* 3 independent types: signed char, unsigned char, char -- 
+    signed-ness is implementation defined
+
+Lessons:
+* Prefer range-based for to regular for loops: readability, hoists initialization
+* If not modifying, prefer const auto&, or just auto
+* Never use std::string to store binary blobs
+
+//-----------------------------------------------------------------------------
+// Lesson 7: algorithms
+
+* Iteration options?
+* char*, operator[], range-based for, algorithm: for_each
+
+* But wait, there's a better algorithm: transform
+
+Lessons:
+* Prefer std::algorithms to raw loops
+* Learn the vast riches of std::algorithm
+* New version
+     * More readable, maintainable
+     * Equally debuggable, testable
+     * Much more safe and secure -- no pointers, no UB, no indices
+     * Performance/size?
+             # of instructions about the same
+
+//-----------------------------------------------------------------------------
+// Lesson 8: flexibility
+
+* range-based for could also have been used
+* a template version is equivalent
+* using std::transform may give more useful error messages than range for
+
+Lessons:
+* Consider flexibility
+* Algorithms give you maximum flexibility
+* auto is essential in generic functions
+* short descriptive comment helps new readers and AI
+
+* what about UTF-8 strings? wide strings?
+
+Next session: performance!

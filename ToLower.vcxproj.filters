@@ -7,9 +7,9 @@
     <ClCompile Include="lower3.cpp" />
     <ClCompile Include="lower2.cpp" />
     <ClCompile Include="lower4.cpp" />
-    <ClCompile Include="lower.h" />
-    <ClCompile Include="lower9.cpp" />
-    <ClCompile Include="lowera.cpp" />
+    <ClCompile Include="lower5678.h" />
+    <ClCompile Include="lower9.h" />
+    <ClCompile Include="lowera.h" />
     <ClCompile Include="lowerb.cpp" />
     <ClCompile Include="lowerc.cpp" />
     <ClCompile Include="lowerd.cpp" />
@@ -20,8 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="lower.cl" />
+    <None Include="..\..\Tantalon\digipen\index.html" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OpenCL.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="digipenCode.txt" />
+    <Text Include="digipenLessons.txt" />
   </ItemGroup>
 </Project>
