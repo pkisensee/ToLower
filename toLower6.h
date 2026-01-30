@@ -5,6 +5,7 @@
 // Notes: 
 //    * Input is any character sequence that can be modified in place
 //    * Returns a reference to the input sequence
+//    * Correctly handles input that's an rvalue reference (temporary)
 //
 // Issues:
 //    * Potential inscrutable compiler errors
@@ -14,15 +15,17 @@
 
 #include <algorithm>
 #include <ranges>
+#include <utility>
 #include "getLowerChar.h"
 
-auto&& toLower6( auto&& s )
+template <typename String>
+String&& toLower6( String&& s )
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
     return getLowerChar( c );
   } );
-  return std::forward< decltype( s ) >( s );
+  return std::forward< String >( s );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
