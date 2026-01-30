@@ -29,18 +29,18 @@
 #ifdef _DEBUG
 #define test(e) assert(e)
 #else
-#define test(e) static_cast<void>( (e) || ( std::unreachable(), 0 ) )
+#define test(e) static_cast<void>( (e) || ( __debugbreak(), 0 ) )
 #endif
 
 #include "lower0.h"
 #include "lower1.h"
 #include "lower2.h"
 #include "toLower3.h"
+#include "toLower4.h"
 #include "lower5678.h"
 #include "lower9.h"
 #include "lowera.h"
 
-std::string_view lower4( std::string_view );  // lower4.cpp
 std::string& lowerb( std::string& ) noexcept; // lowerb.cpp
 std::string& lowerc( std::string& );          // lowerc.cpp
 std::string& lowerd( std::string& );          // lowerd.cpp
@@ -159,11 +159,11 @@ int main()
   VerifyEqual( toLower3( d1 ), "abcdef" );
   std::cout << toLower3( d2 ) << '\n';
 
-  // lower4
+  // toLower4
   std::string_view e1{ "AbCdEf" };
   std::string_view e2{ "AbCdEf" };
-  // VerifyEqual( lower4( e1 ), "abcdef" ); // nope; can't modify string_view
-  // std::cout << lower4( e2 ) << '\n'; // mixed case output
+  //VerifyEqual( toLower4( e1 ), "abcdef" ); // nope; can't modify string_view
+  //std::cout << toLower4( e2 ) << '\n'; // mixed case output
 
   // lower5
   std::string_view f1{ "AbCdEf" };
@@ -318,7 +318,7 @@ int main()
 
   MEASURE( "lower2", lower2 );
   MEASURE( "toLower3", toLower3 );
-  // MEASURE( "lower4", lower4 ); // lower4 uses string_view, which can't be modified
+  //MEASURE( "toLower4", toLower4 ); // doesn't do anything, so no need to measure
   MEASURE( "lower5", lower5 );
   MEASURE( "lower6", lower6 );
   MEASURE( "lower7", lower7 );
@@ -331,5 +331,4 @@ int main()
   MEASURE( "lowere", lowere );
   MEASURE( "lowerf", lowerf );
   MEASURE_BYVAL( "lowerg", lowerg );
-
 }
