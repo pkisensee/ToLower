@@ -180,7 +180,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="lower0.h" />
-    <ClCompile Include="lower1.cpp" />
+    <ClCompile Include="lower1.h" />
     <ClCompile Include="lower2.cpp" />
     <ClCompile Include="lower3.cpp" />
     <ClCompile Include="lower4.cpp" />

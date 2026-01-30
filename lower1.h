@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// lower1.cpp
+// lower1.h
 //
 // Notes: 
 //    * checks for nullptr (good)
@@ -12,6 +12,12 @@
 //    * C-like; doesn't use C++ standard libraries
 //    * caller has to pass the length -- prone to error
 //
+
+#pragma once
+
+#include <cctype>
+#include <cstring>
+
 // ChatGPT suggests this (safer, faster and more readable), 
 // but note the call to strlen, then the traversal of the string: O(2N)
 
@@ -29,10 +35,7 @@ char* lower0( char* s ) {
 }
 */
 
-#include <cctype>
-#include <cstring>
-
-char* lower1( char* s, size_t count )
+inline char* lower1( char* s, size_t count )
 {
   if( s == nullptr )
     return nullptr;
@@ -45,3 +48,5 @@ char* lower1( char* s, size_t count )
   }
   return s;
 }
+
+///////////////////////////////////////////////////////////////////////////////

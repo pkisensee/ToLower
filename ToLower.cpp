@@ -33,11 +33,11 @@
 #endif
 
 #include "lower0.h"
+#include "lower1.h"
 #include "lower5678.h"
 #include "lower9.h"
 #include "lowera.h"
 
-char* lower1( char*, size_t );                // lower1.cpp
 char* lower2( std::span<char> );              // lower2.cpp
 std::string& lower3( std::string& );          // lower3.cpp
 std::string_view lower4( std::string_view );  // lower4.cpp
