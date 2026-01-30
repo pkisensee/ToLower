@@ -5,7 +5,7 @@
     <ClCompile Include="lower0.h" />
     <ClCompile Include="lower1.h" />
     <ClCompile Include="lower3.cpp" />
-    <ClCompile Include="lower2.cpp" />
+    <ClCompile Include="lower2.h" />
     <ClCompile Include="lower4.cpp" />
     <ClCompile Include="lower5678.h" />
     <ClCompile Include="lower9.h" />
@@ -24,6 +24,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OpenCL.h" />
+    <ClInclude Include="getLowerChar.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="digipenCode.txt" />

@@ -181,7 +181,7 @@
   <ItemGroup>
     <ClCompile Include="lower0.h" />
     <ClCompile Include="lower1.h" />
-    <ClCompile Include="lower2.cpp" />
+    <ClCompile Include="lower2.h" />
     <ClCompile Include="lower3.cpp" />
     <ClCompile Include="lower4.cpp" />
     <ClCompile Include="lower5678.h" />
@@ -201,6 +201,7 @@
     <None Include="lower.cl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="getLowerChar.h" />
     <ClInclude Include="OpenCL.h" />
   </ItemGroup>
   <ItemGroup>

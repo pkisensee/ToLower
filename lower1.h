@@ -17,6 +17,7 @@
 
 #include <cctype>
 #include <cstring>
+#include "getLowerChar.h"
 
 // ChatGPT suggests this (safer, faster and more readable), 
 // but note the call to strlen, then the traversal of the string: O(2N)
@@ -42,9 +43,7 @@ inline char* lower1( char* s, size_t count )
   
   for( size_t i = 0; s[i] != '\0' && i < count; ++i )
   {
-    auto u = static_cast<unsigned char>( s[i] );
-    auto lower = std::tolower( u );
-    s[i] = static_cast<char>( lower );
+    s[ i ] = getLowerChar( s[ i ] );
   }
   return s;
 }

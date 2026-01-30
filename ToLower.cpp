@@ -34,11 +34,11 @@
 
 #include "lower0.h"
 #include "lower1.h"
+#include "lower2.h"
 #include "lower5678.h"
 #include "lower9.h"
 #include "lowera.h"
 
-char* lower2( std::span<char> );              // lower2.cpp
 std::string& lower3( std::string& );          // lower3.cpp
 std::string_view lower4( std::string_view );  // lower4.cpp
 std::string& lowerb( std::string& ) noexcept; // lowerb.cpp
