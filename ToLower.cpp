@@ -35,11 +35,11 @@
 #include "lower0.h"
 #include "lower1.h"
 #include "lower2.h"
+#include "toLower3.h"
 #include "lower5678.h"
 #include "lower9.h"
 #include "lowera.h"
 
-std::string& lower3( std::string& );          // lower3.cpp
 std::string_view lower4( std::string_view );  // lower4.cpp
 std::string& lowerb( std::string& ) noexcept; // lowerb.cpp
 std::string& lowerc( std::string& );          // lowerc.cpp
@@ -153,11 +153,11 @@ int main()
   std::cout << lower2( c2 ) << '\n';
   lower2( std::span<char>() ); // safe
 
-  // lower3
+  // toLower3
   std::string d1{ "AbCdEf" };
   std::string d2{ "AbCdEf" };
-  VerifyEqual( lower3( d1 ), "abcdef" );
-  std::cout << lower3( d2 ) << '\n';
+  VerifyEqual( toLower3( d1 ), "abcdef" );
+  std::cout << toLower3( d2 ) << '\n';
 
   // lower4
   std::string_view e1{ "AbCdEf" };
@@ -317,7 +317,7 @@ int main()
   }
 
   MEASURE( "lower2", lower2 );
-  MEASURE( "lower3", lower3 );
+  MEASURE( "toLower3", toLower3 );
   // MEASURE( "lower4", lower4 ); // lower4 uses string_view, which can't be modified
   MEASURE( "lower5", lower5 );
   MEASURE( "lower6", lower6 );

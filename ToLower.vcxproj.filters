@@ -4,7 +4,7 @@
     <ClCompile Include="ToLower.cpp" />
     <ClCompile Include="lower0.h" />
     <ClCompile Include="lower1.h" />
-    <ClCompile Include="lower3.cpp" />
+    <ClCompile Include="toLower3.h" />
     <ClCompile Include="lower2.h" />
     <ClCompile Include="lower4.cpp" />
     <ClCompile Include="lower5678.h" />
