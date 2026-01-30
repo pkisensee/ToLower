@@ -39,6 +39,7 @@
 #include "toLower4.h"
 #include "toLower5.h"
 #include "toLower6.h"
+#include "toLower7.h"
 #include "lower5678.h"
 #include "lower9.h"
 #include "lowera.h"
@@ -197,7 +198,19 @@ int main()
   toLower6( g5 );
   VerifyEqual( std::string_view{ g5.data(), g5.size()-1 }, "abcdef" );
   std::cout << g5 << '\n';
-  std::cout << toLower6( g6 ) << '\n'; // OK, this works
+  std::cout << toLower6( g6 ) << '\n';
+
+  // toLower7
+  char g3a[] = "AbCdEf";
+  char g4a[] = "AbCdEf";
+  std::span g5a{ g4a };
+  std::string g6a{ "AbCdEf" };
+
+  VerifyEqual( toLower7( g3a ), "abcdef" );
+  toLower7( g5a );
+  VerifyEqual( std::string_view{ g5a.data(), g5a.size() - 1 }, "abcdef" );
+  std::cout << g5a << '\n';
+  std::cout << toLower7( g6a ) << '\n';
 
   // lower7
   char h3[] = "AbCdEf";

@@ -27,6 +27,7 @@
     <ClInclude Include="getLowerChar.h" />
     <ClInclude Include="toLower5.h" />
     <ClInclude Include="toLower6.h" />
+    <ClInclude Include="toLower7.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="digipenCode.txt" />
