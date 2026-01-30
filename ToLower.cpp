@@ -32,11 +32,11 @@
 #define test(e) static_cast<void>( (e) || ( std::unreachable(), 0 ) )
 #endif
 
+#include "lower0.h"
 #include "lower5678.h"
 #include "lower9.h"
 #include "lowera.h"
 
-char* lower0( char* );                        // lower0.cpp
 char* lower1( char*, size_t );                // lower1.cpp
 char* lower2( std::span<char> );              // lower2.cpp
 std::string& lower3( std::string& );          // lower3.cpp
