@@ -7,7 +7,6 @@
     <ClCompile Include="toLower3.h" />
     <ClCompile Include="lower2.h" />
     <ClCompile Include="toLower4.h" />
-    <ClCompile Include="lowera.h" />
     <ClCompile Include="lowerb.cpp" />
     <ClCompile Include="lowerc.cpp" />
     <ClCompile Include="lowerd.cpp" />
@@ -29,6 +28,7 @@
     <ClInclude Include="toLower8.h" />
     <ClInclude Include="toLower9.h" />
     <ClInclude Include="toLowerA.h" />
+    <ClInclude Include="toLowerB.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="digipenCode.txt" />

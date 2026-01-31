@@ -43,7 +43,7 @@
 #include "toLower8.h"
 #include "toLower9.h"
 #include "toLowerA.h"
-#include "lowera.h"
+#include "toLowerB.h"
 
 std::string& lowerb( std::string& ) noexcept; // lowerb.cpp
 std::string& lowerc( std::string& );          // lowerc.cpp
@@ -250,37 +250,37 @@ int main()
   VerifyEqual( m1, "abcdef" );
   std::cout << toLowerB(m2) << '\n';
 
-  // lowerb
+  // lowerb -> toLowerC
   std::string n1{ "AbCdEf" };
   std::string n2{ "AbCdEf" };
   VerifyEqual( lowerb( n1 ), "abcdef" );
   std::cout << lowerb( n2 ) << '\n';
 
-  // lowerc
+  // lowerc -> toLowerD
   std::string p1{ "ABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string p2{ "ABCdEfGhIjKlMnOpQrStUvWxYz" };
   VerifyEqual( lowerc( p1 ), "abcdefghijklmnopqrstuvwxyz" );
   std::cout << lowerc( p2 ) << '\n';
 
-  // lowerd
+  // lowerd -> toLowerE
   std::string q1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string q2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   VerifyEqual( lowerd( q1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
   std::cout << lowerd( q2 ) << '\n';
 
-  // lowere
+  // lowere -> toLowerF
   std::string r1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string r2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   VerifyEqual( lowere( r1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
   std::cout << lowere( r2 ) << '\n';
 
-  // lowerf
+  // lowerf -> toLowerG
   std::string s1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string s2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   VerifyEqual( lowerf( s1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
   std::cout << lowerf( s2 ) << '\n';
 
-  // lowerg
+  // lowerg -> toLowerH
   std::string t1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string t2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   VerifyEqual( lowerg( t1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
@@ -297,8 +297,6 @@ int main()
   std::cout << z1 << '\n';
   toLowerA( z1 );
   std::cout << z1 << '\n';
-  std::string underscore{ "_" };
-  toLowerA( underscore );
 
   // Timing runs
   std::string rs = getRandomStr( 1024uz * 1024uz * 10uz ); // 10MB
@@ -306,7 +304,7 @@ int main()
   { // lower0
     std::string tmp = rs;
     Timer timer;
-    // This is super slow because of repeated calls to strlen; commented out for now
+    // Extremely slow because of repeated calls to strlen; commented out for now
     //lower0( tmp.data() );
     //std::cout << "lower0: NOT IMPLEMENTED " << timer.getElapsedMicroseconds() << " microSec\n";
     //Verify( rs, tmp );

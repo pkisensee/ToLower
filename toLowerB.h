@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// lowera.h
+// toLowerB.h
 //
 // Notes: 
 //    * Look up table solution -- fast
@@ -14,7 +14,6 @@
 
 #include <algorithm>
 #include <array>
-#include <cctype>
 #include <numeric>
 #include <ranges>
 #include <string>
@@ -26,26 +25,26 @@
 static constexpr size_t kAsciiTableSize = 256;
 using LowerCaseAsciiTable = std::array<char, kAsciiTableSize>;
 
-// Old school inline lower case ASCII table
+// Old school hard coded table
 static constexpr LowerCaseAsciiTable kLowerCaseAsciiTableOld =
 { {
-  '\x0', '\x1', '\x2', '\x3', '\x4', '\x5', '\x6', '\x7', 
+  '\x0', '\x1', '\x2', '\x3', '\x4', '\x5', '\x6', '\x7',
   '\x8', '\x9', '\xA', '\xB', '\xC', '\xD', '\xE', '\xF',
-  '\x10', '\x11', '\x12', '\x13', '\x14', '\x15', '\x16', '\x17', 
+  '\x10', '\x11', '\x12', '\x13', '\x14', '\x15', '\x16', '\x17',
   '\x18', '\x19', '\x1A', '\x1B', '\x1C', '\x1D', '\x1E', '\x1F',
   ' ', '!', '\"', '#', '$', '%', '&', '\'',
   '(', ')', '*', '+', ',', '-', '.', '/',
   '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
   ':', ';', '<', '=', '<', '?', '@',
-  'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
+  'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', // normally upper case
   'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
   's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
   '[', '\\', ']', '^', '_', '`',
-  'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
+  'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', // lower case letters
   'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
   's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
   '{', '|', '}', '~', '\x7F',
-  '\x80', '\x81', '\x82', '\x83', '\x84', '\x85', '\x86', '\x87', 
+  '\x80', '\x81', '\x82', '\x83', '\x84', '\x85', '\x86', '\x87',
   '\x88', '\x89', '\x8A', '\x8B', '\x8C', '\x8D', '\x8E', '\x8F',
   '\x90', '\x91', '\x92', '\x93', '\x94', '\x95', '\x96', '\x97',
   '\x98', '\x99', '\x9A', '\x9B', '\x9C', '\x9D', '\x9E', '\x9F',
@@ -63,7 +62,7 @@ static constexpr LowerCaseAsciiTable kLowerCaseAsciiTableOld =
   '\xF8', '\xF9', '\xFA', '\xFB', '\xFC', '\xFD', '\xFE', '\xFF',
 } };
 
-// Compiler generated lower case ASCII table
+// Compiler generated table
 static LowerCaseAsciiTable kLowerCaseAsciiTable = []
 {
   // Create standard ASCII table
@@ -94,3 +93,4 @@ constexpr auto&& toLowerB( auto&& s ) noexcept
 #pragma warning(pop)
 
 ///////////////////////////////////////////////////////////////////////////////
+
