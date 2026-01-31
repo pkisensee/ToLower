@@ -24,6 +24,7 @@
 #include <algorithm>
 #include <ranges>
 #include <string>
+#include <utility>
 
 constexpr auto&& toLowerA( auto&& s ) noexcept
 {

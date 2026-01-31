@@ -14,7 +14,7 @@
 
 #include <algorithm>
 #include <array>
-#include <numeric>
+#include <numeric> // iota
 #include <ranges>
 #include <string>
 
@@ -93,4 +93,3 @@ constexpr auto&& toLowerB( auto&& s ) noexcept
 #pragma warning(pop)
 
 ///////////////////////////////////////////////////////////////////////////////
-
