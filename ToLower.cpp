@@ -32,9 +32,9 @@
 #define test(e) static_cast<void>( (e) || ( __debugbreak(), 0 ) )
 #endif
 
-#include "lower0.h"
-#include "lower1.h"
-#include "lower2.h"
+#include   "lower0.h"
+#include   "lower1.h"
+#include   "lower2.h"
 #include "toLower3.h"
 #include "toLower4.h"
 #include "toLower5.h"
@@ -42,8 +42,7 @@
 #include "toLower7.h"
 #include "toLower8.h"
 #include "toLower9.h"
-#include "lower5678.h"
-#include "lower9.h"
+#include "toLowerA.h"
 #include "lowera.h"
 
 std::string& lowerb( std::string& ) noexcept; // lowerb.cpp
@@ -238,18 +237,18 @@ int main()
   std::cout << j5 << '\n';
   std::cout << toLower9( j6, std::execution::par_unseq ) << '\n';
 
-  // lower9
+  // toLowerA
   std::string k1{ "AbCdEf" };
   std::string k2{ "AbCdEf" };
-  VerifyEqual( lower9( k1 ), "abcdef" );
-  std::cout << lower9( k2 ) << '\n';
+  VerifyEqual( toLowerA( k1 ), "abcdef" );
+  std::cout << toLowerA( k2 ) << '\n';
 
-  // lowera
+  // toLowerB
   std::string m1{ "AbCdEf" };
   std::string m2{ "AbCdEf" };
-  toLowerA( m1 );
+  toLowerB( m1 );
   VerifyEqual( m1, "abcdef" );
-  std::cout << toLowerA(m2) << '\n';
+  std::cout << toLowerB(m2) << '\n';
 
   // lowerb
   std::string n1{ "AbCdEf" };
@@ -296,8 +295,10 @@ int main()
   z1.resize( 127uz - ' ' );
   std::ranges::iota( z1, ' ' );
   std::cout << z1 << '\n';
-  lower9( z1 );
+  toLowerA( z1 );
   std::cout << z1 << '\n';
+  std::string underscore{ "_" };
+  toLowerA( underscore );
 
   // Timing runs
   std::string rs = getRandomStr( 1024uz * 1024uz * 10uz ); // 10MB
@@ -326,10 +327,9 @@ int main()
   MEASURE( "toLower6", toLower6 );
   MEASURE( "toLower7", toLower7 );
   MEASURE( "toLower8", toLower8 );
-  MEASURE( "lower7", lower7 );
-  MEASURE1( "lower8", lower8, std::execution::par_unseq );
-  MEASURE( "lower9", lower9 );
+  MEASURE1( "toLower9", toLower9, std::execution::par_unseq );
   MEASURE( "toLowerA", toLowerA );
+  MEASURE( "toLowerB", toLowerB );
   MEASURE( "lowerb", lowerb );
   MEASURE( "lowerc", lowerc );
   MEASURE( "lowerd", lowerd );

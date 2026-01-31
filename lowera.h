@@ -80,7 +80,7 @@ static LowerCaseAsciiTable kLowerCaseAsciiTable = []
 }();
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-constexpr auto&& toLowerA( auto&& s ) noexcept
+constexpr auto&& toLowerB( auto&& s ) noexcept
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {

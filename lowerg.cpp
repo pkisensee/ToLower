@@ -3,17 +3,17 @@
 // lowerg.cpp
 //
 // Notes: 
-//    * by value solution using lowera
+//    * by value solution
 //
 // Issues:
 //    * Always going to be slower because a copy is required
+//    * Can't be constexpr because std::string allocates memory
 
 #include <string>
-#include "lowera.h"
+#include "toLower8.h"
 
-// Note: can't be constexpr function because allocates memory internally
-std::string lowerg( const std::string& str ) noexcept
+std::string lowerg( const std::string& s ) noexcept
 {
-  std::string s{ str };
-  return toLowerA( s );
+  std::string tmp{ s };
+  return toLower8( tmp ); // TODO verify this is a good option
 }

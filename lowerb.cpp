@@ -16,7 +16,12 @@
 #include <thread>
 #include <vector>
 
-char toLowerChar( char );
+char toLowerChar( char c )
+{
+  auto uchar = static_cast<unsigned char>( c );
+  auto lowered = std::tolower( uchar );
+  return static_cast<char>( lowered );
+}
 
 std::string& lowerb( std::string& s ) noexcept
 { 
