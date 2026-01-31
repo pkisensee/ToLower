@@ -44,8 +44,8 @@
 #include "toLower9.h"
 #include "toLowerA.h"
 #include "toLowerB.h"
+#include "toLowerC.h"
 
-std::string& lowerb( std::string& ) noexcept; // lowerb.cpp
 std::string& lowerc( std::string& );          // lowerc.cpp
 std::string& lowerd( std::string& );          // lowerd.cpp
 std::string& lowere( std::string& );          // lowere.cpp
@@ -250,11 +250,11 @@ int main()
   VerifyEqual( m1, "abcdef" );
   std::cout << toLowerB(m2) << '\n';
 
-  // lowerb -> toLowerC
+  // toLowerC
   std::string n1{ "AbCdEf" };
   std::string n2{ "AbCdEf" };
-  VerifyEqual( lowerb( n1 ), "abcdef" );
-  std::cout << lowerb( n2 ) << '\n';
+  VerifyEqual( toLowerC( n1 ), "abcdef" );
+  std::cout << toLowerC( n2 ) << '\n';
 
   // lowerc -> toLowerD
   std::string p1{ "ABCdEfGhIjKlMnOpQrStUvWxYz" };
@@ -328,7 +328,7 @@ int main()
   MEASURE1( "toLower9", toLower9, std::execution::par_unseq );
   MEASURE( "toLowerA", toLowerA );
   MEASURE( "toLowerB", toLowerB );
-  MEASURE( "lowerb", lowerb );
+  MEASURE( "toLowerC", toLowerC );
   MEASURE( "lowerc", lowerc );
   MEASURE( "lowerd", lowerd );
   MEASURE( "lowere", lowere );

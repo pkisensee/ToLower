@@ -1,44 +1,41 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// lowerb.cpp
+// toLowerC.cpp
 //
 // Notes: 
 //    * multi-threaded solution
 //
 // Issues:
-//    * how do you decide how many threads?
+//    * threads could be a parameter
+//    * if thread count not a parameter, how should thread count be chosen?
+//    * could use existing thread pool
 
 #include <algorithm>
-#include <cctype>
 #include <ranges>
 #include <span>
 #include <string>
 #include <thread>
 #include <vector>
+#include "getLowerChar.h"
 
-char toLowerChar( char c )
+constexpr auto&& toLowerC( auto&& s ) noexcept
 {
-  auto uchar = static_cast<unsigned char>( c );
-  auto lowered = std::tolower( uchar );
-  return static_cast<char>( lowered );
-}
-
-std::string& lowerb( std::string& s ) noexcept
-{ 
   auto toLowerWorker = []( auto substr )
   {
     std::ranges::transform( substr, substr.begin(), []( auto c )
     {
-      return toLowerChar( c );
+      return getLowerChar( c );
     } );
   };
 
-  // Kick off threads to do case conversion
+  // Divide up the work
   const size_t threadCount = std::max( std::thread::hardware_concurrency(), 1u );
   const size_t substrLen = s.size() / threadCount;
-  size_t strOffset = 0; 
+
+  // Kick off threads to do case conversion
+  size_t strOffset = 0;
   std::vector<std::jthread> pool( threadCount - 1 );
-  for( auto& thread : pool )
+  for ( auto& thread : pool )
   {
     std::span substr{ s.data() + strOffset, substrLen };
     thread = std::jthread( toLowerWorker, substr );
@@ -51,5 +48,7 @@ std::string& lowerb( std::string& s ) noexcept
   std::jthread lastThread = std::jthread( toLowerWorker, substr );
 
   // jthreads automatically join, so conversion is complete upon function return
-  return s;
+  return std::forward<decltype( s )>( s );
 }
+
+///////////////////////////////////////////////////////////////////////////////

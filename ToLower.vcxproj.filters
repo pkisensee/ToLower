@@ -7,7 +7,6 @@
     <ClCompile Include="toLower3.h" />
     <ClCompile Include="lower2.h" />
     <ClCompile Include="toLower4.h" />
-    <ClCompile Include="lowerb.cpp" />
     <ClCompile Include="lowerc.cpp" />
     <ClCompile Include="lowerd.cpp" />
     <ClCompile Include="RandomStr.cpp" />
@@ -29,6 +28,7 @@
     <ClInclude Include="toLower9.h" />
     <ClInclude Include="toLowerA.h" />
     <ClInclude Include="toLowerB.h" />
+    <ClInclude Include="toLowerC.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="digipenCode.txt" />
