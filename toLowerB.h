@@ -4,11 +4,10 @@
 //
 // Notes: 
 //    * Look up table solution -- fast
-//    * only 256 bytes
+//    * Only 256 bytes of memory required
 //
 // Issues:
-//    * doesn't scale to larger size characters, such as 16-bit values
-//    * doesn't work for UTF-8
+//    * Doesn't scale to larger size characters, such as 16-bit values
 
 #pragma once
 

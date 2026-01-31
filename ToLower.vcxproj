@@ -207,6 +207,7 @@
     <ClInclude Include="toLowerA.h" />
     <ClInclude Include="toLowerB.h" />
     <ClInclude Include="toLowerC.h" />
+    <ClInclude Include="toLowerD.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="digipenCode.txt" />

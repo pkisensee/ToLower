@@ -3,16 +3,16 @@
 // toLower3.h
 //
 // Notes: 
-//    * uses std::string
-//    * obvious that input is being modified (passed by non-const ref)
-//    * uses ranges
-//    * uses standard algorithms
-//    * uses relevant and obvious name: transform
-//    * proven containers and algorithms
-//    * less ambiguous function name (lower() could be noun or adj)
+//    * Uses std::string
+//    * Obvious that input is being modified (passed by non-const ref)
+//    * Uses ranges
+//    * Uses standard algorithms
+//    * Uses relevant and obvious name: transform
+//    * Proven containers and algorithms
+//    * Less ambiguous function name (lower() could be noun or adj)
 //
 // Issues:
-//    * doesn't work for anything but std::string
+//    * Doesn't work for anything but std::string
 
 #pragma once
 

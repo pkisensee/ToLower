@@ -3,8 +3,8 @@
 // toLower9.h
 //
 // Notes: 
-//    * execution policy support
-//    * can't use std::ranges, since it doesn't support execution policies
+//    * Execution policy support
+//    * Can't use std::ranges, since it doesn't support execution policies
 //
 // Issues:
 //    * Potential inscrutable compiler errors

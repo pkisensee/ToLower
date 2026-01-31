@@ -3,10 +3,10 @@
 // toLower4.h
 //
 // Notes: 
-//    * uses std::string_view C++17 -- more flexible
+//    * Uses std::string_view C++17 -- more flexible
 //
 // Issues:
-//    * compiler error: std::string_views are immutable; this is a good thing!
+//    * Compiler error: std::string_views are immutable; this is a good thing!
 
 #pragma once
 

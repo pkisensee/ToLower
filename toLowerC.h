@@ -3,12 +3,13 @@
 // toLowerC.cpp
 //
 // Notes: 
-//    * multi-threaded solution
+//    * Multi-threaded solution
 //
 // Issues:
-//    * threads could be a parameter
-//    * if thread count not a parameter, how should thread count be chosen?
-//    * could use existing thread pool
+//    * Threads are created within the function
+//    * Allocates memory
+//    * In practice, this function should create the jthread vector and
+//      then invoke toLowerD
 
 #include <algorithm>
 #include <ranges>
@@ -32,22 +33,24 @@ constexpr auto&& toLowerC( auto&& s ) noexcept
   const size_t threadCount = std::max( std::thread::hardware_concurrency(), 1u );
   const size_t substrLen = s.size() / threadCount;
 
-  // Kick off threads to do case conversion
+  // Kick off all but last thread to do case conversion
   size_t strOffset = 0;
-  std::vector<std::jthread> pool( threadCount - 1 );
+  std::vector<std::jthread> threadPool{ threadCount };
+  auto pool = threadPool | std::views::take( threadCount - 1 );
   for ( auto& thread : pool )
   {
     std::span substr{ s.data() + strOffset, substrLen };
-    thread = std::jthread( toLowerWorker, substr );
+    thread = std::jthread{ toLowerWorker, substr };
     strOffset += substrLen;
   }
 
-  // Last thread handles remaining letters
+  // Last thread handles final segment plus any remaining letters
   const size_t remainingLetterCount = s.size() % threadCount;
   std::span substr{ s.data() + strOffset, substrLen + remainingLetterCount };
-  std::jthread lastThread = std::jthread( toLowerWorker, substr );
+  threadPool.back() = std::jthread{ toLowerWorker, substr };
 
-  // jthreads automatically join, so conversion is complete upon function return
+  // jthreads automatically join when thread vector exits scope,
+  // so conversion is complete upon function return
   return std::forward<decltype( s )>( s );
 }
 

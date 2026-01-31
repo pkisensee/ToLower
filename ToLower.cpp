@@ -22,7 +22,9 @@
 #include <iostream>
 #include <span>
 #include <string>
+#include <thread>
 #include <utility>
+#include <vector>
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -45,6 +47,7 @@
 #include "toLowerA.h"
 #include "toLowerB.h"
 #include "toLowerC.h"
+#include "toLowerD.h"
 
 std::string& lowerc( std::string& );          // lowerc.cpp
 std::string& lowerd( std::string& );          // lowerd.cpp
@@ -136,6 +139,8 @@ static void Verify( std::string_view original, std::string_view lower )
 
 int main()
 {
+  std::vector<std::jthread> threadPool( std::max( std::thread::hardware_concurrency(), 1u ) );
+
   // lower0
   char a1[] = "AbCdEf";
   char a2[] = "AbCdEf";
@@ -256,31 +261,37 @@ int main()
   VerifyEqual( toLowerC( n1 ), "abcdef" );
   std::cout << toLowerC( n2 ) << '\n';
 
-  // lowerc -> toLowerD
+  // toLowerD
+  std::string n1a{ "AbCdEf" };
+  std::string n2a{ "AbCdEf" };
+  VerifyEqual( toLowerD( n1a, threadPool ), "abcdef" );
+  std::cout << toLowerD( n2a, threadPool ) << '\n';
+
+  // lowerc -> toLowerE
   std::string p1{ "ABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string p2{ "ABCdEfGhIjKlMnOpQrStUvWxYz" };
   VerifyEqual( lowerc( p1 ), "abcdefghijklmnopqrstuvwxyz" );
   std::cout << lowerc( p2 ) << '\n';
 
-  // lowerd -> toLowerE
+  // lowerd -> toLowerF
   std::string q1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string q2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   VerifyEqual( lowerd( q1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
   std::cout << lowerd( q2 ) << '\n';
 
-  // lowere -> toLowerF
+  // lowere -> toLowerG
   std::string r1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string r2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   VerifyEqual( lowere( r1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
   std::cout << lowere( r2 ) << '\n';
 
-  // lowerf -> toLowerG
+  // lowerf -> toLowerH
   std::string s1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string s2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   VerifyEqual( lowerf( s1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
   std::cout << lowerf( s2 ) << '\n';
 
-  // lowerg -> toLowerH
+  // lowerg -> toLowerI
   std::string t1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string t2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   VerifyEqual( lowerg( t1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
@@ -329,6 +340,7 @@ int main()
   MEASURE( "toLowerA", toLowerA );
   MEASURE( "toLowerB", toLowerB );
   MEASURE( "toLowerC", toLowerC );
+  MEASURE1( "toLowerD", toLowerD, threadPool );
   MEASURE( "lowerc", lowerc );
   MEASURE( "lowerd", lowerd );
   MEASURE( "lowere", lowere );
