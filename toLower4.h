@@ -11,7 +11,6 @@
 #pragma once
 
 #include <algorithm>
-#include <cctype>
 #include <ranges>
 #include <string_view>
 #include "getLowerChar.h"

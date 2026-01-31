@@ -40,6 +40,8 @@
 #include "toLower5.h"
 #include "toLower6.h"
 #include "toLower7.h"
+#include "toLower8.h"
+#include "toLower9.h"
 #include "lower5678.h"
 #include "lower9.h"
 #include "lowera.h"
@@ -212,43 +214,29 @@ int main()
   std::cout << g5a << '\n';
   std::cout << toLower7( g6a ) << '\n';
 
-  // lower7
-  char h3[] = "AbCdEf";
-  char h4[] = "AbCdEf";
-  std::span h5{ h4 };
-  std::string h6{ "AbCdEf" };
+  // toLower8
+  char g3ab[] = "AbCdEf";
+  char g4ab[] = "AbCdEf";
+  std::span g5ab{ g4ab };
+  std::string g6ab{ "AbCdEf" };
 
-  lower7( h3 );
-  VerifyEqual( h3, "abcdef" );
-  lower7( h5 );
-  VerifyEqual( std::string_view{ h5.data(), h5.size()-1 }, "abcdef" );
-  std::cout << h5 << '\n';
-  std::cout << lower7( h6 ) << '\n';
+  VerifyEqual( toLower8( g3ab ), "abcdef" );
+  toLower8( g5ab );
+  VerifyEqual( std::string_view{ g5ab.data(), g5ab.size() - 1 }, "abcdef" );
+  std::cout << g5ab << '\n';
+  std::cout << toLower8( g6ab ) << '\n';
 
-  // lower7a
-  char ah3[] = "AbCdEf";
-  char ah4[] = "AbCdEf";
-  std::span ah5{ ah4 };
-  std::string ah6{ "AbCdEf" };
-
-  lower7a( ah3 );
-  VerifyEqual( ah3, "abcdef" );
-  lower7a( ah5 );
-  VerifyEqual( std::string_view{ ah5.data(), ah5.size() - 1 }, "abcdef" );
-  std::cout << ah5 << '\n';
-  std::cout << lower7a( ah6 ) << '\n';
-
-  // lower8
+  // toLower9
   char j3[] = "AbCdEf";
   char j4[] = "AbCdEf";
   std::span j5{ j4 };
   std::string j6{ "AbCdEf" };
 
-  VerifyEqual( lower8( j3, std::execution::par_unseq ), "abcdef" );
-  lower8( j5, std::execution::par_unseq );
+  VerifyEqual( toLower9( j3, std::execution::par_unseq ), "abcdef" );
+  toLower9( j5, std::execution::par_unseq );
   VerifyEqual( std::string_view{ j5.data(), j5.size()-1 }, "abcdef" );
   std::cout << j5 << '\n';
-  std::cout << lower8( j6, std::execution::par_unseq ) << '\n';
+  std::cout << toLower9( j6, std::execution::par_unseq ) << '\n';
 
   // lower9
   std::string k1{ "AbCdEf" };
@@ -336,6 +324,8 @@ int main()
   //MEASURE( "toLower4", toLower4 ); // doesn't do anything, so no need to measure
   MEASURE( "toLower5", toLower5 );
   MEASURE( "toLower6", toLower6 );
+  MEASURE( "toLower7", toLower7 );
+  MEASURE( "toLower8", toLower8 );
   MEASURE( "lower7", lower7 );
   MEASURE1( "lower8", lower8, std::execution::par_unseq );
   MEASURE( "lower9", lower9 );
