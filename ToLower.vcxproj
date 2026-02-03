@@ -198,6 +198,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="getLowerChar.h" />
+    <ClInclude Include="LowerCaseAsciiTable.h" />
     <ClInclude Include="OpenCL.h" />
     <ClInclude Include="toLower5.h" />
     <ClInclude Include="toLower6.h" />

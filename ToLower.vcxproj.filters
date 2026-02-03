@@ -30,6 +30,7 @@
     <ClInclude Include="toLowerB.h" />
     <ClInclude Include="toLowerC.h" />
     <ClInclude Include="toLowerD.h" />
+    <ClInclude Include="LowerCaseAsciiTable.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="digipenCode.txt" />

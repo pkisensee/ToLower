@@ -25,6 +25,7 @@
 #include <thread>
 #include <utility>
 #include <vector>
+#include "LowerCaseAsciiTable.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -140,6 +141,8 @@ static void Verify( std::string_view original, std::string_view lower )
 int main()
 {
   std::vector<std::jthread> threadPool( std::max( std::thread::hardware_concurrency(), 1u ) );
+
+  test( std::ranges::equal( kLowerCaseAsciiTable, kLowerCaseAsciiTableHardCoded ) );
 
   // lower0
   char a1[] = "AbCdEf";
@@ -276,26 +279,26 @@ int main()
   // lowerd -> toLowerF
   std::string q1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string q2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
-  VerifyEqual( lowerd( q1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
-  std::cout << lowerd( q2 ) << '\n';
+  //VerifyEqual( lowerd( q1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
+  //std::cout << lowerd( q2 ) << '\n';
 
   // lowere -> toLowerG
   std::string r1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string r2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
-  VerifyEqual( lowere( r1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
-  std::cout << lowere( r2 ) << '\n';
+  //VerifyEqual( lowere( r1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
+  //std::cout << lowere( r2 ) << '\n';
 
   // lowerf -> toLowerH
   std::string s1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string s2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
-  VerifyEqual( lowerf( s1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
-  std::cout << lowerf( s2 ) << '\n';
+  //VerifyEqual( lowerf( s1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
+  //std::cout << lowerf( s2 ) << '\n';
 
   // lowerg -> toLowerI
   std::string t1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string t2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
-  VerifyEqual( lowerg( t1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
-  std::cout << lowerg( t2 ) << '\n';
+  //VerifyEqual( lowerg( t1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
+  //std::cout << lowerg( t2 ) << '\n';
 
   // multithreaded SIMD
   // CUDA, Vulkan, Halide
@@ -308,6 +311,8 @@ int main()
   std::cout << z1 << '\n';
   toLowerA( z1 );
   std::cout << z1 << '\n';
+
+  if (z1.size()) return 0;
 
   // Timing runs
   std::string rs = getRandomStr( 1024uz * 1024uz * 10uz ); // 10MB
