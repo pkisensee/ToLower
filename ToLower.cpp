@@ -35,9 +35,9 @@
 #define test(e) static_cast<void>( (e) || ( __debugbreak(), 0 ) )
 #endif
 
-#include   "lower0.h"
-#include   "lower1.h"
-#include   "lower2.h"
+#include "lowerOriginal.h"
+#include "lower1.h"
+#include "lower2.h"
 #include "toLower3.h"
 #include "toLower4.h"
 #include "toLower5.h"
@@ -147,8 +147,8 @@ int main()
   // lower0
   char a1[] = "AbCdEf";
   char a2[] = "AbCdEf";
-  VerifyEqual( lower0( a1 ), "abcdef" );
-  std::cout << lower0( a2 ) << '\n';
+  VerifyEqual( lowerOriginal( a1 ), "abcdef" );
+  std::cout << lowerOriginal( a2 ) << '\n';
   // lower0( nullptr ); // crash!
 
   // lower1
@@ -312,17 +312,18 @@ int main()
   toLowerA( z1 );
   std::cout << z1 << '\n';
 
-  if (z1.size()) return 0;
+  //if (z1.size()) return 0; TODO
 
   // Timing runs
   std::string rs = getRandomStr( 1024uz * 1024uz * 10uz ); // 10MB
 
   { // lower0
     std::string tmp = rs;
+    tmp.resize( tmp.size() / 100 ); // temporary TODO
     Timer timer;
-    // Extremely slow because of repeated calls to strlen; commented out for now
-    //lower0( tmp.data() );
-    //std::cout << "lower0: NOT IMPLEMENTED " << timer.getElapsedMicroseconds() << " microSec\n";
+    // Extremely slow because of repeated calls to strlen
+    lowerOriginal( tmp.data() );
+    std::cout << "Original: 1/100 buffer " << timer.getElapsedMicroseconds() << " microSec\n";
     //Verify( rs, tmp );
   }
 

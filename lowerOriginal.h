@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// lower0.h
+// lowerOriginal.h
 //
 // Issues: 
 //    * Compiler warnings; strlen returns size_t (unsigned) but loop uses int (signed)
@@ -23,7 +23,7 @@
 #pragma warning(push)
 #pragma warning(disable: 4242 4244 4388)
 
-inline char* lower0( char* s )
+inline char* lowerOriginal( char* s )
 {
   for( int i = 0; i < std::strlen( s ); ++i ) // '<': signed/unsigned mismatch
     s[i] = std::tolower( s[i] );              // '=': conversion from int to char

@@ -179,7 +179,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="lower0.h" />
+    <ClCompile Include="lowerOriginal.h" />
     <ClCompile Include="lower1.h" />
     <ClCompile Include="lower2.h" />
     <ClCompile Include="toLower3.h" />
