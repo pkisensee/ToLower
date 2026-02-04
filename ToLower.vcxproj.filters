@@ -21,7 +21,7 @@
   <ItemGroup>
     <ClInclude Include="OpenCL.h" />
     <ClInclude Include="getLowerChar.h" />
-    <ClInclude Include="toLower5.h" />
+    <ClInclude Include="toLowerAutoNoReturn.h" />
     <ClInclude Include="toLower6.h" />
     <ClInclude Include="toLower7.h" />
     <ClInclude Include="toLower8.h" />

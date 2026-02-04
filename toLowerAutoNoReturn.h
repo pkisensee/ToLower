@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// toLower5.h
+// toLowerAutoNoReturn.h
 //
 // Notes: 
 //    * Returns nothing
@@ -16,7 +16,7 @@
 #include <ranges>
 #include "getLowerChar.h"
 
-void toLower5( auto&& s )
+void toLowerAutoNoReturn( auto&& s )
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {

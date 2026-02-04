@@ -40,7 +40,7 @@
 #include "toLowerSpan.h"
 #include "toLowerStrRef.h"
 #include "toLowerStrView.h"
-#include "toLower5.h"
+#include "toLowerAutoNoReturn.h"
 #include "toLower6.h"
 #include "toLower7.h"
 #include "toLower8.h"
@@ -177,7 +177,7 @@ int main()
   //VerifyEqual( toLowerStrView( e1 ), "abcdef" ); // fails; can't modify string_view
   //std::cout << toLowerStrView( e2 ) << '\n'; // mixed case output
 
-  // toLower5
+  // AutoNoReturn
   std::string_view f1{ "AbCdEf" };
   std::span f2{ "AbCdEf" };
   char f3[] = "AbCdEf";
@@ -185,17 +185,15 @@ int main()
   std::span f5{ f4 };
   std::string f6{ "AbCdEf" };
 
-  // toLower5( f1 ); // compiler error; can't modify string_view (it's a view!)
-  // toLower5( f2 ); // compiler error; f2 is const char*
-  toLower5( f3 );
+  toLowerAutoNoReturn( f3 );
   VerifyEqual( f3, "abcdef" );
-  toLower5( f5 );
+  toLowerAutoNoReturn( f5 );
   VerifyEqual( std::string_view{ f5.data(), f5.size()-1 }, "abcdef" );
   std::cout << f5 << '\n';
-  toLower5( f6 );
+  toLowerAutoNoReturn( f6 );
   VerifyEqual( f6, "abcdef" );
   std::cout << f6 << '\n';
-  // std::cout << toLower5( f6 ) << '\n'; // compiler error; toLower5 doesn't return anything
+  // std::cout << toLowerAutoNoReturn( f6 ) << '\n'; // compiler error; toLowerAutoNoReturn doesn't return anything
 
   // toLower6
   char g3[] = "AbCdEf";
@@ -338,7 +336,7 @@ int main()
   MEASURE( "Span", toLowerSpan );
   MEASURE( "StrRef", toLowerStrRef );
   //MEASURE( "StrView", toLowerStrView ); // invalid, so no need to measure
-  MEASURE( "toLower5", toLower5 );
+  MEASURE( "AutoNoReturn", toLowerAutoNoReturn );
   MEASURE( "toLower6", toLower6 );
   MEASURE( "toLower7", toLower7 );
   MEASURE( "toLower8", toLower8 );
