@@ -54,8 +54,7 @@
 #include "toLowerAVX2.h"
 #include "toLowerOpenCL.h"
 #include "getLowerByValue.h"
-
-std::string getRandomStr( size_t ); // RandomStr.cpp
+#include "getRandomStr.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 
