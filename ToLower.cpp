@@ -36,7 +36,7 @@
 #endif
 
 #include "lowerOriginal.h"
-#include "lower1.h"
+#include "lowerPtrNoStrlen.h"
 #include "lower2.h"
 #include "toLower3.h"
 #include "toLower4.h"
@@ -144,19 +144,19 @@ int main()
 
   test( std::ranges::equal( kLowerCaseAsciiTable, kLowerCaseAsciiTableHardCoded ) );
 
-  // lower0
+  // Original
   char a1[] = "AbCdEf";
   char a2[] = "AbCdEf";
   VerifyEqual( lowerOriginal( a1 ), "abcdef" );
   std::cout << lowerOriginal( a2 ) << '\n';
   // lower0( nullptr ); // crash!
 
-  // lower1
+  // PtrNoStrlen
   char b1[] = "AbCdEf";
   char b2[] = "AbCdEf";
-  VerifyEqual( lower1( b1, strlen( b1 ) ), "abcdef");
-  std::cout << lower1( b2, strlen( b2 ) ) << '\n';
-  lower1( nullptr, 0 ); // safe
+  VerifyEqual( lowerPtrNoStrlen( b1, strlen( b1 ) ), "abcdef");
+  std::cout << lowerPtrNoStrlen( b2, strlen( b2 ) ) << '\n';
+  lowerPtrNoStrlen( nullptr, 0 ); // safe
 
   // lower2
   char c1[] = "AbCdEf";
@@ -317,21 +317,21 @@ int main()
   // Timing runs
   std::string rs = getRandomStr( 1024uz * 1024uz * 10uz ); // 10MB
 
-  { // lower0
+  { // Original
     std::string tmp = rs;
     tmp.resize( tmp.size() / 100 ); // temporary TODO
     Timer timer;
     // Extremely slow because of repeated calls to strlen
     lowerOriginal( tmp.data() );
-    std::cout << "Original: 1/100 buffer " << timer.getElapsedMicroseconds() << " microSec\n";
+    std::cout << "Original/100: " << timer.getElapsedMicroseconds() << " microSec\n";
     //Verify( rs, tmp );
   }
 
-  { // lower1
+  { // PtrNoStrlen
     std::string tmp = rs;
     Timer timer;
-    lower1( tmp.data(), tmp.size() );
-    std::cout << "lower1: " << timer.getElapsedMicroseconds() << " microSec\n";
+    lowerPtrNoStrlen( tmp.data(), tmp.size() );
+    std::cout << "PtrNoStrlen: " << timer.getElapsedMicroseconds() << " microSec\n";
     Verify( rs, tmp );
   }
 
