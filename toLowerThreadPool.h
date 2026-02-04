@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// toLowerD.cpp
+// toLowerThreadPool.cpp
 //
 // Notes: 
 //    * Thread pool passed as parameter
@@ -19,7 +19,7 @@
 #include <thread>
 #include "getLowerChar.h"
 
-constexpr auto&& toLowerD( auto&& s, auto&& threadPool ) noexcept
+constexpr auto&& toLowerThreadPool( auto&& s, auto&& threadPool ) noexcept
 {
   assert( !threadPool.empty() );
 

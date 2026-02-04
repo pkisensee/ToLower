@@ -184,7 +184,7 @@
     <ClCompile Include="toLowerSpan.h" />
     <ClCompile Include="toLowerStrRef.h" />
     <ClCompile Include="toLowerStrView.h" />
-    <ClCompile Include="lowerc.cpp" />
+    <ClCompile Include="toLowerSSE.h" />
     <ClCompile Include="lowerd.cpp" />
     <ClCompile Include="lowere.cpp" />
     <ClCompile Include="lowerf.cpp" />
@@ -208,7 +208,7 @@
     <ClInclude Include="toLower5thBit.h" />
     <ClInclude Include="toLowerLookupTable.h" />
     <ClInclude Include="toLowerThreads.h" />
-    <ClInclude Include="toLowerD.h" />
+    <ClInclude Include="toLowerThreadPool.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="digipenCode.txt" />

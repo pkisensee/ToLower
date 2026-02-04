@@ -48,9 +48,9 @@
 #include "toLower5thBit.h"
 #include "toLowerLookupTable.h"
 #include "toLowerThreads.h"
-#include "toLowerD.h"
+#include "toLowerThreadPool.h"
+#include "toLowerSSE.h"
 
-std::string& lowerc( std::string& );          // lowerc.cpp
 std::string& lowerd( std::string& );          // lowerd.cpp
 std::string& lowere( std::string& );          // lowere.cpp
 std::string& lowerf( std::string& );          // lowerf.cpp
@@ -262,17 +262,17 @@ int main()
   VerifyEqual( toLowerThreads( n1 ), "abcdef" );
   std::cout << toLowerThreads( n2 ) << '\n';
 
-  // toLowerD
+  // ThreadPool
   std::string n1a{ "AbCdEf" };
   std::string n2a{ "AbCdEf" };
-  VerifyEqual( toLowerD( n1a, threadPool ), "abcdef" );
-  std::cout << toLowerD( n2a, threadPool ) << '\n';
+  VerifyEqual( toLowerThreadPool( n1a, threadPool ), "abcdef" );
+  std::cout << toLowerThreadPool( n2a, threadPool ) << '\n';
 
-  // lowerc -> toLowerE
+  // SSE
   std::string p1{ "ABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string p2{ "ABCdEfGhIjKlMnOpQrStUvWxYz" };
-  VerifyEqual( lowerc( p1 ), "abcdefghijklmnopqrstuvwxyz" );
-  std::cout << lowerc( p2 ) << '\n';
+  VerifyEqual( toLowerSSE( p1 ), "abcdefghijklmnopqrstuvwxyz" );
+  std::cout << toLowerSSE( p2 ) << '\n';
 
   // lowerd -> toLowerF
   std::string q1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
@@ -345,8 +345,8 @@ int main()
   MEASURE( "5thBit", toLower5thBit );
   MEASURE( "LookupTable", toLowerLookupTable );
   MEASURE( "Threads", toLowerThreads );
-  MEASURE1( "toLowerD", toLowerD, threadPool );
-  MEASURE( "lowerc", lowerc );
+  MEASURE1( "ThreadPool", toLowerThreadPool, threadPool );
+  MEASURE( "SSE", toLowerSSE );
   MEASURE( "lowerd", lowerd );
   MEASURE( "lowere", lowere );
   MEASURE( "lowerf", lowerf );
