@@ -15,7 +15,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <cassert>
-#include <chrono>
 #include <clocale>
 #include <execution>
 #include <filesystem>
@@ -26,7 +25,28 @@
 #include <thread>
 #include <utility>
 #include <vector>
+
+#include "getLowerByValue.h"
+#include "getRandomStr.h"
 #include "LowerCaseAsciiTable.h"
+#include "lowerOriginal.h"
+#include "Stopwatch.h"
+#include "toLower5thBit.h"
+#include "toLowerAuto.h"
+#include "toLowerAutoConstexpr.h"
+#include "toLowerAutoNoReturn.h"
+#include "toLowerAVX2.h"
+#include "toLowerExecPolicy.h"
+#include "toLowerLookupTable.h"
+#include "toLowerOpenCL.h"
+#include "toLowerPtrNoStrlen.h"
+#include "toLowerSpan.h"
+#include "toLowerSSE.h"
+#include "toLowerStrRef.h"
+#include "toLowerStrView.h"
+#include "toLowerTemplatized.h"
+#include "toLowerThreadPool.h"
+#include "toLowerThreads.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -35,43 +55,6 @@
 #else
 #define test(e) static_cast<void>( (e) || ( __debugbreak(), 0 ) )
 #endif
-
-#include "lowerOriginal.h"
-#include "toLowerPtrNoStrlen.h"
-#include "toLowerSpan.h"
-#include "toLowerStrRef.h"
-#include "toLowerStrView.h"
-#include "toLowerAutoNoReturn.h"
-#include "toLowerTemplatized.h"
-#include "toLowerAuto.h"
-#include "toLowerAutoConstexpr.h"
-#include "toLowerExecPolicy.h"
-#include "toLower5thBit.h"
-#include "toLowerLookupTable.h"
-#include "toLowerThreads.h"
-#include "toLowerThreadPool.h"
-#include "toLowerSSE.h"
-#include "toLowerAVX2.h"
-#include "toLowerOpenCL.h"
-#include "getLowerByValue.h"
-#include "getRandomStr.h"
-
-///////////////////////////////////////////////////////////////////////////////
-
-using namespace std::chrono;
-class Timer
-{
-public:
-  Timer() : start_( high_resolution_clock::now() ) {
-  }
-  double getElapsedMicroseconds() const {
-    auto end = high_resolution_clock::now();
-    duration<double, std::micro> duration = end - start_;
-    return duration.count();
-  }
-private:
-  time_point<high_resolution_clock> start_;
-};
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -111,26 +94,26 @@ static void Verify( std::string_view original, std::string_view lower )
 #define MEASURE( name, function ) \
 { \
   std::string tmp = rs; \
-  Timer timer; \
+  Stopwatch stopwatch; \
   function( tmp ); \
-  std::cout << name << ": " << timer.getElapsedMicroseconds() << " microSec\n"; \
+  std::cout << name << ": " << stopwatch.GetElapsedMicroseconds() << " microSec\n"; \
   Verify( rs, tmp ); \
 }
 
 #define MEASURE1( name, function, arg1 ) \
 { \
   std::string tmp = rs; \
-  Timer timer; \
+  Stopwatch stopwatch; \
   function( tmp, arg1 ); \
-  std::cout << name << ": " << timer.getElapsedMicroseconds() << " microSec\n"; \
+  std::cout << name << ": " << stopwatch.GetElapsedMicroseconds() << " microSec\n"; \
   Verify( rs, tmp ); \
 }
 
 #define MEASURE_BYVAL( name, function ) \
 { \
-  Timer timer; \
+  Stopwatch stopwatch; \
   std::string tmp = function( rs ); \
-  std::cout << name << ": " << timer.getElapsedMicroseconds() << " microSec\n"; \
+  std::cout << name << ": " << stopwatch.GetElapsedMicroseconds() << " microSec\n"; \
   Verify( tmp, rs ); \
 }
 
@@ -317,18 +300,18 @@ int main()
   { // Original
     std::string tmp = rs;
     tmp.resize( tmp.size() / 100 ); // temporary TODO
-    Timer timer;
+    Stopwatch stopwatch;
     // Extremely slow because of repeated calls to strlen
     lowerOriginal( tmp.data() );
-    std::cout << "Original/100: " << timer.getElapsedMicroseconds() << " microSec\n";
+    std::cout << "Original/100: " << stopwatch.GetElapsedMicroseconds() << " microSec\n";
     //Verify( rs, tmp );
   }
 
   { // PtrNoStrlen
     std::string tmp = rs;
-    Timer timer;
+    Stopwatch stopwatch;
     toLowerPtrNoStrlen( tmp.data(), tmp.size() );
-    std::cout << "PtrNoStrlen: " << timer.getElapsedMicroseconds() << " microSec\n";
+    std::cout << "PtrNoStrlen: " << stopwatch.GetElapsedMicroseconds() << " microSec\n";
     Verify( rs, tmp );
   }
 

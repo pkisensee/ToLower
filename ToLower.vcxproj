@@ -199,6 +199,7 @@
     <ClInclude Include="getLowerChar.h" />
     <ClInclude Include="LowerCaseAsciiTable.h" />
     <ClInclude Include="OpenCLContext.h" />
+    <ClInclude Include="Stopwatch.h" />
     <ClInclude Include="toLowerAutoNoReturn.h" />
     <ClInclude Include="toLowerTemplatized.h" />
     <ClInclude Include="toLowerAuto.h" />

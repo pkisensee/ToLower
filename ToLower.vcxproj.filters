@@ -30,6 +30,7 @@
     <ClInclude Include="toLowerThreads.h" />
     <ClInclude Include="toLowerThreadPool.h" />
     <ClInclude Include="LowerCaseAsciiTable.h" />
+    <ClInclude Include="Stopwatch.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="digipenCode.txt" />
