@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// toLowerA.h
+// toLower5thBit.h
 //
 // Notes: 
 //    * Clever ASCII designers created an easy conversion; for all upper case
@@ -26,7 +26,7 @@
 #include <string>
 #include <utility>
 
-constexpr auto&& toLowerA( auto&& s ) noexcept
+constexpr auto&& toLower5thBit( auto&& s ) noexcept
 {
   static constexpr unsigned char kBit5Set = 0b0010'0000; // 0x20
   std::ranges::transform( s, std::begin( s ), []( char c )

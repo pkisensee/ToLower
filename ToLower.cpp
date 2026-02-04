@@ -45,7 +45,7 @@
 #include "toLowerAuto.h"
 #include "toLowerAutoConstexpr.h"
 #include "toLowerExecPolicy.h"
-#include "toLowerA.h"
+#include "toLower5thBit.h"
 #include "toLowerB.h"
 #include "toLowerC.h"
 #include "toLowerD.h"
@@ -243,11 +243,11 @@ int main()
   std::cout << j5 << '\n';
   std::cout << toLowerExecPolicy( j6, std::execution::par_unseq ) << '\n';
 
-  // toLowerA
+  // 5thBit
   std::string k1{ "AbCdEf" };
   std::string k2{ "AbCdEf" };
-  VerifyEqual( toLowerA( k1 ), "abcdef" );
-  std::cout << toLowerA( k2 ) << '\n';
+  VerifyEqual( toLower5thBit( k1 ), "abcdef" );
+  std::cout << toLower5thBit( k2 ) << '\n';
 
   // toLowerB
   std::string m1{ "AbCdEf" };
@@ -307,7 +307,7 @@ int main()
   z1.resize( 127uz - ' ' );
   std::ranges::iota( z1, ' ' );
   std::cout << z1 << '\n';
-  toLowerA( z1 );
+  toLower5thBit( z1 );
   std::cout << z1 << '\n';
 
   //if (z1.size()) return 0; TODO
@@ -342,7 +342,7 @@ int main()
   MEASURE( "AutoConstexpr", toLowerAutoConstexpr );
   MEASURE1( "ExecPolicy par", toLowerExecPolicy, std::execution::par );
   MEASURE1( "ExecPolicy par_unseq", toLowerExecPolicy, std::execution::par_unseq );
-  MEASURE( "toLowerA", toLowerA );
+  MEASURE( "5thBit", toLower5thBit );
   MEASURE( "toLowerB", toLowerB );
   MEASURE( "toLowerC", toLowerC );
   MEASURE1( "toLowerD", toLowerD, threadPool );
