@@ -180,7 +180,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="lowerOriginal.h" />
-    <ClCompile Include="lowerPtrNoStrlen.h" />
+    <ClCompile Include="toLowerPtrNoStrlen.h" />
     <ClCompile Include="lowerSpan.h" />
     <ClCompile Include="toLowerStrRef.h" />
     <ClCompile Include="toLower4.h" />

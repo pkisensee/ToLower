@@ -36,7 +36,7 @@
 #endif
 
 #include "lowerOriginal.h"
-#include "lowerPtrNoStrlen.h"
+#include "toLowerPtrNoStrlen.h"
 #include "lowerSpan.h"
 #include "toLowerStrRef.h"
 #include "toLower4.h"
@@ -154,9 +154,9 @@ int main()
   // PtrNoStrlen
   char b1[] = "AbCdEf";
   char b2[] = "AbCdEf";
-  VerifyEqual( lowerPtrNoStrlen( b1, strlen( b1 ) ), "abcdef");
-  std::cout << lowerPtrNoStrlen( b2, strlen( b2 ) ) << '\n';
-  lowerPtrNoStrlen( nullptr, 0 ); // safe
+  VerifyEqual( toLowerPtrNoStrlen( b1, strlen( b1 ) ), "abcdef");
+  std::cout << toLowerPtrNoStrlen( b2, strlen( b2 ) ) << '\n';
+  toLowerPtrNoStrlen( nullptr, 0 ); // safe
 
   // Span
   char c1[] = "AbCdEf";
@@ -330,7 +330,7 @@ int main()
   { // PtrNoStrlen
     std::string tmp = rs;
     Timer timer;
-    lowerPtrNoStrlen( tmp.data(), tmp.size() );
+    toLowerPtrNoStrlen( tmp.data(), tmp.size() );
     std::cout << "PtrNoStrlen: " << timer.getElapsedMicroseconds() << " microSec\n";
     Verify( rs, tmp );
   }

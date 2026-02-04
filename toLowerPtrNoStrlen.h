@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// lowerPtrNoStrlen.h
+// toLowerPtrNoStrlen.h
 //
 // Notes: 
 //    * checks for nullptr (good)
@@ -35,7 +35,7 @@ char* lower0( char* s ) {
 }
 */
 
-inline char* lowerPtrNoStrlen( char* s, size_t count )
+inline char* toLowerPtrNoStrlen( char* s, size_t count )
 {
   if( s == nullptr )
     return nullptr;

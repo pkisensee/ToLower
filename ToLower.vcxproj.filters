@@ -3,7 +3,7 @@
   <ItemGroup>
     <ClCompile Include="ToLower.cpp" />
     <ClCompile Include="lowerOriginal.h" />
-    <ClCompile Include="lowerPtrNoStrlen.h" />
+    <ClCompile Include="toLowerPtrNoStrlen.h" />
     <ClCompile Include="toLowerStrRef.h" />
     <ClCompile Include="lowerSpan.h" />
     <ClCompile Include="toLower4.h" />
