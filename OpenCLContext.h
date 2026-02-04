@@ -1,9 +1,11 @@
-#pragma once
-
 ///////////////////////////////////////////////////////////////////////////////
 //
-// OpenCL.h
+// OpenCLContext.h
 //
+// Wraps common boilerplate for OpenCL, including CL Device, Context,
+// CommandQueue, Program and Kernel
+
+#pragma once
 
 #include <cassert>
 #include <exception>
@@ -15,15 +17,12 @@
 
 #pragma warning(push)
 #pragma warning(disable: 4365 4623 4626 5027 5039 5246)
-#include "CL/OpenCL.hpp" // C++ header
+#include "CL/OpenCL.hpp"
 #pragma warning(pop)
 
-//#include "CL/cl.h" // C header
+inline const std::string kBuildOptions{ "-cl-std=CL3.0 -Werror" };
 
-static constexpr std::string_view kSourceCodeFile = "lower.cl";
-static const std::string kBuildOptions{ "-cl-std=CL3.0 -Werror" };
-static const std::string kKernelFunction{ "lowerLUT" };
-
+// Get the default GPU or CPU device
 inline cl::Device GetDefaultDevice( cl_device_type deviceType )
 {
   std::vector<cl::Platform> platforms;
@@ -43,23 +42,28 @@ inline cl::Device GetDefaultDevice( cl_device_type deviceType )
   }
 }
 
+// Convert file into a string
 inline std::string GetSourceCode( const std::filesystem::path& fileName )
 {
   std::ifstream fileStream( fileName );
   return std::string{ std::istreambuf_iterator<char>( fileStream ), {} };
 }
 
-class OpenCL
+class OpenCLContext
 {
 public:
-  OpenCL() = delete;
+  OpenCLContext() = delete;
 
-  OpenCL( cl_device_type preferredDevice, const std::string& kernelFunction ) :
+  // Establish context given device, .cl file and desired function
+  // kernelFunction must have prototype: void toLower( __global char* s, unsigned long len )
+  OpenCLContext( cl_device_type preferredDevice, 
+                 const std::filesystem::path& sourceCodeFile, 
+                 const std::string& kernelFunction ) :
     device_{ GetDefaultDevice( preferredDevice ) },
     context_{ device_ },
     queue_{ context_, device_ },
-    program_{ context_, GetSourceCode( kSourceCodeFile ) },
-    kernel_{} // must build before referencing kernel function
+    program_{ context_, GetSourceCode( sourceCodeFile ) },
+    kernel_{}
   {
     // Build the kernel
     auto result = program_.build( device_, kBuildOptions );
@@ -72,35 +76,41 @@ public:
     assert( kernel_.get() != nullptr );
   }
 
-  std::string& ToLower( std::string& s )
+  // Convert char sequence to lower case in place. Returns modified sequence.
+  constexpr auto&& ToLower( auto&& s ) noexcept
   {
-    cl::Buffer stringDataBuffer( context_, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, s.size(), s.data());
+    // Point CL buffer to incoming char sequence
+    size_t len = std::size( s );
+    char* data = std::data( s );
+    cl::Buffer stringDataBuffer( context_, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,
+                                 len, data );
 
-    // void lower( __global char* s, unsigned long len )
-    kernel_.setArg( 0, stringDataBuffer );  // s
-    kernel_.setArg( 1, static_cast<uint64_t>( s.size() ) ); // len
+    // Establish arguments to kernl function
+    // void toLower( __global char* s, unsigned long len )
+    kernel_.setArg( 0, stringDataBuffer );
+    kernel_.setArg( 1, static_cast<uint64_t>( len ) );
 
-    // Execute kernel on the device
-    auto offset = cl::NullRange;                // process the entire string
-    auto threadCount = cl::NDRange{ s.size() }; // 1 thread per character
-    auto localWork = cl::NullRange;             // no local threads
+    // Execute kernel on device
+    auto offset = cl::NullRange;           // process the entire string
+    auto threadCount = cl::NDRange{ len }; // 1 thread per character
+    auto localWork = cl::NullRange;        // no local threads
     queue_.enqueueNDRangeKernel( kernel_, offset, threadCount, localWork );
     queue_.finish();
 
     // Read results back into s
     cl_bool blocking = CL_TRUE;
-    queue_.enqueueReadBuffer( stringDataBuffer, blocking, 0, s.size(), s.data() );
-    return s;
+    queue_.enqueueReadBuffer( stringDataBuffer, blocking, 0, len, data );
+
+    return std::forward<decltype( s )>( s );
   }
 
 private:
 
-  cl::Device device_;
-  cl::Context context_;
-  cl::CommandQueue queue_;
-  cl::Program program_;
-  cl::Kernel kernel_;
-
+  cl::Device        device_;
+  cl::Context       context_;
+  cl::CommandQueue  queue_;
+  cl::Program       program_;
+  cl::Kernel        kernel_;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

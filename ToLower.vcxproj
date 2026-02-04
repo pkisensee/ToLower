@@ -186,8 +186,7 @@
     <ClCompile Include="toLowerStrView.h" />
     <ClCompile Include="toLowerSSE.h" />
     <ClCompile Include="toLowerAVX2.h" />
-    <ClCompile Include="lowere.cpp" />
-    <ClCompile Include="lowerf.cpp" />
+    <ClCompile Include="toLowerOpenCL.h" />
     <ClCompile Include="lowerg.cpp" />
     <ClCompile Include="RandomStr.cpp" />
     <ClCompile Include="ToLower.cpp" />
@@ -199,7 +198,7 @@
   <ItemGroup>
     <ClInclude Include="getLowerChar.h" />
     <ClInclude Include="LowerCaseAsciiTable.h" />
-    <ClInclude Include="OpenCL.h" />
+    <ClInclude Include="OpenCLContext.h" />
     <ClInclude Include="toLowerAutoNoReturn.h" />
     <ClInclude Include="toLowerTemplatized.h" />
     <ClInclude Include="toLowerAuto.h" />

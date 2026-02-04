@@ -36,6 +36,7 @@ constexpr auto&& toLowerAVX2( auto&& s ) noexcept
     __m256i lower = _mm256_or_si256( input, kBit5Set256 );
     _mm256_storeu_si256( strAVX2, lower );
   }
+
   // Convert any remaining <kAVX2bytes chars directly
   for( ; len > 0; ++data, --len )
   {
@@ -43,7 +44,8 @@ constexpr auto&& toLowerAVX2( auto&& s ) noexcept
     auto lower = uchar | kBit5Set;
     *data = static_cast<char>( lower );
   }
-  return s;
+
+  return std::forward<decltype( s )>( s );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

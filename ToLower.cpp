@@ -18,6 +18,7 @@
 #include <chrono>
 #include <clocale>
 #include <execution>
+#include <filesystem>
 #include <functional>
 #include <iostream>
 #include <span>
@@ -51,8 +52,8 @@
 #include "toLowerThreadPool.h"
 #include "toLowerSSE.h"
 #include "toLowerAVX2.h"
+#include "toLowerOpenCL.h"
 
-std::string& lowere( std::string& );          // lowere.cpp
 std::string& lowerf( std::string& );          // lowerf.cpp
 std::string lowerg( const std::string& ) noexcept; // lowerg.cpp
 
@@ -280,11 +281,12 @@ int main()
   VerifyEqual( toLowerAVX2( q1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
   std::cout << toLowerAVX2( q2 ) << '\n';
 
-  // lowere -> toLowerG
+  // OpenCL
+  OpenCLContext openCLContextLowerLUT{ CL_DEVICE_TYPE_GPU, "lower.cl", "lowerLUT" };
   std::string r1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string r2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
-  //VerifyEqual( lowere( r1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
-  //std::cout << lowere( r2 ) << '\n';
+  VerifyEqual( toLowerOpenCL( r1, openCLContextLowerLUT ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
+  std::cout << toLowerOpenCL( r2, openCLContextLowerLUT ) << '\n';
 
   // lowerf -> toLowerH
   std::string s1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
@@ -335,7 +337,7 @@ int main()
 
   MEASURE( "Span", toLowerSpan );
   MEASURE( "StrRef", toLowerStrRef );
-  //MEASURE( "StrView", toLowerStrView ); // invalid, so no need to measure
+  //MEASURE( "StrView", toLowerStrView ); // invalid; no need to measure
   MEASURE( "AutoNoReturn", toLowerAutoNoReturn );
   MEASURE( "Templatized", toLowerTemplatized );
   MEASURE( "Auto", toLowerAuto );
@@ -348,7 +350,19 @@ int main()
   MEASURE1( "ThreadPool", toLowerThreadPool, threadPool );
   MEASURE( "SSE", toLowerSSE );
   MEASURE( "AVX2", toLowerAVX2 );
-  MEASURE( "lowere", lowere );
-  MEASURE( "lowerf", lowerf );
+  MEASURE1( "OpenCL LookupTable", toLowerOpenCL, openCLContextLowerLUT );
+
+  OpenCLContext openCLContextLowerBranch{ CL_DEVICE_TYPE_GPU, "lower.cl", "lowerBranch" };
+  MEASURE1( "OpenCL Branch", toLowerOpenCL, openCLContextLowerBranch );
+
+  OpenCLContext openCLContextLowerBranchless{ CL_DEVICE_TYPE_GPU, "lower.cl", "lowerBranchless" };
+  MEASURE1( "OpenCL Branchless", toLowerOpenCL, openCLContextLowerBranchless );
+
+  OpenCLContext openCLContextLower5thBit{ CL_DEVICE_TYPE_GPU, "lower.cl", "lower5thBit" };
+  MEASURE1( "OpenCL 5thBit", toLowerOpenCL, openCLContextLower5thBit );
+
+  OpenCLContext openCLContextLowerVector{ CL_DEVICE_TYPE_GPU, "lower.cl", "lowerVector" };
+  MEASURE1( "OpenCL Vector", toLowerOpenCL, openCLContextLowerVector );
+
   MEASURE_BYVAL( "lowerg", lowerg );
 }

@@ -10,8 +10,7 @@
     <ClCompile Include="toLowerSSE.h" />
     <ClCompile Include="toLowerAVX2.h" />
     <ClCompile Include="RandomStr.cpp" />
-    <ClCompile Include="lowere.cpp" />
-    <ClCompile Include="lowerf.cpp" />
+    <ClCompile Include="toLowerOpenCL.h" />
     <ClCompile Include="lowerg.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -19,7 +18,7 @@
     <None Include="..\..\Tantalon\digipen\index.html" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="OpenCL.h" />
+    <ClInclude Include="OpenCLContext.h" />
     <ClInclude Include="getLowerChar.h" />
     <ClInclude Include="toLowerAutoNoReturn.h" />
     <ClInclude Include="toLowerTemplatized.h" />
