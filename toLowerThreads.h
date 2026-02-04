@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// toLowerC.cpp
+// toLowerThreads.cpp
 //
 // Notes: 
 //    * Multi-threaded solution
@@ -19,7 +19,7 @@
 #include <vector>
 #include "getLowerChar.h"
 
-constexpr auto&& toLowerC( auto&& s ) noexcept
+constexpr auto&& toLowerThreads( auto&& s ) noexcept
 {
   auto toLowerWorker = []( auto substr )
   {

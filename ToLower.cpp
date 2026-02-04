@@ -47,7 +47,7 @@
 #include "toLowerExecPolicy.h"
 #include "toLower5thBit.h"
 #include "toLowerLookupTable.h"
-#include "toLowerC.h"
+#include "toLowerThreads.h"
 #include "toLowerD.h"
 
 std::string& lowerc( std::string& );          // lowerc.cpp
@@ -256,11 +256,11 @@ int main()
   VerifyEqual( m1, "abcdef" );
   std::cout << toLowerLookupTable(m2) << '\n';
 
-  // toLowerC
+  // Threads
   std::string n1{ "AbCdEf" };
   std::string n2{ "AbCdEf" };
-  VerifyEqual( toLowerC( n1 ), "abcdef" );
-  std::cout << toLowerC( n2 ) << '\n';
+  VerifyEqual( toLowerThreads( n1 ), "abcdef" );
+  std::cout << toLowerThreads( n2 ) << '\n';
 
   // toLowerD
   std::string n1a{ "AbCdEf" };
@@ -344,7 +344,7 @@ int main()
   MEASURE1( "ExecPolicy par_unseq", toLowerExecPolicy, std::execution::par_unseq );
   MEASURE( "5thBit", toLower5thBit );
   MEASURE( "LookupTable", toLowerLookupTable );
-  MEASURE( "toLowerC", toLowerC );
+  MEASURE( "Threads", toLowerThreads );
   MEASURE1( "toLowerD", toLowerD, threadPool );
   MEASURE( "lowerc", lowerc );
   MEASURE( "lowerd", lowerd );
