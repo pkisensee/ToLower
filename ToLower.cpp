@@ -43,7 +43,7 @@
 #include "toLowerAutoNoReturn.h"
 #include "toLowerTemplatized.h"
 #include "toLowerAuto.h"
-#include "toLower8.h"
+#include "toLowerAutoConstexpr.h"
 #include "toLower9.h"
 #include "toLowerA.h"
 #include "toLowerB.h"
@@ -219,17 +219,17 @@ int main()
   std::cout << g5a << '\n';
   std::cout << toLowerAuto( g6a ) << '\n';
 
-  // toLower8
+  // AutoConstexpr
   char g3ab[] = "AbCdEf";
   char g4ab[] = "AbCdEf";
   std::span g5ab{ g4ab };
   std::string g6ab{ "AbCdEf" };
 
-  VerifyEqual( toLower8( g3ab ), "abcdef" );
-  toLower8( g5ab );
+  VerifyEqual( toLowerAutoConstexpr( g3ab ), "abcdef" );
+  toLowerAutoConstexpr( g5ab );
   VerifyEqual( std::string_view{ g5ab.data(), g5ab.size() - 1 }, "abcdef" );
   std::cout << g5ab << '\n';
-  std::cout << toLower8( g6ab ) << '\n';
+  std::cout << toLowerAutoConstexpr( g6ab ) << '\n';
 
   // toLower9
   char j3[] = "AbCdEf";
@@ -339,7 +339,7 @@ int main()
   MEASURE( "AutoNoReturn", toLowerAutoNoReturn );
   MEASURE( "Templatized", toLowerTemplatized );
   MEASURE( "Auto", toLowerAuto );
-  MEASURE( "toLower8", toLower8 );
+  MEASURE( "AutoConstexpr", toLowerAutoConstexpr );
   MEASURE1( "toLower9", toLower9, std::execution::par_unseq );
   MEASURE( "toLowerA", toLowerA );
   MEASURE( "toLowerB", toLowerB );

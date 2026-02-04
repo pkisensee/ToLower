@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// toLower8.h
+// toLowerAutoConstexpr.h
 //
 // Notes: 
 //    * constexpr and noexcept
@@ -15,7 +15,7 @@
 #include <utility>
 #include "getLowerChar.h"
 
-constexpr auto&& toLower8( auto&& s ) noexcept
+constexpr auto&& toLowerAutoConstexpr( auto&& s ) noexcept
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {

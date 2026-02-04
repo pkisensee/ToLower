@@ -24,7 +24,7 @@
     <ClInclude Include="toLowerAutoNoReturn.h" />
     <ClInclude Include="toLowerTemplatized.h" />
     <ClInclude Include="toLowerAuto.h" />
-    <ClInclude Include="toLower8.h" />
+    <ClInclude Include="toLowerAutoConstexpr.h" />
     <ClInclude Include="toLower9.h" />
     <ClInclude Include="toLowerA.h" />
     <ClInclude Include="toLowerB.h" />
