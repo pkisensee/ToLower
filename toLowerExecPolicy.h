@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// toLower9.h
+// toLowerExecPolicy.h
 //
 // Notes: 
 //    * Execution policy support
@@ -15,7 +15,7 @@
 #include <utility>
 #include "getLowerChar.h"
 
-constexpr auto&& toLower9( auto&& s, auto&& execPolicy ) noexcept
+constexpr auto&& toLowerExecPolicy( auto&& s, auto&& execPolicy ) noexcept
 {
   auto begin = std::begin( s );
   auto end = std::end( s );

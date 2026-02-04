@@ -44,7 +44,7 @@
 #include "toLowerTemplatized.h"
 #include "toLowerAuto.h"
 #include "toLowerAutoConstexpr.h"
-#include "toLower9.h"
+#include "toLowerExecPolicy.h"
 #include "toLowerA.h"
 #include "toLowerB.h"
 #include "toLowerC.h"
@@ -231,17 +231,17 @@ int main()
   std::cout << g5ab << '\n';
   std::cout << toLowerAutoConstexpr( g6ab ) << '\n';
 
-  // toLower9
+  // ExecPolicy
   char j3[] = "AbCdEf";
   char j4[] = "AbCdEf";
   std::span j5{ j4 };
   std::string j6{ "AbCdEf" };
 
-  VerifyEqual( toLower9( j3, std::execution::par_unseq ), "abcdef" );
-  toLower9( j5, std::execution::par_unseq );
+  VerifyEqual( toLowerExecPolicy( j3, std::execution::par_unseq ), "abcdef" );
+  toLowerExecPolicy( j5, std::execution::par_unseq );
   VerifyEqual( std::string_view{ j5.data(), j5.size()-1 }, "abcdef" );
   std::cout << j5 << '\n';
-  std::cout << toLower9( j6, std::execution::par_unseq ) << '\n';
+  std::cout << toLowerExecPolicy( j6, std::execution::par_unseq ) << '\n';
 
   // toLowerA
   std::string k1{ "AbCdEf" };
@@ -340,7 +340,8 @@ int main()
   MEASURE( "Templatized", toLowerTemplatized );
   MEASURE( "Auto", toLowerAuto );
   MEASURE( "AutoConstexpr", toLowerAutoConstexpr );
-  MEASURE1( "toLower9", toLower9, std::execution::par_unseq );
+  MEASURE1( "ExecPolicy par", toLowerExecPolicy, std::execution::par );
+  MEASURE1( "ExecPolicy par_unseq", toLowerExecPolicy, std::execution::par_unseq );
   MEASURE( "toLowerA", toLowerA );
   MEASURE( "toLowerB", toLowerB );
   MEASURE( "toLowerC", toLowerC );
