@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// lower2.h
+// lowerSpan.h
 //
 // Notes: 
 //    * Uses std::span (C++20)
@@ -19,7 +19,7 @@
 #include <span>
 #include "getLowerChar.h"
 
-inline char* lower2( std::span<char> s )
+inline char* lowerSpan( std::span<char> s )
 {
   size_t i = 0;
   for( char c : s )

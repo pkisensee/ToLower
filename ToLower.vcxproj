@@ -181,7 +181,7 @@
   <ItemGroup>
     <ClCompile Include="lowerOriginal.h" />
     <ClCompile Include="lowerPtrNoStrlen.h" />
-    <ClCompile Include="lower2.h" />
+    <ClCompile Include="lowerSpan.h" />
     <ClCompile Include="toLower3.h" />
     <ClCompile Include="toLower4.h" />
     <ClCompile Include="lowerc.cpp" />

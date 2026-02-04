@@ -37,7 +37,7 @@
 
 #include "lowerOriginal.h"
 #include "lowerPtrNoStrlen.h"
-#include "lower2.h"
+#include "lowerSpan.h"
 #include "toLower3.h"
 #include "toLower4.h"
 #include "toLower5.h"
@@ -158,12 +158,12 @@ int main()
   std::cout << lowerPtrNoStrlen( b2, strlen( b2 ) ) << '\n';
   lowerPtrNoStrlen( nullptr, 0 ); // safe
 
-  // lower2
+  // Span
   char c1[] = "AbCdEf";
   char c2[] = "AbCdEf";
-  VerifyEqual( lower2( std::span{ c1 } ), "abcdef" );
-  std::cout << lower2( c2 ) << '\n';
-  lower2( std::span<char>() ); // safe
+  VerifyEqual( lowerSpan( std::span{ c1 } ), "abcdef" );
+  std::cout << lowerSpan( c2 ) << '\n';
+  lowerSpan( std::span<char>() ); // safe
 
   // toLower3
   std::string d1{ "AbCdEf" };
@@ -335,7 +335,7 @@ int main()
     Verify( rs, tmp );
   }
 
-  MEASURE( "lower2", lower2 );
+  MEASURE( "Span", lowerSpan );
   MEASURE( "toLower3", toLower3 );
   //MEASURE( "toLower4", toLower4 ); // doesn't do anything, so no need to measure
   MEASURE( "toLower5", toLower5 );
