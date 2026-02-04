@@ -46,7 +46,7 @@
 #include "toLowerAutoConstexpr.h"
 #include "toLowerExecPolicy.h"
 #include "toLower5thBit.h"
-#include "toLowerB.h"
+#include "toLowerLookupTable.h"
 #include "toLowerC.h"
 #include "toLowerD.h"
 
@@ -249,12 +249,12 @@ int main()
   VerifyEqual( toLower5thBit( k1 ), "abcdef" );
   std::cout << toLower5thBit( k2 ) << '\n';
 
-  // toLowerB
+  // LookupTable
   std::string m1{ "AbCdEf" };
   std::string m2{ "AbCdEf" };
-  toLowerB( m1 );
+  toLowerLookupTable( m1 );
   VerifyEqual( m1, "abcdef" );
-  std::cout << toLowerB(m2) << '\n';
+  std::cout << toLowerLookupTable(m2) << '\n';
 
   // toLowerC
   std::string n1{ "AbCdEf" };
@@ -343,7 +343,7 @@ int main()
   MEASURE1( "ExecPolicy par", toLowerExecPolicy, std::execution::par );
   MEASURE1( "ExecPolicy par_unseq", toLowerExecPolicy, std::execution::par_unseq );
   MEASURE( "5thBit", toLower5thBit );
-  MEASURE( "toLowerB", toLowerB );
+  MEASURE( "LookupTable", toLowerLookupTable );
   MEASURE( "toLowerC", toLowerC );
   MEASURE1( "toLowerD", toLowerD, threadPool );
   MEASURE( "lowerc", lowerc );

@@ -206,7 +206,7 @@
     <ClInclude Include="toLowerAutoConstexpr.h" />
     <ClInclude Include="toLowerExecPolicy.h" />
     <ClInclude Include="toLower5thBit.h" />
-    <ClInclude Include="toLowerB.h" />
+    <ClInclude Include="toLowerLookupTable.h" />
     <ClInclude Include="toLowerC.h" />
     <ClInclude Include="toLowerD.h" />
   </ItemGroup>
