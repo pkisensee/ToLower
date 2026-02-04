@@ -183,7 +183,7 @@
     <ClCompile Include="toLowerPtrNoStrlen.h" />
     <ClCompile Include="toLowerSpan.h" />
     <ClCompile Include="toLowerStrRef.h" />
-    <ClCompile Include="toLower4.h" />
+    <ClCompile Include="toLowerStrView.h" />
     <ClCompile Include="lowerc.cpp" />
     <ClCompile Include="lowerd.cpp" />
     <ClCompile Include="lowere.cpp" />

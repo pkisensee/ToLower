@@ -39,7 +39,7 @@
 #include "toLowerPtrNoStrlen.h"
 #include "toLowerSpan.h"
 #include "toLowerStrRef.h"
-#include "toLower4.h"
+#include "toLowerStrView.h"
 #include "toLower5.h"
 #include "toLower6.h"
 #include "toLower7.h"
@@ -165,17 +165,17 @@ int main()
   std::cout << toLowerSpan( c2 ) << '\n';
   toLowerSpan( std::span<char>() ); // safe
 
-  // LowerStrRef
+  // StrRef
   std::string d1{ "AbCdEf" };
   std::string d2{ "AbCdEf" };
   VerifyEqual( toLowerStrRef( d1 ), "abcdef" );
   std::cout << toLowerStrRef( d2 ) << '\n';
 
-  // toLower4
-  std::string_view e1{ "AbCdEf" };
-  std::string_view e2{ "AbCdEf" };
-  //VerifyEqual( toLower4( e1 ), "abcdef" ); // nope; can't modify string_view
-  //std::cout << toLower4( e2 ) << '\n'; // mixed case output
+  // StrView -- doesn't work; can't modify string_view
+  //std::string_view e1{ "AbCdEf" };
+  //std::string_view e2{ "AbCdEf" };
+  //VerifyEqual( toLowerStrView( e1 ), "abcdef" ); // fails; can't modify string_view
+  //std::cout << toLowerStrView( e2 ) << '\n'; // mixed case output
 
   // toLower5
   std::string_view f1{ "AbCdEf" };
@@ -337,7 +337,7 @@ int main()
 
   MEASURE( "Span", toLowerSpan );
   MEASURE( "StrRef", toLowerStrRef );
-  //MEASURE( "toLower4", toLower4 ); // doesn't do anything, so no need to measure
+  //MEASURE( "StrView", toLowerStrView ); // invalid, so no need to measure
   MEASURE( "toLower5", toLower5 );
   MEASURE( "toLower6", toLower6 );
   MEASURE( "toLower7", toLower7 );

@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// toLower4.h
+// toLowerStrView.h
 //
 // Notes: 
 //    * Uses std::string_view C++17 -- more flexible
@@ -15,7 +15,7 @@
 #include <string_view>
 #include "getLowerChar.h"
 
-inline std::string_view toLower4( std::string_view s )
+inline std::string_view toLowerStrView( std::string_view s )
 {
   // can't modify a string_view -- it's a read-only view!
   /*
