@@ -5,7 +5,7 @@
     <ClCompile Include="lowerOriginal.h" />
     <ClCompile Include="toLowerPtrNoStrlen.h" />
     <ClCompile Include="toLowerStrRef.h" />
-    <ClCompile Include="lowerSpan.h" />
+    <ClCompile Include="toLowerSpan.h" />
     <ClCompile Include="toLower4.h" />
     <ClCompile Include="lowerc.cpp" />
     <ClCompile Include="lowerd.cpp" />

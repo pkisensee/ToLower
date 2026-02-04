@@ -37,7 +37,7 @@
 
 #include "lowerOriginal.h"
 #include "toLowerPtrNoStrlen.h"
-#include "lowerSpan.h"
+#include "toLowerSpan.h"
 #include "toLowerStrRef.h"
 #include "toLower4.h"
 #include "toLower5.h"
@@ -161,9 +161,9 @@ int main()
   // Span
   char c1[] = "AbCdEf";
   char c2[] = "AbCdEf";
-  VerifyEqual( lowerSpan( std::span{ c1 } ), "abcdef" );
-  std::cout << lowerSpan( c2 ) << '\n';
-  lowerSpan( std::span<char>() ); // safe
+  VerifyEqual( toLowerSpan( std::span{ c1 } ), "abcdef" );
+  std::cout << toLowerSpan( c2 ) << '\n';
+  toLowerSpan( std::span<char>() ); // safe
 
   // LowerStrRef
   std::string d1{ "AbCdEf" };
@@ -335,7 +335,7 @@ int main()
     Verify( rs, tmp );
   }
 
-  MEASURE( "Span", lowerSpan );
+  MEASURE( "Span", toLowerSpan );
   MEASURE( "StrRef", toLowerStrRef );
   //MEASURE( "toLower4", toLower4 ); // doesn't do anything, so no need to measure
   MEASURE( "toLower5", toLower5 );
