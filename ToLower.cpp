@@ -41,8 +41,8 @@
 #include "toLowerStrRef.h"
 #include "toLowerStrView.h"
 #include "toLowerAutoNoReturn.h"
-#include "toLower6.h"
-#include "toLower7.h"
+#include "toLowerTemplatized.h"
+#include "toLowerAuto.h"
 #include "toLower8.h"
 #include "toLower9.h"
 #include "toLowerA.h"
@@ -195,29 +195,29 @@ int main()
   std::cout << f6 << '\n';
   // std::cout << toLowerAutoNoReturn( f6 ) << '\n'; // compiler error; toLowerAutoNoReturn doesn't return anything
 
-  // toLower6
+  // Templatized
   char g3[] = "AbCdEf";
   char g4[] = "AbCdEf";
   std::span g5{ g4 };
   std::string g6{ "AbCdEf" };
 
-  VerifyEqual( toLower6( g3 ), "abcdef");
-  toLower6( g5 );
+  VerifyEqual( toLowerTemplatized( g3 ), "abcdef");
+  toLowerTemplatized( g5 );
   VerifyEqual( std::string_view{ g5.data(), g5.size()-1 }, "abcdef" );
   std::cout << g5 << '\n';
-  std::cout << toLower6( g6 ) << '\n';
+  std::cout << toLowerTemplatized( g6 ) << '\n';
 
-  // toLower7
+  // LowerAuto
   char g3a[] = "AbCdEf";
   char g4a[] = "AbCdEf";
   std::span g5a{ g4a };
   std::string g6a{ "AbCdEf" };
 
-  VerifyEqual( toLower7( g3a ), "abcdef" );
-  toLower7( g5a );
+  VerifyEqual( toLowerAuto( g3a ), "abcdef" );
+  toLowerAuto( g5a );
   VerifyEqual( std::string_view{ g5a.data(), g5a.size() - 1 }, "abcdef" );
   std::cout << g5a << '\n';
-  std::cout << toLower7( g6a ) << '\n';
+  std::cout << toLowerAuto( g6a ) << '\n';
 
   // toLower8
   char g3ab[] = "AbCdEf";
@@ -337,8 +337,8 @@ int main()
   MEASURE( "StrRef", toLowerStrRef );
   //MEASURE( "StrView", toLowerStrView ); // invalid, so no need to measure
   MEASURE( "AutoNoReturn", toLowerAutoNoReturn );
-  MEASURE( "toLower6", toLower6 );
-  MEASURE( "toLower7", toLower7 );
+  MEASURE( "Templatized", toLowerTemplatized );
+  MEASURE( "Auto", toLowerAuto );
   MEASURE( "toLower8", toLower8 );
   MEASURE1( "toLower9", toLower9, std::execution::par_unseq );
   MEASURE( "toLowerA", toLowerA );

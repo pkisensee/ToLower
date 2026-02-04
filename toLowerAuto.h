@@ -1,11 +1,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// toLower6.h
+// toLowerAuto.h
 //
 // Notes: 
-//    * Input is any character sequence that can be modified in place
-//    * Returns a reference to the input sequence
-//    * Correctly handles input that's an rvalue reference (temporary)
+//    * Uses auto instead of templates
 //
 // Issues:
 //    * Potential inscrutable compiler errors
@@ -18,14 +16,14 @@
 #include <utility>
 #include "getLowerChar.h"
 
-template <typename String>
-String&& toLower6( String&& s )
+auto&& toLowerAuto( auto&& s )
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
     return getLowerChar( c );
   } );
-  return std::forward< String >( s );
+  return std::forward< decltype(s) >(s);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// toLower7.h
+// toLowerTemplatized.h
 //
 // Notes: 
-//    * Uses auto instead of templates
+//    * Templatized for any character sequence that can be modified in place
+//    * Returns a reference to the input sequence
+//    * Correctly handles input that's an rvalue reference (temporary)
 //
 // Issues:
 //    * Potential inscrutable compiler errors
@@ -16,14 +18,14 @@
 #include <utility>
 #include "getLowerChar.h"
 
-auto&& toLower7( auto&& s )
+template <typename String>
+String&& toLowerTemplatized( String&& s )
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
     return getLowerChar( c );
   } );
-  return std::forward< decltype(s) >(s);
+  return std::forward< String >( s );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-

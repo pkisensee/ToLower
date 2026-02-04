@@ -22,8 +22,8 @@
     <ClInclude Include="OpenCL.h" />
     <ClInclude Include="getLowerChar.h" />
     <ClInclude Include="toLowerAutoNoReturn.h" />
-    <ClInclude Include="toLower6.h" />
-    <ClInclude Include="toLower7.h" />
+    <ClInclude Include="toLowerTemplatized.h" />
+    <ClInclude Include="toLowerAuto.h" />
     <ClInclude Include="toLower8.h" />
     <ClInclude Include="toLower9.h" />
     <ClInclude Include="toLowerA.h" />
