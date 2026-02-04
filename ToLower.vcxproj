@@ -185,7 +185,7 @@
     <ClCompile Include="toLowerStrRef.h" />
     <ClCompile Include="toLowerStrView.h" />
     <ClCompile Include="toLowerSSE.h" />
-    <ClCompile Include="lowerd.cpp" />
+    <ClCompile Include="toLowerAVX2.h" />
     <ClCompile Include="lowere.cpp" />
     <ClCompile Include="lowerf.cpp" />
     <ClCompile Include="lowerg.cpp" />

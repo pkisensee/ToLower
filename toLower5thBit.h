@@ -29,6 +29,7 @@
 constexpr auto&& toLower5thBit( auto&& s ) noexcept
 {
   static constexpr unsigned char kBit5Set = 0b0010'0000; // 0x20
+
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
     auto uchar = static_cast<unsigned char>( c );

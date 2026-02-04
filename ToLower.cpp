@@ -50,8 +50,8 @@
 #include "toLowerThreads.h"
 #include "toLowerThreadPool.h"
 #include "toLowerSSE.h"
+#include "toLowerAVX2.h"
 
-std::string& lowerd( std::string& );          // lowerd.cpp
 std::string& lowere( std::string& );          // lowere.cpp
 std::string& lowerf( std::string& );          // lowerf.cpp
 std::string lowerg( const std::string& ) noexcept; // lowerg.cpp
@@ -274,11 +274,11 @@ int main()
   VerifyEqual( toLowerSSE( p1 ), "abcdefghijklmnopqrstuvwxyz" );
   std::cout << toLowerSSE( p2 ) << '\n';
 
-  // lowerd -> toLowerF
+  // AVX2
   std::string q1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   std::string q2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
-  //VerifyEqual( lowerd( q1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
-  //std::cout << lowerd( q2 ) << '\n';
+  VerifyEqual( toLowerAVX2( q1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
+  std::cout << toLowerAVX2( q2 ) << '\n';
 
   // lowere -> toLowerG
   std::string r1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
@@ -347,7 +347,7 @@ int main()
   MEASURE( "Threads", toLowerThreads );
   MEASURE1( "ThreadPool", toLowerThreadPool, threadPool );
   MEASURE( "SSE", toLowerSSE );
-  MEASURE( "lowerd", lowerd );
+  MEASURE( "AVX2", toLowerAVX2 );
   MEASURE( "lowere", lowere );
   MEASURE( "lowerf", lowerf );
   MEASURE_BYVAL( "lowerg", lowerg );

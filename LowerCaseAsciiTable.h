@@ -55,7 +55,7 @@ static constexpr LowerCaseAsciiTable kLowerCaseAsciiTableHardCoded =
 } };
 
 // Compiler generated table
-static constexpr LowerCaseAsciiTable kLowerCaseAsciiTable = []
+inline constexpr LowerCaseAsciiTable kLowerCaseAsciiTable = []
 {
   // Create standard ASCII table
   LowerCaseAsciiTable lowerAscii;

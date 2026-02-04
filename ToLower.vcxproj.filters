@@ -8,7 +8,7 @@
     <ClCompile Include="toLowerSpan.h" />
     <ClCompile Include="toLowerStrView.h" />
     <ClCompile Include="toLowerSSE.h" />
-    <ClCompile Include="lowerd.cpp" />
+    <ClCompile Include="toLowerAVX2.h" />
     <ClCompile Include="RandomStr.cpp" />
     <ClCompile Include="lowere.cpp" />
     <ClCompile Include="lowerf.cpp" />

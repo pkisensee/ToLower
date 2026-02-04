@@ -15,18 +15,14 @@
 #include <iterator>
 #include "getLowerChar.h"
 
-// VS may give false positive if const var (kSSEbytes) used in templates
-#pragma warning( push )
-#pragma warning( disable: 5264 )
-
-static const __m128i kAAAAs = _mm_set1_epi8( 'A' - 1 ); // no mm_cmpgte, so offset -1
-static const __m128i kZZZZs = _mm_set1_epi8( 'Z' + 1 ); // no mm_cmplte, so offset +1
-static const __m128i kCaseOffset = _mm_set1_epi8( 'a' - 'A' );
-static const size_t kSSEbytes = sizeof(__m128i);
-
 // Convert char sequence to lower case in place. Returns modified sequence.
 constexpr auto&& toLowerSSE( auto&& s ) noexcept
 {
+  static const __m128i kAAAAs = _mm_set1_epi8( 'A' - 1 ); // no mm_cmpgte, so offset -1
+  static const __m128i kZZZZs = _mm_set1_epi8( 'Z' + 1 ); // no mm_cmplte, so offset +1
+  static const __m128i kCaseOffset = _mm_set1_epi8( 'a' - 'A' );
+  static const size_t kSSEbytes = sizeof( __m128i ); // typically 16
+
   // Convert each kSSEbyte block
   size_t len = std::size( s );
   char* data = std::data( s );
@@ -76,7 +72,5 @@ constexpr auto&& toLowerSSE( auto&& s ) noexcept
 
   return std::forward<decltype( s )>( s );
 }
-
-#pragma warning( pop )
 
 ///////////////////////////////////////////////////////////////////////////////
