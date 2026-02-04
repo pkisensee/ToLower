@@ -11,6 +11,7 @@
 //    * Unreadable
 
 #pragma once
+
 #include <emmintrin.h>
 #include <iterator>
 #include "getLowerChar.h"

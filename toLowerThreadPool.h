@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// toLowerThreadPool.cpp
+// toLowerThreadPool.h
 //
 // Notes: 
 //    * Thread pool passed as parameter
@@ -10,6 +10,8 @@
 // Issues:
 //    * Still calling getLowerChar, which calls tolower()
 //    * Might be faster with look up table
+
+#pragma once
 
 #include <algorithm>
 #include <cassert>

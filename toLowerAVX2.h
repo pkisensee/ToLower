@@ -14,13 +14,10 @@
 //    * Doesn't handle @, [, ], ^, _, and '\'
 
 #pragma once
+
 #include <immintrin.h>
 #include <iterator>
 #include <string>
-
-// VS may give false positive if const var (kAVX2bytes) used in templates
-#pragma warning( push )
-#pragma warning( disable: 5264 )
 
 // Convert char sequence to lower case in place. Returns modified sequence.
 constexpr auto&& toLowerAVX2( auto&& s ) noexcept
@@ -48,7 +45,5 @@ constexpr auto&& toLowerAVX2( auto&& s ) noexcept
   }
   return s;
 }
-
-#pragma warning( pop )
 
 ///////////////////////////////////////////////////////////////////////////////

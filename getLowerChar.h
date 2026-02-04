@@ -11,6 +11,7 @@
 // current locale, which is runtime state.
 
 #pragma once
+
 #include <cctype>
 
 // Converts the incoming character to lowercase

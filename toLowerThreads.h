@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// toLowerThreads.cpp
+// toLowerThreads.h
 //
 // Notes: 
 //    * Multi-threaded solution
@@ -10,6 +10,8 @@
 //    * Allocates memory
 //    * In practice, this function should create the jthread vector and
 //      then invoke toLowerD
+
+#pragma once
 
 #include <algorithm>
 #include <ranges>
