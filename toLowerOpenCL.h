@@ -10,6 +10,8 @@
 //    * Must install OpenCL SDK
 //    * Must install runtime/drivers for AMD or NVIDIA GPU (Windows)
 
+#pragma once
+
 #include "OpenCLContext.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
@@ -17,3 +19,5 @@ constexpr auto&& toLowerOpenCL( auto&& s, OpenCLContext& openCLContext ) noexcep
 {
   return openCLContext.ToLower( s );
 }
+
+///////////////////////////////////////////////////////////////////////////////

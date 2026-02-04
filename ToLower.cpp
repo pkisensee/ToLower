@@ -53,9 +53,7 @@
 #include "toLowerSSE.h"
 #include "toLowerAVX2.h"
 #include "toLowerOpenCL.h"
-
-std::string& lowerf( std::string& );          // lowerf.cpp
-std::string lowerg( const std::string& ) noexcept; // lowerg.cpp
+#include "getLowerByValue.h"
 
 std::string getRandomStr( size_t ); // RandomStr.cpp
 
@@ -364,5 +362,5 @@ int main()
   OpenCLContext openCLContextLowerVector{ CL_DEVICE_TYPE_GPU, "lower.cl", "lowerVector" };
   MEASURE1( "OpenCL Vector", toLowerOpenCL, openCLContextLowerVector );
 
-  MEASURE_BYVAL( "lowerg", lowerg );
+  MEASURE_BYVAL( "ByValue", getLowerByValue );
 }

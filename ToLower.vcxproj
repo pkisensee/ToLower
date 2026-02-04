@@ -187,7 +187,7 @@
     <ClCompile Include="toLowerSSE.h" />
     <ClCompile Include="toLowerAVX2.h" />
     <ClCompile Include="toLowerOpenCL.h" />
-    <ClCompile Include="lowerg.cpp" />
+    <ClCompile Include="getLowerByValue.h" />
     <ClCompile Include="RandomStr.cpp" />
     <ClCompile Include="ToLower.cpp" />
   </ItemGroup>
