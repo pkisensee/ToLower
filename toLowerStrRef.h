@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// toLower3.h
+// toLowerStrRef.h
 //
 // Notes: 
 //    * Uses std::string
@@ -21,7 +21,7 @@
 #include <string>
 #include "getLowerChar.h"
 
-inline std::string& toLower3( std::string& s )
+inline std::string& toLowerStrRef( std::string& s )
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
