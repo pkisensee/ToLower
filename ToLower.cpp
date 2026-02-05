@@ -1,6 +1,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
 //  ToLower.cpp
+// 
+//  Test and performance module for evaluating correctness and performance
+//  of various case conversion functions.
 //
 //  Copyright © Pete Isensee (PKIsensee@msn.com).
 //  All rights reserved worldwide.
@@ -346,3 +349,5 @@ int main()
 
   MEASURE_BYVAL( "ByValue", getLowerByValue );
 }
+
+///////////////////////////////////////////////////////////////////////////////

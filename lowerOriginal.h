@@ -1,8 +1,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// lowerOriginal.h
+//  lowerOriginal.h
 //
-// Issues: 
+//  Issues: 
 //    * Compiler warnings; strlen returns size_t (unsigned) but loop uses int (signed)
 //    * UB if input is null
 //    * strlen is an unsafe function used for buffer overflow attacks
@@ -13,6 +13,16 @@
 //    * Non-obvious that s itself is converted
 //    * UB to call tolower() without first converting the input to unsigned char
 //      (https://en.cppreference.com/w/cpp/string/byte/tolower)
+//
+//  Copyright © Pete Isensee (PKIsensee@msn.com).
+//  All rights reserved worldwide.
+//
+//  Permission to copy, modify, reproduce or redistribute this source code is
+//  granted provided the above copyright notice is retained in the resulting 
+//  source code.
+// 
+//  This software is provided "as is" and without any express or implied
+//  warranties.
 
 #pragma once
 

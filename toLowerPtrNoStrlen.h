@@ -1,17 +1,26 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// toLowerPtrNoStrlen.h
+//  toLowerPtrNoStrlen.h
 //
-// Notes: 
+//  Notes: 
 //    * checks for nullptr (good)
 //    * requires a size and bounds to that size (good)
 //    * doesn't call strlen every iteration
 //    * proper casts
 //
-// Issues:
+//  Issues:
 //    * C-like; doesn't use C++ standard libraries
 //    * caller has to pass the length -- prone to error
 //
+//  Copyright © Pete Isensee (PKIsensee@msn.com).
+//  All rights reserved worldwide.
+//
+//  Permission to copy, modify, reproduce or redistribute this source code is
+//  granted provided the above copyright notice is retained in the resulting 
+//  source code.
+// 
+//  This software is provided "as is" and without any express or implied
+//  warranties.
 
 #pragma once
 

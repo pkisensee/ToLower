@@ -1,12 +1,22 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// toLowerStrView.h
+//  toLowerStrView.h
 //
-// Notes: 
+//  Notes: 
 //    * Uses std::string_view C++17 -- more flexible
 //
-// Issues:
+//  Issues:
 //    * Compiler error: std::string_views are immutable; this is a good thing!
+//
+//  Copyright © Pete Isensee (PKIsensee@msn.com).
+//  All rights reserved worldwide.
+//
+//  Permission to copy, modify, reproduce or redistribute this source code is
+//  granted provided the above copyright notice is retained in the resulting 
+//  source code.
+// 
+//  This software is provided "as is" and without any express or implied
+//  warranties.
 
 #pragma once
 

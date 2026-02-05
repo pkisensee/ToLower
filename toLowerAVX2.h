@@ -1,17 +1,27 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// toLowerAVX2.h
+//  toLowerAVX2.h
 //
-// Notes: 
+//  Notes: 
 //    * Same flexible interface
 //    * AVX2 vectorized solution
 //    * Uses bit 5 trick
 //    * 32 characters at a time
 //    * Simpler than SSE solution; fewer instructions
 //
-// Issues:
+//  Issues:
 //    * Unreadable
 //    * Doesn't handle @, [, ], ^, _, and '\'
+//
+//  Copyright © Pete Isensee (PKIsensee@msn.com).
+//  All rights reserved worldwide.
+//
+//  Permission to copy, modify, reproduce or redistribute this source code is
+//  granted provided the above copyright notice is retained in the resulting 
+//  source code.
+// 
+//  This software is provided "as is" and without any express or implied
+//  warranties.
 
 #pragma once
 

@@ -1,8 +1,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// toLowerStrRef.h
+//  toLowerStrRef.h
 //
-// Notes: 
+//  Notes: 
 //    * Uses std::string
 //    * Obvious that input is being modified (passed by non-const ref)
 //    * Uses ranges
@@ -11,8 +11,18 @@
 //    * Proven containers and algorithms
 //    * Less ambiguous function name (lower() could be noun or adj)
 //
-// Issues:
+//  Issues:
 //    * Doesn't work for anything but std::string
+//
+//  Copyright © Pete Isensee (PKIsensee@msn.com).
+//  All rights reserved worldwide.
+//
+//  Permission to copy, modify, reproduce or redistribute this source code is
+//  granted provided the above copyright notice is retained in the resulting 
+//  source code.
+// 
+//  This software is provided "as is" and without any express or implied
+//  warranties.
 
 #pragma once
 
