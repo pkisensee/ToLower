@@ -28,8 +28,9 @@
 #include <utility>
 #include "getLowerChar.h"
 
+// Convert char sequence to lower case in place. Returns modified sequence.
 template <typename String>
-String&& toLowerTemplatized( String&& s )
+constexpr String&& toLowerTemplatized( String&& s ) noexcept
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {

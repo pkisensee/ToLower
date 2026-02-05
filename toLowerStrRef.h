@@ -31,6 +31,7 @@
 #include <string>
 #include "getLowerChar.h"
 
+// Convert string to lower case in place. Returns modified string.
 inline std::string& toLowerStrRef( std::string& s )
 {
   std::ranges::transform( s, std::begin( s ), []( char c )

@@ -29,6 +29,7 @@
 #include <span>
 #include "getLowerChar.h"
 
+// Convert char sequence to lower case in place. Returns modified sequence.
 inline char* toLowerSpan( std::span<char> s )
 {
   size_t i = 0;

@@ -44,6 +44,7 @@ char* lower0( char* s ) {
 }
 */
 
+// Convert char sequence to lower case in place. Returns modified sequence.
 inline char* toLowerPtrNoStrlen( char* s, size_t count )
 {
   if( s == nullptr )

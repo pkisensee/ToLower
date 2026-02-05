@@ -120,6 +120,28 @@ static void Verify( std::string_view original, std::string_view lower )
   Verify( tmp, rs ); \
 }
 
+void Measure( auto&& name, auto&& str, auto&& function )
+{
+  std::string tmp{ str };
+  {
+    Stopwatch stopwatch;
+    function( tmp );
+    std::cout << name << ": " << stopwatch.GetElapsedMicroseconds() << " microSec\n";
+  }
+  Verify( str, tmp );
+}
+
+void Measure( auto&& name, auto&& str, auto&& function, auto&& param )
+{
+  std::string tmp{ str };
+  {
+    Stopwatch stopwatch;
+    function( tmp, param );
+    std::cout << name << ": " << stopwatch.GetElapsedMicroseconds() << " microSec\n";
+  }
+  Verify( str, tmp );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 int main()
@@ -318,21 +340,72 @@ int main()
     Verify( rs, tmp );
   }
 
-  MEASURE( "Span", toLowerSpan );
-  MEASURE( "StrRef", toLowerStrRef );
-  //MEASURE( "StrView", toLowerStrView ); // invalid; no need to measure
-  MEASURE( "AutoNoReturn", toLowerAutoNoReturn );
-  MEASURE( "Templatized", toLowerTemplatized );
-  MEASURE( "Auto", toLowerAuto );
-  MEASURE( "AutoConstexpr", toLowerAutoConstexpr );
+  class Profile
+  {
+  private:
+    std::string_view name_;
+    std::function<std::string&(std::string&)> func_;
+    std::string str_;
+
+  public:
+    Profile( std::string_view name, const std::function<std::string& ( std::string& )>& func ) :
+      name_( name ),
+      func_( func )
+    {
+      str_ = getRandomStr( 1024uz * 1024uz * 10uz ); // 10MB
+    }
+
+    Profile() = delete;
+    Profile( const Profile& ) = delete;
+    Profile& operator=( const Profile& ) = delete;
+    Profile& operator=( Profile&& ) = delete;
+
+    void Measure() const
+    {
+      std::string tmp{ str_ };
+      {
+        Stopwatch stopwatch;
+        func_( tmp );
+        std::cout << name_ << ": " << stopwatch.GetElapsedMicroseconds() << " microSec\n";
+      }
+    }
+
+    void Validate() const
+    {
+      std::string tmp{ str_ };
+      func_( tmp );
+      Verify( str_, tmp );
+    }
+
+  };
+
+  std::array<Profile, 9> profiles =
+  { {
+    { "StrRef",         toLowerStrRef                      },
+    { "Auto",           toLowerAuto         <std::string&> },
+    { "Templatized",    toLowerTemplatized  <std::string&> },
+    { "AutoConstexpr",  toLowerAutoConstexpr<std::string&> },
+    { "5thBit",         toLower5thBit       <std::string&> },
+    { "LookupTable",    toLowerLookupTable  <std::string&> },
+    { "Threads",        toLowerThreads      <std::string&> },
+    { "SSE",            toLowerSSE          <std::string&> },
+    { "AVX2",           toLowerAVX2         <std::string&> },
+    } };
+
+  for ( const auto& profile : profiles )
+  {
+    profile.Measure();
+  }
+
+  Measure( "Span", rs, toLowerSpan );
+  Measure( "AutoNoReturn", rs, toLowerAutoNoReturn<std::string&> );
+  
+  //const auto& par = std::as_const( std::execution::par );
+  //Measure( "ExecPolicy par", rs, toLowerExecPolicy<std::string&, decltype( par )>, std::execution::par );
+
   MEASURE1( "ExecPolicy par", toLowerExecPolicy, std::execution::par );
   MEASURE1( "ExecPolicy par_unseq", toLowerExecPolicy, std::execution::par_unseq );
-  MEASURE( "5thBit", toLower5thBit );
-  MEASURE( "LookupTable", toLowerLookupTable );
-  MEASURE( "Threads", toLowerThreads );
   MEASURE1( "ThreadPool", toLowerThreadPool, threadPool );
-  MEASURE( "SSE", toLowerSSE );
-  MEASURE( "AVX2", toLowerAVX2 );
   MEASURE1( "OpenCL LookupTable", toLowerOpenCL, openCLContextLowerLUT );
 
   OpenCLContext openCLContextLowerBranch{ CL_DEVICE_TYPE_GPU, "lower.cl", "lowerBranch" };

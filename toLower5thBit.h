@@ -36,6 +36,7 @@
 #include <string>
 #include <utility>
 
+// Convert char sequence to lower case in place. Returns modified sequence.
 constexpr auto&& toLower5thBit( auto&& s ) noexcept
 {
   static constexpr unsigned char kBit5Set = 0b0010'0000; // 0x20

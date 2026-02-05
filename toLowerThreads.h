@@ -31,6 +31,7 @@
 #include <vector>
 #include "getLowerChar.h"
 
+// Convert char sequence to lower case in place. Returns modified sequence.
 constexpr auto&& toLowerThreads( auto&& s ) noexcept
 {
   auto toLowerWorker = []( auto substr )

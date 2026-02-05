@@ -25,6 +25,7 @@
 #include <utility>
 #include "getLowerChar.h"
 
+// Convert char sequence to lower case in place. Returns modified sequence.
 constexpr auto&& toLowerAutoConstexpr( auto&& s ) noexcept
 {
   std::ranges::transform( s, std::begin( s ), []( char c )

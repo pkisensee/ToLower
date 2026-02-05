@@ -31,6 +31,7 @@
 #include <thread>
 #include "getLowerChar.h"
 
+// Convert char sequence to lower case in place. Returns modified sequence.
 constexpr auto&& toLowerThreadPool( auto&& s, auto&& threadPool ) noexcept
 {
   assert( !threadPool.empty() );
