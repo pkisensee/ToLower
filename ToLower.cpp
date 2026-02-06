@@ -324,30 +324,14 @@ int main()
   // Timing runs
   std::string rs = getRandomStr( kRandomStrSize );
 
-  { // Original
-    std::string tmp = rs;
-    tmp.resize( tmp.size() / 100 ); // temporary TODO
-    Stopwatch stopwatch;
-    // Extremely slow because of repeated calls to strlen
-    lowerOriginal( tmp.data() );
-    std::cout << "Original/100: " << stopwatch.GetElapsedMicroseconds() << " microSec\n";
-    //Verify( rs, tmp );
-  }
-
-  { // PtrNoStrlen
-    std::string tmp = rs;
-    Stopwatch stopwatch;
-    toLowerPtrNoStrlen( tmp.data(), tmp.size() );
-    std::cout << "PtrNoStrlen: " << stopwatch.GetElapsedMicroseconds() << " microSec\n";
-    Verify( rs, tmp );
-  }
-
-  std::array<Profile, 11> profiles =
+  std::array<Profile, 14> profiles =
   { {
     { "Original",       lowerOriginal                     , 0.01 },
+    { "PtrNoStrlen",    toLowerPtrNoStrlen                       },
     { "Span",           toLowerSpan                              },
     { "StrRef",         toLowerStrRef                     , 2.0  },
     { "Auto",           toLowerAuto         <std::string&>       },
+    { "AutoNoReturn",   toLowerAutoNoReturn <std::string&>       },
     { "Templatized",    toLowerTemplatized  <std::string&>       },
     { "AutoConstexpr",  toLowerAutoConstexpr<std::string&>       },
     { "5thBit",         toLower5thBit       <std::string&>       },
@@ -355,18 +339,15 @@ int main()
     { "Threads",        toLowerThreads      <std::string&>       },
     { "SSE",            toLowerSSE          <std::string&>       },
     { "AVX2",           toLowerAVX2         <std::string&>       },
-    } };
+    { "ExecPolicy par", toLowerExecPolicy   <std::string&, const std::execution::parallel_policy&>, std::execution::par },
+  } };
 
   for ( const auto& profile : profiles )
     profile.Measure();
 
-  Measure( "Span", rs, toLowerSpan );
-  Measure( "AutoNoReturn", rs, toLowerAutoNoReturn<std::string&> );
-  
   //const auto& par = std::as_const( std::execution::par );
   //Measure( "ExecPolicy par", rs, toLowerExecPolicy<std::string&, decltype( par )>, std::execution::par );
 
-  MEASURE1( "ExecPolicy par", toLowerExecPolicy, std::execution::par );
   MEASURE1( "ExecPolicy par_unseq", toLowerExecPolicy, std::execution::par_unseq );
   MEASURE1( "ThreadPool", toLowerThreadPool, threadPool );
   MEASURE1( "OpenCL LookupTable", toLowerOpenCL, openCLContextLowerLUT );
