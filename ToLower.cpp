@@ -58,8 +58,7 @@
 #endif
 
 size_t kRandomStrSize = 1024uz * 1024uz * 10uz; // 10 MB baseline for scale=1.0
-std::string Profile::testStr_;
-size_t Profile::testStringSize_ = kRandomStrSize;
+std::string Profile::testStr_ = getRandomStr( kRandomStrSize );
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -324,32 +323,33 @@ int main()
   // Timing runs
   std::string rs = getRandomStr( kRandomStrSize );
 
-  std::array<Profile, 14> profiles =
+  namespace execution = std::execution;
+  using ParPolicy = execution::parallel_policy;
+  using ParUnseqPolicy = std::execution::parallel_unsequenced_policy;
+
+  std::array<Profile, 16> profiles =
   { {
-    { "Original",       lowerOriginal                     , 0.01 },
-    { "PtrNoStrlen",    toLowerPtrNoStrlen                       },
-    { "Span",           toLowerSpan                              },
-    { "StrRef",         toLowerStrRef                     , 2.0  },
-    { "Auto",           toLowerAuto         <std::string&>       },
-    { "AutoNoReturn",   toLowerAutoNoReturn <std::string&>       },
-    { "Templatized",    toLowerTemplatized  <std::string&>       },
-    { "AutoConstexpr",  toLowerAutoConstexpr<std::string&>       },
-    { "5thBit",         toLower5thBit       <std::string&>       },
-    { "LookupTable",    toLowerLookupTable  <std::string&>       },
-    { "Threads",        toLowerThreads      <std::string&>       },
-    { "SSE",            toLowerSSE          <std::string&>       },
-    { "AVX2",           toLowerAVX2         <std::string&>       },
-    { "ExecPolicy par", toLowerExecPolicy   <std::string&, const std::execution::parallel_policy&>, std::execution::par },
+    { "Original",             lowerOriginal                     , 0.01 },
+    { "PtrNoStrlen",          toLowerPtrNoStrlen                       },
+    { "Span",                 toLowerSpan                              },
+    { "StrRef",               toLowerStrRef                     , 2.0  },
+    { "Auto",                 toLowerAuto         <std::string&>       },
+    { "AutoNoReturn",         toLowerAutoNoReturn <std::string&>       },
+    { "Templatized",          toLowerTemplatized  <std::string&>       },
+    { "AutoConstexpr",        toLowerAutoConstexpr<std::string&>       },
+    { "5thBit",               toLower5thBit       <std::string&>       },
+    { "LookupTable",          toLowerLookupTable  <std::string&>       },
+    { "Threads",              toLowerThreads      <std::string&>       },
+    { "SSE",                  toLowerSSE          <std::string&>       },
+    { "AVX2",                 toLowerAVX2         <std::string&>       },
+    { "ExecPolicy par",       toLowerExecPolicy   <std::string&, const ParPolicy&>, execution::par },
+    { "ExecPolicy par_unseq", toLowerExecPolicy   <std::string&, const ParUnseqPolicy&>, execution::par_unseq },
+    { "ThreadPool",           toLowerThreadPool   <std::string&, std::vector<std::jthread>&>, &threadPool },
   } };
 
   for ( const auto& profile : profiles )
     profile.Measure();
 
-  //const auto& par = std::as_const( std::execution::par );
-  //Measure( "ExecPolicy par", rs, toLowerExecPolicy<std::string&, decltype( par )>, std::execution::par );
-
-  MEASURE1( "ExecPolicy par_unseq", toLowerExecPolicy, std::execution::par_unseq );
-  MEASURE1( "ThreadPool", toLowerThreadPool, threadPool );
   MEASURE1( "OpenCL LookupTable", toLowerOpenCL, openCLContextLowerLUT );
 
   OpenCLContext openCLContextLowerBranch{ CL_DEVICE_TYPE_GPU, "lower.cl", "lowerBranch" };

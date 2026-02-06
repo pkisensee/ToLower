@@ -67,11 +67,30 @@ public:
   {
   }
 
-  Profile( std::string_view name, std::string& ( *func )( std::string&, const std::execution::parallel_policy& ), const std::execution::parallel_policy& execPolicy ) :
+  Profile( std::string_view name, std::string& ( *func )( std::string&, const std::execution::parallel_policy& ), 
+           const std::execution::parallel_policy& parPolicy ) :
     name_( name ),
     func_( std::function<std::string& ( std::string&, const std::execution::parallel_policy& )>( func ) ),
     scale_( 1.0 ),
-    execPolicy_( execPolicy )
+    parPolicy_( parPolicy )
+  {
+  }
+
+  Profile( std::string_view name, std::string& ( *func )( std::string&, const std::execution::parallel_unsequenced_policy& ),
+    const std::execution::parallel_unsequenced_policy& parunseqPolicy ) :
+    name_( name ),
+    func_( std::function<std::string& ( std::string&, const std::execution::parallel_unsequenced_policy& )>( func ) ),
+    scale_( 1.0 ),
+    parunseqPolicy_( parunseqPolicy )
+  {
+  }
+
+  Profile( std::string_view name, std::string& ( *func )( std::string&, std::vector<std::jthread>& ),
+    std::vector<std::jthread>* threadPool ) :
+    name_( name ),
+    func_( std::function<std::string& ( std::string&, std::vector<std::jthread>& )>( func ) ),
+    scale_( 1.0 ),
+    threadPool_( threadPool )
   {
   }
 
@@ -125,11 +144,25 @@ public:
         func( input );
         break;
       }
-      case( FunctionType::StrRef_StrRefPolicy ):
+      case( FunctionType::StrRef_StrRefParPolicy ):
       {
-        const auto& func = std::get<FunctionType::StrRef_StrRefPolicy>( func_ );
+        const auto& func = std::get<FunctionType::StrRef_StrRefParPolicy>( func_ );
         stopwatch.Start();
-        func( input, execPolicy_ );
+        func( input, parPolicy_ );
+        break;
+      }
+      case( FunctionType::StrRef_StrRefParUnseqPolicy ):
+      {
+        const auto& func = std::get<FunctionType::StrRef_StrRefParUnseqPolicy>( func_ );
+        stopwatch.Start();
+        func( input, parunseqPolicy_ );
+        break;
+      }
+      case( FunctionType::StrRef_StrRefThreadPool ):
+      {
+        const auto& func = std::get<FunctionType::StrRef_StrRefThreadPool>( func_ );
+        stopwatch.Start();
+        func( input, *threadPool_ );
         break;
       }
     }
@@ -152,9 +185,6 @@ public:
 private:
   std::string GetTestInput() const
   {
-    if ( testStr_.size() != testStringSize_ )
-      testStr_ = getRandomStr( testStringSize_ );
-
     // Create test string of appropriate size based on desired scale
     std::string input{ testStr_ };
     auto scaledSize = static_cast<double>( testStr_.size() ) * scale_;
@@ -173,8 +203,14 @@ private:
     CharPtr_SpanChar,
     Void_StrRef,
     StrRef_StrRef,
-    StrRef_StrRefPolicy,
+    StrRef_StrRefParPolicy,
+    StrRef_StrRefParUnseqPolicy,
+    StrRef_StrRefThreadPool,
   };
+
+  using ParPolicy = std::execution::parallel_policy;
+  using ParUnseqPolicy = std::execution::parallel_unsequenced_policy;
+  using ThreadPoolType = std::vector<std::jthread>;
 
   using FunctionVariant = std::variant<
     std::function< char*        ( char* )>,           // e.g. lowerOriginal
@@ -182,16 +218,24 @@ private:
     std::function< char*        ( std::span<char> )>, // e.g. toLowerSpan
     std::function< void         ( std::string& )>,    // e.g. toLowerAutoNoReturn
     std::function< std::string& ( std::string& )>,    // e.g. toLowerLookupTable
-    std::function< std::string& ( std::string&, const std::execution::parallel_policy& )> // e.g. toLowerExecPolicy
+    std::function< std::string& ( std::string&, const ParPolicy& )>, // e.g. toLowerExecPolicy
+    std::function< std::string& ( std::string&, const ParUnseqPolicy& )>, // e.g. toLowerExecPolicy
+    std::function< std::string& ( std::string&, ThreadPoolType& )> // e.g. toLowerThreadPool
   >;
 
   std::string_view name_; // e.g. "LookupTable"
   FunctionVariant  func_; // e.g. toLowerLookupTable
   double           scale_ = 1.0; // decrease for slow funcs; increase for fast funcs to improve overall speed
-  std::execution::parallel_policy execPolicy_;
 
+  // For std::algorithms with policies
+  std::execution::parallel_policy parPolicy_ = std::execution::par;
+  std::execution::parallel_unsequenced_policy parunseqPolicy_ = std::execution::par_unseq;
+
+  // For functions that accept a threadPool
+  ThreadPoolType *threadPool_;
+
+  // Store a single test string in mixed case
   static std::string testStr_;
-  static size_t testStringSize_;
 
 }; // class Profile
 

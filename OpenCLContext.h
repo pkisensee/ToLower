@@ -67,7 +67,7 @@ public:
   // Establish context given device, .cl file and desired function
   // kernelFunction must have prototype: void toLower( __global char* s, unsigned long len )
   OpenCLContext( cl_device_type preferredDevice, 
-                 const std::filesystem::path& sourceCodeFile, 
+                 const std::filesystem::path& sourceCodeFile,
                  const std::string& kernelFunction ) :
     device_{ GetDefaultDevice( preferredDevice ) },
     context_{ device_ },
