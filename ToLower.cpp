@@ -21,20 +21,17 @@
 #include <clocale>
 #include <execution>
 #include <filesystem>
-#include <functional>
 #include <iostream>
 #include <span>
 #include <string>
 #include <thread>
 #include <utility>
-#include <variant>
 #include <vector>
 
 #include "getLowerByValue.h"
-#include "getRandomStr.h"
 #include "LowerCaseAsciiTable.h"
 #include "lowerOriginal.h"
-#include "Stopwatch.h"
+#include "Profile.h"
 #include "toLower5thBit.h"
 #include "toLowerAuto.h"
 #include "toLowerAutoConstexpr.h"
@@ -61,6 +58,8 @@
 #endif
 
 size_t kRandomStrSize = 1024uz * 1024uz * 10uz; // 10 MB baseline for scale=1.0
+std::string Profile::testStr_;
+size_t Profile::testStringSize_ = kRandomStrSize;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -343,114 +342,23 @@ int main()
     Verify( rs, tmp );
   }
 
-  class Profile
-  {
-  public:
-
-    Profile( std::string_view name, const std::function<char* ( char* )>& func, double scale = 1.0 ) :
-      name_( name ),
-      func_( func ),
-      scale_( scale )
-    {
-    }
-
-    Profile( std::string_view name, const std::function<std::string& ( std::string& )>& func, double scale = 1.0 ) :
-      name_( name ),
-      func_( func ),
-      scale_( scale )
-    {
-    }
-
-    Profile() = delete;
-    Profile( const Profile& ) = delete;
-    Profile& operator=( const Profile& ) = delete;
-    Profile& operator=( Profile&& ) = delete;
-
-    void Measure() const
-    {
-      std::string input = GetTestInput();
-      std::cout << name_ << ": ";
-      Stopwatch stopwatch;
-      switch ( func_.index() )
-      {
-        case( FunctionType::CharPtr_CharPtr ) :
-        {
-          const auto& func = std::get<FunctionType::CharPtr_CharPtr>( func_ );
-          func( input.data() );
-          break;
-        }
-        case( FunctionType::StrRef_StrRef ) :
-        {
-          const auto& func = std::get<FunctionType::StrRef_StrRef>( func_ );
-          func( input );
-          break;
-        }
-      }
-
-      // Record the time
-      double microSecs = stopwatch.GetElapsedMicroseconds();
-      if ( scale_ != 0.0 ) 
-        microSecs /= scale_;
-      std::cout << microSecs << " microSec\n";
-    }
-
-    void Validate() const
-    {
-      std::string tmp{ str_ };
-      // func_( tmp ); TODO
-      Verify( str_, tmp );
-    }
-
-  private:
-    std::string GetTestInput() const
-    {
-      // Create test string of appropriate size based on desired scale
-      std::string input{ str_ };
-      auto scaledSize = static_cast<double>( str_.size() ) * scale_;
-      auto charCount = static_cast<size_t>( scaledSize );
-      while ( input.size() < charCount )
-        input += str_;
-      input.resize( charCount );
-      return input;
-    }
-
-  private:
-    enum FunctionType : size_t // Must match FunctionVariant order below
-    {
-      CharPtr_CharPtr = 0,
-      StrRef_StrRef,
-    };
-
-    using FunctionVariant = std::variant<
-      std::function<char* ( char* )>,                   // e.g. lowerOriginal
-      std::function< std::string& ( std::string& )>     // e.g. toLowerLookupTable
-    >;
-
-    std::string_view name_; // e.g. "LookupTable"
-    FunctionVariant func_;  // e.g. toLowerLookupTable
-    std::string str_ = getRandomStr( kRandomStrSize );
-    double scale_ = 1.0;    // decrease for slow funcs; increase for fast funcs to improve overall speed
-
-  };
-
-  std::array<Profile, 10> profiles =
+  std::array<Profile, 11> profiles =
   { {
     { "Original",       lowerOriginal                     , 0.01 },
+    { "Span",           toLowerSpan                              },
     { "StrRef",         toLowerStrRef                     , 2.0  },
-    { "Auto",           toLowerAuto         <std::string&> },
-    { "Templatized",    toLowerTemplatized  <std::string&> },
-    { "AutoConstexpr",  toLowerAutoConstexpr<std::string&> },
-    { "5thBit",         toLower5thBit       <std::string&> },
-    { "LookupTable",    toLowerLookupTable  <std::string&> },
-    { "Threads",        toLowerThreads      <std::string&> },
-    { "SSE",            toLowerSSE          <std::string&> },
-    { "AVX2",           toLowerAVX2         <std::string&> },
+    { "Auto",           toLowerAuto         <std::string&>       },
+    { "Templatized",    toLowerTemplatized  <std::string&>       },
+    { "AutoConstexpr",  toLowerAutoConstexpr<std::string&>       },
+    { "5thBit",         toLower5thBit       <std::string&>       },
+    { "LookupTable",    toLowerLookupTable  <std::string&>       },
+    { "Threads",        toLowerThreads      <std::string&>       },
+    { "SSE",            toLowerSSE          <std::string&>       },
+    { "AVX2",           toLowerAVX2         <std::string&>       },
     } };
 
   for ( const auto& profile : profiles )
-  {
     profile.Measure();
-  }
 
   Measure( "Span", rs, toLowerSpan );
   Measure( "AutoNoReturn", rs, toLowerAutoNoReturn<std::string&> );
