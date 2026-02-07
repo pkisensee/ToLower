@@ -62,7 +62,7 @@ std::string Profile::testStr_ = getRandomStr( kRandomStrSize );
 
 ///////////////////////////////////////////////////////////////////////////////
 
-int main()
+int __cdecl main()
 {
   std::cout << "5th bit trick visualization\n";
   std::string bit5ASCII( 127uz - ' ', '\0' );

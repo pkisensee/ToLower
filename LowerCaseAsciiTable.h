@@ -19,7 +19,6 @@
 //  warranties.
 
 #pragma once
-
 #include <array>
 #include <numeric> // iota
 #include <ranges>
