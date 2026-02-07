@@ -22,13 +22,13 @@
 //  warranties.
 
 #pragma once
-
 #include <algorithm>
 #include <cassert>
 #include <ranges>
 #include <span>
 #include <string>
 #include <thread>
+#include <utility>
 #include "getLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.

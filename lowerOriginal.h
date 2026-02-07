@@ -25,7 +25,6 @@
 //  warranties.
 
 #pragma once
-
 #include <cctype>
 #include <cstring>
 

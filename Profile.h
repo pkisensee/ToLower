@@ -16,7 +16,6 @@
 //  warranties.
 
 #pragma once
-
 #include <cassert>
 #include <execution>
 #include <functional>

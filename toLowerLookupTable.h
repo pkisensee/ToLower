@@ -20,9 +20,9 @@
 //  warranties.
 
 #pragma once
-
 #include <algorithm>
 #include <ranges>
+#include <utility>
 #include "LowerCaseAsciiTable.h"
 
 // VS may give false positive if constexpr var (kLowerCaseAsciiTable) used in templates

@@ -15,7 +15,6 @@
 //  warranties.
 
 #pragma once
-
 #include <algorithm>
 #include <random>
 #include <ranges>

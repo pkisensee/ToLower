@@ -24,10 +24,10 @@
 //  warranties.
 
 #pragma once
-
 #include <immintrin.h>
 #include <iterator>
 #include <string>
+#include <utility>
 
 // Convert char sequence to lower case in place. Returns modified sequence.
 constexpr auto&& toLowerAVX2( auto&& s ) noexcept

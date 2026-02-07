@@ -23,8 +23,6 @@
 //  warranties.
 
 #pragma once
-
-#include <cstring>
 #include "getLowerChar.h"
 
 // ChatGPT suggests this (safer, faster and more readable), 

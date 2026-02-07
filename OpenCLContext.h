@@ -16,13 +16,15 @@
 //  warranties.
 
 #pragma once
-
 #include <cassert>
 #include <exception>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <string_view>
+#include <unordered_map>
+#include <utility>
 #include <vector>
 
 #pragma warning(push)

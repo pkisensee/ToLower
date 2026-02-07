@@ -21,7 +21,6 @@
 //  warranties.
 
 #pragma once
-
 #include <cctype>
 
 // Converts the incoming character to lowercase

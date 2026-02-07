@@ -23,7 +23,6 @@
 //  warranties.
 
 #pragma once
-
 #include <string>
 #include "toLowerSSE.h"
 

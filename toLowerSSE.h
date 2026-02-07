@@ -21,9 +21,9 @@
 //  warranties.
 
 #pragma once
-
 #include <emmintrin.h>
 #include <iterator>
+#include <utility>
 #include "getLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.

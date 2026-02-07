@@ -20,7 +20,6 @@
 //  warranties.
 
 #pragma once
-
 #include <algorithm>
 #include <utility>
 #include "getLowerChar.h"

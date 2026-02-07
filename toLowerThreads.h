@@ -22,13 +22,13 @@
 //  warranties.
 
 #pragma once
-
 #include <algorithm>
 #include <ranges>
 #include <span>
 #include <string>
 #include <thread>
 #include <vector>
+#include <utility>
 #include "getLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
@@ -44,7 +44,7 @@ constexpr auto&& toLowerThreads( auto&& s ) noexcept
 
   // Divide up the work
   const size_t threadCount = std::max( std::thread::hardware_concurrency(), 1u );
-  const size_t substrLen = s.size() / threadCount;
+  const size_t substrLen = std::size( s ) / threadCount;
 
   // Kick off all but last thread to do case conversion
   size_t strOffset = 0;

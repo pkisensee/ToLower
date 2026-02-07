@@ -30,10 +30,8 @@
 //  warranties.
 
 #pragma once
-
 #include <algorithm>
 #include <ranges>
-#include <string>
 #include <utility>
 
 // Convert char sequence to lower case in place. Returns modified sequence.

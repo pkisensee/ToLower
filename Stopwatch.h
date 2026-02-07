@@ -19,7 +19,6 @@
 //  warranties.
 
 #pragma once
-
 #include <chrono>
 
 class Stopwatch
