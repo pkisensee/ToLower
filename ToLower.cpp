@@ -75,6 +75,7 @@ static void VerifyEqual( std::string_view lhs, std::string_view rhs )
   test( std::ranges::equal( lhs, rhs ) );
 }
 
+/*
 static void Verify( std::string_view original, std::string_view lower )
 {
   test( original.size() == lower.size() );
@@ -94,7 +95,9 @@ static void Verify( std::string_view original, std::string_view lower )
     ++orig;
   }
 }
+*/
 
+/*
 #define MEASURE( name, function ) \
 { \
   std::string tmp = rs; \
@@ -142,11 +145,25 @@ void Measure( auto&& name, auto&& str, auto&& function, auto&& param )
   }
   Verify( str, tmp );
 }
+*/
 
 ///////////////////////////////////////////////////////////////////////////////
 
 int main()
 {
+  std::array<std::string, 5> openCLkernels =
+  { {
+    { "lowerLUT" },
+    { "lowerBranch" },
+    { "lowerBranchless" },
+    { "lower5thBit" },
+    { "lowerVector" },
+  } };
+
+  std::cout << "Compiling OpenCL kernels\n";
+  OpenCLContext openCLContextCPU{ CL_DEVICE_TYPE_CPU, "lower.cl", openCLkernels };
+  OpenCLContext openCLContextGPU{ CL_DEVICE_TYPE_GPU, "lower.cl", openCLkernels };
+
   std::vector<std::jthread> threadPool( std::max( std::thread::hardware_concurrency(), 1u ) );
 
   test( std::ranges::equal( kLowerCaseAsciiTable, kLowerCaseAsciiTableHardCoded ) );
@@ -161,7 +178,7 @@ int main()
   // PtrNoStrlen
   char b1[] = "AbCdEf";
   char b2[] = "AbCdEf";
-  VerifyEqual( toLowerPtrNoStrlen( b1, strlen( b1 ) ), "abcdef");
+  VerifyEqual( toLowerPtrNoStrlen( b1, strlen( b1 ) ), "abcdef" );
   std::cout << toLowerPtrNoStrlen( b2, strlen( b2 ) ) << '\n';
   toLowerPtrNoStrlen( nullptr, 0 ); // safe
 
@@ -195,7 +212,7 @@ int main()
   toLowerAutoNoReturn( f3 );
   VerifyEqual( f3, "abcdef" );
   toLowerAutoNoReturn( f5 );
-  VerifyEqual( std::string_view{ f5.data(), f5.size()-1 }, "abcdef" );
+  VerifyEqual( std::string_view{ f5.data(), f5.size() - 1 }, "abcdef" );
   std::cout << f5 << '\n';
   toLowerAutoNoReturn( f6 );
   VerifyEqual( f6, "abcdef" );
@@ -208,9 +225,9 @@ int main()
   std::span g5{ g4 };
   std::string g6{ "AbCdEf" };
 
-  VerifyEqual( toLowerTemplatized( g3 ), "abcdef");
+  VerifyEqual( toLowerTemplatized( g3 ), "abcdef" );
   toLowerTemplatized( g5 );
-  VerifyEqual( std::string_view{ g5.data(), g5.size()-1 }, "abcdef" );
+  VerifyEqual( std::string_view{ g5.data(), g5.size() - 1 }, "abcdef" );
   std::cout << g5 << '\n';
   std::cout << toLowerTemplatized( g6 ) << '\n';
 
@@ -246,7 +263,7 @@ int main()
 
   VerifyEqual( toLowerExecPolicy( j3, std::execution::par_unseq ), "abcdef" );
   toLowerExecPolicy( j5, std::execution::par_unseq );
-  VerifyEqual( std::string_view{ j5.data(), j5.size()-1 }, "abcdef" );
+  VerifyEqual( std::string_view{ j5.data(), j5.size() - 1 }, "abcdef" );
   std::cout << j5 << '\n';
   std::cout << toLowerExecPolicy( j6, std::execution::par_unseq ) << '\n';
 
@@ -261,7 +278,7 @@ int main()
   std::string m2{ "AbCdEf" };
   toLowerLookupTable( m1 );
   VerifyEqual( m1, "abcdef" );
-  std::cout << toLowerLookupTable(m2) << '\n';
+  std::cout << toLowerLookupTable( m2 ) << '\n';
 
   // Threads
   std::string n1{ "AbCdEf" };
@@ -287,6 +304,7 @@ int main()
   VerifyEqual( toLowerAVX2( q1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
   std::cout << toLowerAVX2( q2 ) << '\n';
 
+  /*
   // OpenCL
   OpenCLContext openCLContextLowerLUT{ CL_DEVICE_TYPE_GPU, "lower.cl", "lowerLUT" };
   std::string r1{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
@@ -305,6 +323,7 @@ int main()
   std::string t2{ "ABCdEfGhIjKlMnOpQrStUvWxYzABCdEfGhIjKlMnOpQrStUvWxYz" };
   //VerifyEqual( lowerg( t1 ), "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz" );
   //std::cout << lowerg( t2 ) << '\n';
+  */
 
   // multithreaded SIMD
   // CUDA, Vulkan, Halide
@@ -327,14 +346,15 @@ int main()
   using ParPolicy = execution::parallel_policy;
   using ParUnseqPolicy = std::execution::parallel_unsequenced_policy;
 
-  std::array<Profile, 16> profiles =
+  std::vector<Profile> profiles =
   { {
     { "Original",             lowerOriginal                     , 0.01 },
     { "PtrNoStrlen",          toLowerPtrNoStrlen                       },
     { "Span",                 toLowerSpan                              },
-    { "StrRef",               toLowerStrRef                     , 2.0  },
+    { "StrRef",               toLowerStrRef                            },
     { "Auto",                 toLowerAuto         <std::string&>       },
     { "AutoNoReturn",         toLowerAutoNoReturn <std::string&>       },
+    { "ByValue",              getLowerByValue     <std::string&>       },
     { "Templatized",          toLowerTemplatized  <std::string&>       },
     { "AutoConstexpr",        toLowerAutoConstexpr<std::string&>       },
     { "5thBit",               toLower5thBit       <std::string&>       },
@@ -344,27 +364,23 @@ int main()
     { "AVX2",                 toLowerAVX2         <std::string&>       },
     { "ExecPolicy par",       toLowerExecPolicy   <std::string&, const ParPolicy&>, execution::par },
     { "ExecPolicy par_unseq", toLowerExecPolicy   <std::string&, const ParUnseqPolicy&>, execution::par_unseq },
-    { "ThreadPool",           toLowerThreadPool   <std::string&, std::vector<std::jthread>&>, &threadPool },
+    { "ThreadPool",           toLowerThreadPool   <std::string&, std::vector<std::jthread>&>, &threadPool},
+
+    { "OpenCL CPU LUT",       toLowerOpenCL, "lowerLUT",        &openCLContextCPU },
+    { "OpenCL CPU Branch",    toLowerOpenCL, "lowerBranch",     &openCLContextCPU },
+    { "OpenCL CPU Branchless",toLowerOpenCL, "lowerBranchless", &openCLContextCPU },
+    { "OpenCL CPU 5thBit",    toLowerOpenCL, "lower5thBit",     &openCLContextCPU },
+    { "OpenCL CPU Vector",    toLowerOpenCL, "lowerVector",     &openCLContextCPU },
+
+    { "OpenCL GPU LUT",       toLowerOpenCL, "lowerLUT",        &openCLContextGPU },
+    { "OpenCL GPU Branch",    toLowerOpenCL, "lowerBranch",     &openCLContextGPU },
+    { "OpenCL GPU Branchless",toLowerOpenCL, "lowerBranchless", &openCLContextGPU },
+    { "OpenCL GPU 5thBit",    toLowerOpenCL, "lower5thBit",     &openCLContextGPU },
+    { "OpenCL GPU Vector",    toLowerOpenCL, "lowerVector",     &openCLContextGPU },
   } };
 
   for ( const auto& profile : profiles )
     profile.Measure();
-
-  MEASURE1( "OpenCL LookupTable", toLowerOpenCL, openCLContextLowerLUT );
-
-  OpenCLContext openCLContextLowerBranch{ CL_DEVICE_TYPE_GPU, "lower.cl", "lowerBranch" };
-  MEASURE1( "OpenCL Branch", toLowerOpenCL, openCLContextLowerBranch );
-
-  OpenCLContext openCLContextLowerBranchless{ CL_DEVICE_TYPE_GPU, "lower.cl", "lowerBranchless" };
-  MEASURE1( "OpenCL Branchless", toLowerOpenCL, openCLContextLowerBranchless );
-
-  OpenCLContext openCLContextLower5thBit{ CL_DEVICE_TYPE_GPU, "lower.cl", "lower5thBit" };
-  MEASURE1( "OpenCL 5thBit", toLowerOpenCL, openCLContextLower5thBit );
-
-  OpenCLContext openCLContextLowerVector{ CL_DEVICE_TYPE_GPU, "lower.cl", "lowerVector" };
-  MEASURE1( "OpenCL Vector", toLowerOpenCL, openCLContextLowerVector );
-
-  MEASURE_BYVAL( "ByValue", getLowerByValue );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

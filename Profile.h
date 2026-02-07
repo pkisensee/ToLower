@@ -20,13 +20,17 @@
 #include <execution>
 #include <functional>
 #include <iostream>
+#include <thread>
 #include <span>
 #include <string>
 #include <string_view>
 #include <variant>
+#include <vector>
 
 #include "getRandomStr.h"
 #include "Stopwatch.h"
+
+class OpenCLContext;
 
 class Profile
 {
@@ -56,6 +60,13 @@ public:
   Profile( std::string_view name, void ( *func )( std::string& ), double scale = 1.0 ) :
     name_( name ),
     func_( std::function<void ( std::string& )>( func ) ),
+    scale_( scale )
+  {
+  }
+
+  Profile( std::string_view name, std::string ( *func )( std::string& ), double scale = 1.0 ) :
+    name_( name ),
+    func_( std::function<std::string ( std::string& )>( func ) ),
     scale_( scale )
   {
   }
@@ -94,8 +105,18 @@ public:
   {
   }
 
+  Profile( std::string_view name, std::string& ( *func )( std::string&, OpenCLContext&, std::string_view ),
+    std::string_view kernel, OpenCLContext* openCLContext ) :
+    name_( name ),
+    func_( std::function<std::string& ( std::string&, OpenCLContext&, std::string_view )>(func)),
+    scale_( 1.0 ),
+    kernel_( kernel ),
+    openCLContext_( openCLContext )
+  {
+  }
+
   Profile() = delete;
-  Profile( const Profile& ) = delete;
+  Profile( const Profile& ) = default;
   Profile& operator=( const Profile& ) = delete;
   Profile& operator=( Profile&& ) = delete;
 
@@ -137,6 +158,13 @@ public:
         func( input );
         break;
       }
+      case( FunctionType::Str_StrRef ):
+      {
+        const auto& func = std::get<FunctionType::Str_StrRef>( func_ );
+        stopwatch.Start();
+        [[maybe_unused]] std::string result = func( input );
+        break;
+      }
       case( FunctionType::StrRef_StrRef ):
       {
         const auto& func = std::get<FunctionType::StrRef_StrRef>( func_ );
@@ -163,6 +191,13 @@ public:
         const auto& func = std::get<FunctionType::StrRef_StrRefThreadPool>( func_ );
         stopwatch.Start();
         func( input, *threadPool_ );
+        break;
+      }
+      case( FunctionType::StrRef_StrRefOpenCLContextStrView ):
+      {
+        const auto& func = std::get<FunctionType::StrRef_StrRefOpenCLContextStrView>( func_ );
+        stopwatch.Start();
+        func( input, *openCLContext_, kernel_ );
         break;
       }
     }
@@ -202,10 +237,12 @@ private:
     CharPtr_CharPtrSizeT,
     CharPtr_SpanChar,
     Void_StrRef,
+    Str_StrRef,
     StrRef_StrRef,
     StrRef_StrRefParPolicy,
     StrRef_StrRefParUnseqPolicy,
     StrRef_StrRefThreadPool,
+    StrRef_StrRefOpenCLContextStrView,
   };
 
   using ParPolicy = std::execution::parallel_policy;
@@ -217,10 +254,12 @@ private:
     std::function< char*        ( char*, size_t )>,   // e.g. toLowerPtrNoStrlen
     std::function< char*        ( std::span<char> )>, // e.g. toLowerSpan
     std::function< void         ( std::string& )>,    // e.g. toLowerAutoNoReturn
+    std::function< std::string  ( std::string& )>,    // e.g. getLowerByValue
     std::function< std::string& ( std::string& )>,    // e.g. toLowerLookupTable
     std::function< std::string& ( std::string&, const ParPolicy& )>, // e.g. toLowerExecPolicy
     std::function< std::string& ( std::string&, const ParUnseqPolicy& )>, // e.g. toLowerExecPolicy
-    std::function< std::string& ( std::string&, ThreadPoolType& )> // e.g. toLowerThreadPool
+    std::function< std::string& ( std::string&, ThreadPoolType& )>, // e.g. toLowerThreadPool
+    std::function< std::string& ( std::string&, OpenCLContext&, std::string_view )> // e.g. toLowerOpenCL
   >;
 
   std::string_view name_; // e.g. "LookupTable"
@@ -232,7 +271,11 @@ private:
   std::execution::parallel_unsequenced_policy parunseqPolicy_ = std::execution::par_unseq;
 
   // For functions that accept a threadPool
-  ThreadPoolType *threadPool_;
+  ThreadPoolType* threadPool_ = nullptr;
+
+  // For OpenCL functions
+  std::string_view kernel_; // e.g. "lowerLUT"
+  OpenCLContext* openCLContext_ = nullptr;
 
   // Store a single test string in mixed case
   static std::string testStr_;

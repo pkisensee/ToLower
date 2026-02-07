@@ -68,27 +68,33 @@ public:
   // kernelFunction must have prototype: void toLower( __global char* s, unsigned long len )
   OpenCLContext( cl_device_type preferredDevice, 
                  const std::filesystem::path& sourceCodeFile,
-                 const std::string& kernelFunction ) :
+                 const auto& kernelNames ) :
     device_{ GetDefaultDevice( preferredDevice ) },
     context_{ device_ },
     queue_{ context_, device_ },
-    program_{ context_, GetSourceCode( sourceCodeFile ) },
-    kernel_{}
+    program_{ context_, GetSourceCode( sourceCodeFile ) }
   {
-    // Build the kernel
+    // Build the kernels
     auto result = program_.build( device_, kBuildOptions );
     if( result != CL_SUCCESS )
     {
       std::cout << program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>( device_ );
       throw std::exception( "Error compiling OpenCL kernel" );
     }
-    kernel_ = cl::Kernel{ program_, kernelFunction };
-    assert( kernel_.get() != nullptr );
+    for ( const auto& kernelName : kernelNames )
+    {
+      cl::Kernel kernel{ program_, kernelName };
+      kernels_.insert( { kernelName, kernel } );
+    }
   }
 
   // Convert char sequence to lower case in place. Returns modified sequence.
-  constexpr auto&& ToLower( auto&& s ) noexcept
+  constexpr auto&& ToLower( auto&& s, std::string_view kernelName ) noexcept
   {
+    // Grab relevant kernel
+    std::string kn{ kernelName }; // TODO fix
+    auto& kernel = kernels_[ kn ];
+
     // Point CL buffer to incoming char sequence
     size_t len = std::size( s );
     char* data = std::data( s );
@@ -97,14 +103,14 @@ public:
 
     // Establish arguments to kernl function
     // void toLower( __global char* s, unsigned long len )
-    kernel_.setArg( 0, stringDataBuffer );
-    kernel_.setArg( 1, static_cast<uint64_t>( len ) );
+    kernel.setArg( 0, stringDataBuffer );
+    kernel.setArg( 1, static_cast<uint64_t>( len ) );
 
     // Execute kernel on device
     auto offset = cl::NullRange;           // process the entire string
     auto threadCount = cl::NDRange{ len }; // 1 thread per character
     auto localWork = cl::NullRange;        // no local threads
-    queue_.enqueueNDRangeKernel( kernel_, offset, threadCount, localWork );
+    queue_.enqueueNDRangeKernel( kernel, offset, threadCount, localWork );
     queue_.finish();
 
     // Read results back into s
@@ -120,7 +126,10 @@ private:
   cl::Context       context_;
   cl::CommandQueue  queue_;
   cl::Program       program_;
-  cl::Kernel        kernel_;
+
+  using Key = std::string;
+  using Value = cl::Kernel;
+  std::unordered_map< Key, Value > kernels_;
 };
 
-///////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////// 

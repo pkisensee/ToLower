@@ -21,13 +21,13 @@
 //  warranties.
 
 #pragma once
-
+#include <string_view>
 #include "OpenCLContext.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-constexpr auto&& toLowerOpenCL( auto&& s, OpenCLContext& openCLContext ) noexcept
+constexpr auto&& toLowerOpenCL( auto&& s, OpenCLContext& openCLContext, std::string_view kernelName ) noexcept
 {
-  return openCLContext.ToLower( s );
+  return openCLContext.ToLower( s, kernelName );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
