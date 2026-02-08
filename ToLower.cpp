@@ -29,6 +29,7 @@
 #include <vector>
 
 #include "getLowerByValue.h"
+#include "getRandomStr.h"
 #include "LowerCaseAsciiTable.h"
 #include "lowerOriginal.h"
 #include "Profile.h"
@@ -51,12 +52,6 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifdef _DEBUG
-#define test(e) assert(e)
-#else
-#define test(e) static_cast<void>( (e) || ( __debugbreak(), 0 ) )
-#endif
-
 size_t kRandomStrSize = 1024uz * 1024uz * 1uz; // 1 MB baseline for scale=1.0
 std::string Profile::testStr_ = getRandomStr( kRandomStrSize );
 
@@ -64,6 +59,11 @@ std::string Profile::testStr_ = getRandomStr( kRandomStrSize );
 
 int __cdecl main()
 {
+  namespace execution = std::execution;
+  using ParPolicy = execution::parallel_policy;
+  using ParUnseqPolicy = std::execution::parallel_unsequenced_policy;
+  using ThreadPoolType = std::vector<std::jthread>;
+
   std::cout << "5th bit trick visualization\n";
   std::string bit5ASCII( 127uz - ' ', '\0' );
   std::ranges::iota( bit5ASCII, ' ' );
@@ -84,17 +84,14 @@ int __cdecl main()
   OpenCLContext openCLContextCPU{ CL_DEVICE_TYPE_CPU, "lower.cl", openCLkernels };
   OpenCLContext openCLContextGPU{ CL_DEVICE_TYPE_GPU, "lower.cl", openCLkernels };
 
-  std::vector<std::jthread> threadPool( std::max( std::thread::hardware_concurrency(), 1u ) );
+  ThreadPoolType threadPool( std::max( std::thread::hardware_concurrency(), 1u ) );
 
-  test( std::ranges::equal( kLowerCaseAsciiTable, kLowerCaseAsciiTableHardCoded ) );
+  assert( std::ranges::equal( kLowerCaseAsciiTable, kLowerCaseAsciiTableHardCoded ) );
 
+  // inline
   // multithreaded SIMD
   // CUDA, Vulkan, Halide
   // https://lemire.me/blog/2024/08/03/converting-ascii-strings-to-lower-case-at-crazy-speeds-with-avx-512/
-
-  namespace execution = std::execution;
-  using ParPolicy = execution::parallel_policy;
-  using ParUnseqPolicy = std::execution::parallel_unsequenced_policy;
 
   std::vector<Profile> profiles =
   { {
@@ -114,7 +111,7 @@ int __cdecl main()
     { "AVX2 5thBit",          toLowerAVX2         <std::string&>       },
     { "ExecPolicy par",       toLowerExecPolicy   <std::string&, const ParPolicy&>, execution::par },
     { "ExecPolicy par_unseq", toLowerExecPolicy   <std::string&, const ParUnseqPolicy&>, execution::par_unseq },
-    { "ThreadPool",           toLowerThreadPool   <std::string&, std::vector<std::jthread>&>, &threadPool},
+    { "ThreadPool",           toLowerThreadPool   <std::string&, ThreadPoolType&>, &threadPool},
 
     { "OpenCL CPU LUT",       toLowerOpenCL, "lowerLUT",        &openCLContextCPU },
     { "OpenCL CPU Branch",    toLowerOpenCL, "lowerBranch",     &openCLContextCPU },

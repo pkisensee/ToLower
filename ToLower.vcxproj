@@ -188,6 +188,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="lowerOriginal.h" />
+    <ClCompile Include="Profile.cpp" />
     <ClCompile Include="toLowerPtrNoStrlen.h" />
     <ClCompile Include="toLowerSpan.h" />
     <ClCompile Include="toLowerStrRef.h" />
