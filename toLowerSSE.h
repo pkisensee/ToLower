@@ -25,10 +25,14 @@
 #include <iterator>
 #include <utility>
 #include "GetLowerChar.h"
+#include "SIMDSupport.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
 constexpr auto&& ToLowerSSE( auto&& s ) noexcept
 {
+  if ( !HasSIMDSupport( SIMDLevel::SSE2 ) )
+    return s;
+
   static const __m128i kAAAAs = _mm_set1_epi8( 'A' - 1 ); // no mm_cmpgte, so offset -1
   static const __m128i kZZZZs = _mm_set1_epi8( 'Z' + 1 ); // no mm_cmplte, so offset +1
   static const __m128i kCaseOffset = _mm_set1_epi8( 'a' - 'A' );

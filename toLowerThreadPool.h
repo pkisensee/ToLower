@@ -8,8 +8,7 @@
 //   * Explicitly joins all threads before exit
 //
 // Issues:
-//   * Still calling GetLowerChar, which calls tolower()
-//   * Might be faster with look up table
+//   * Default version still calling GetLowerChar, which calls tolower()
 //
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.
@@ -30,19 +29,13 @@
 #include <thread>
 #include <utility>
 #include "GetLowerChar.h"
+#include "ToLower5thBit.h"
+#include "ToLowerSSE.h"
 
-// Convert char sequence to lower case in place. Returns modified sequence.
-constexpr auto&& ToLowerThreadPool( auto&& s, auto&& threadPool ) noexcept
+// Helper function that accepts the worker function
+constexpr auto&& ToLowerThreadPoolWithWorker( auto&& s, auto&& threadPool, auto&& toLowerWorker ) noexcept
 {
   assert( !threadPool.empty() );
-
-  auto toLowerWorker = []( auto substr )
-  {
-    std::ranges::transform( substr, substr.begin(), []( auto c )
-    {
-      return GetLowerChar( c );
-    } );
-  };
 
   // Divide up the work
   const size_t threadCount = threadPool.size();
@@ -66,6 +59,36 @@ constexpr auto&& ToLowerThreadPool( auto&& s, auto&& threadPool ) noexcept
   // Wait for case conversion to complete
   std::ranges::for_each( threadPool, []( auto& thread ) { thread.join(); } );
   return std::forward<decltype( s )>( s );
+}
+
+// Convert char sequence to lower case in place. Returns modified sequence.
+// Uses ToLowerSSE().
+constexpr auto&& ToLowerThreadPoolSSE( auto&& s, auto&& threadPool ) noexcept
+{
+  return ToLowerThreadPoolWithWorker( s, threadPool, []( auto&& substr )
+  {
+    ToLowerSSE( substr );
+  } );
+}
+
+// Convert char sequence to lower case in place. Returns modified sequence.
+// Uses ToLower5thBit().
+constexpr auto&& ToLowerThreadPool5thBit( auto&& s, auto&& threadPool ) noexcept
+{
+  return ToLowerThreadPoolWithWorker( s, threadPool, []( auto&& substr )
+  { 
+    ToLower5thBit( substr ); 
+  } );
+}
+
+// Convert char sequence to lower case in place. Returns modified sequence.
+// Uses GetLowerChar().
+constexpr auto&& ToLowerThreadPool( auto&& s, auto&& threadPool ) noexcept
+{
+  return ToLowerThreadPoolWithWorker( s, threadPool, []( auto&& substr )
+  {
+    ToLowerAuto( substr );
+  } );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

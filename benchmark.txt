@@ -1,0 +1,20 @@
+original, 8.5e+06
+ptr no strlen, 47361.5
+span<char>, 41600.2
+std::string&, 42421.3
+templatized, 41087.3
+auto&&, 41051.7
+auto&& no return, 43226.7
+constexpr noexcept, 40910.9
+return by value, 130047
+bit 5 trick, 10150.9
+lookup table, 21060.9
+threads, 15456.5
+thread pool, 13712.6
+thread pool bit 5, 6334.5
+thread pool SSE, 3377.5
+execution::par, 10721.3
+execution::par_unseq, 10567.4
+AVX2 with bit 5, 13100.3
+AVX512 bit 5, 13225.2
+SSE, 1274

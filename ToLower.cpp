@@ -36,6 +36,7 @@
 #include "ToLowerAutoConstexpr.h"
 #include "ToLowerAutoNoReturn.h"
 #include "ToLowerAVX2.h"
+#include "ToLowerAVX512.h"
 #include "ToLowerExecPolicy.h"
 #include "ToLowerLookupTable.h"
 #include "ToLowerOpenCL.h"
@@ -50,13 +51,17 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-size_t kRandomStrSize = 1024uz * 1024uz * 1uz; // 1 MB baseline for scale=1.0
+size_t kRandomStrSize = 1024uz * 1024uz * 10uz; // 10 MB baseline for scale=1.0
 std::string Profile::testStr_ = GetRandomStr( kRandomStrSize );
+std::ofstream Profile::outputFile;
 
 ///////////////////////////////////////////////////////////////////////////////
 
 int __cdecl main()
 {
+  if ( !HasSIMDSupport( SIMDLevel::AVX2 ) ) std::cout << "Note: No AVX2 support\n";
+  if ( !HasSIMDSupport( SIMDLevel::AVX512 ) ) std::cout << "Note: No AVX-512 support\n";
+
   namespace execution = std::execution;
   using ParPolicy = execution::parallel_policy;
   using ParUnseqPolicy = std::execution::parallel_unsequenced_policy;
@@ -79,58 +84,73 @@ int __cdecl main()
   } };
 
   std::cout << "\nCompiling OpenCL kernels\n";
-  OpenCLContext openCLContextCPU{ CL_DEVICE_TYPE_CPU, "Lower.cl", openCLkernels };
-  OpenCLContext openCLContextGPU{ CL_DEVICE_TYPE_GPU, "Lower.cl", openCLkernels };
+  //OpenCLContext openCLContextCPU{ CL_DEVICE_TYPE_CPU, "Lower.cl", openCLkernels };
+  //OpenCLContext openCLContextGPU{ CL_DEVICE_TYPE_GPU, "Lower.cl", openCLkernels };
 
   ThreadPoolType threadPool( std::max( std::thread::hardware_concurrency(), 1u ) );
 
   assert( std::ranges::equal( kLowerCaseAsciiTable, kLowerCaseAsciiTableHardCoded ) );
 
-  // inline
-  // multithreaded SIMD
-  // CUDA, Vulkan, Halide
-  // https://lemire.me/blog/2024/08/03/converting-ascii-strings-to-lower-case-at-crazy-speeds-with-avx-512/
-
   std::vector<Profile> profiles =
   { {
-    { "Original",             LowerOriginal                    , 0.001 },
-    { "PtrNoStrlen",          ToLowerPtrNoStrlen                       },
-    { "Span",                 ToLowerSpan                              },
-    { "StrRef",               ToLowerStrRef                            },
-    { "Auto",                 ToLowerAuto         <std::string&>       },
-    { "AutoNoReturn",         ToLowerAutoNoReturn <std::string&>       },
-    { "ByValue",              GetLowerByValue     <std::string&>       },
-    { "Templatized",          ToLowerTemplatized  <std::string&>       },
-    { "AutoConstexpr",        ToLowerAutoConstexpr<std::string&>       },
-    { "5thBit",               ToLower5thBit       <std::string&>       },
-    { "LookupTable",          ToLowerLookupTable  <std::string&>       },
-    { "Threads",              ToLowerThreads      <std::string&>       },
-    { "SSE",                  ToLowerSSE          <std::string&>       },
-    { "AVX2 5thBit",          ToLowerAVX2         <std::string&>       },
-    { "ExecPolicy par",       ToLowerExecPolicy   <std::string&, const ParPolicy&>, execution::par },
-    { "ExecPolicy par_unseq", ToLowerExecPolicy   <std::string&, const ParUnseqPolicy&>, execution::par_unseq },
-    { "ThreadPool",           ToLowerThreadPool   <std::string&, ThreadPoolType&>, &threadPool},
+    { "original",             LowerOriginal                    , 0.001 },
+    { "ptr no strlen",        ToLowerPtrNoStrlen                       },
+    { "span<char>",           ToLowerSpan                              },
+    { "std::string&",         ToLowerStrRef                            },
+    { "templatized",          ToLowerTemplatized      <std::string&>   },
+    { "auto&&",               ToLowerAuto             <std::string&>   },
+    { "auto&& no return",     ToLowerAutoNoReturn     <std::string&>   },
+    { "constexpr noexcept",   ToLowerAutoConstexpr    <std::string&>   },
+    { "return by value",      GetLowerByValue         <std::string&>   },
+    { "bit 5 trick",          ToLower5thBit           <std::string&>   },
+    { "lookup table",         ToLowerLookupTable      <std::string&>   },
+    { "threads",              ToLowerThreads          <std::string&>   },
+    { "thread pool",          ToLowerThreadPool       <std::string&, ThreadPoolType&>, &threadPool      },
+    { "thread pool bit 5",    ToLowerThreadPool5thBit <std::string&, ThreadPoolType&>, &threadPool      },
+    { "thread pool SSE",      ToLowerThreadPoolSSE    <std::string&, ThreadPoolType&>, &threadPool      },
+    { "execution::par",       ToLowerExecPolicy       <std::string&, const ParPolicy&>, execution::par  },
+    { "execution::par_unseq", ToLowerExecPolicy       <std::string&, const ParUnseqPolicy&>, execution::par_unseq },
+    { "AVX2 with bit 5",      ToLowerAVX2             <std::string&>    },
+    { "AVX512 bit 5",         ToLowerAVX512           <std::string&>    }, // flagged "bit 5" because of fall back to AVX2
+    { "SSE",                  ToLowerSSE              <std::string&>    },
 
+    /*
     { "OpenCL CPU LUT",       ToLowerOpenCL, "lowerLUT",        &openCLContextCPU },
-    { "OpenCL CPU Branch",    ToLowerOpenCL, "lowerBranch",     &openCLContextCPU },
-    { "OpenCL CPU Branchless",ToLowerOpenCL, "lowerBranchless", &openCLContextCPU },
-    { "OpenCL CPU 5thBit",    ToLowerOpenCL, "lower5thBit",     &openCLContextCPU },
-    { "OpenCL CPU Vector",    ToLowerOpenCL, "lowerVector",     &openCLContextCPU },
+    { "OpenCL CPU branch",    ToLowerOpenCL, "lowerBranch",     &openCLContextCPU },
+    { "OpenCL CPU branchless",ToLowerOpenCL, "lowerBranchless", &openCLContextCPU },
+    { "OpenCL CPU bit 5",     ToLowerOpenCL, "lower5thBit",     &openCLContextCPU },
+    { "OpenCL CPU unrolled",  ToLowerOpenCL, "lowerVector",     &openCLContextCPU },
 
     { "OpenCL GPU LUT",       ToLowerOpenCL, "lowerLUT",        &openCLContextGPU },
-    { "OpenCL GPU Branch",    ToLowerOpenCL, "lowerBranch",     &openCLContextGPU },
-    { "OpenCL GPU Branchless",ToLowerOpenCL, "lowerBranchless", &openCLContextGPU },
-    { "OpenCL GPU 5thBit",    ToLowerOpenCL, "lower5thBit",     &openCLContextGPU },
-    { "OpenCL GPU Vector",    ToLowerOpenCL, "lowerVector",     &openCLContextGPU },
+    { "OpenCL GPU branch",    ToLowerOpenCL, "lowerBranch",     &openCLContextGPU },
+    { "OpenCL GPU branchless",ToLowerOpenCL, "lowerBranchless", &openCLContextGPU },
+    { "OpenCL GPU bit 5",     ToLowerOpenCL, "lower5thBit",     &openCLContextGPU },
+    { "OpenCL GPU unrolled",  ToLowerOpenCL, "lowerVector",     &openCLContextGPU },
+    */
   } };
 
   std::cout << "Validating implementations\n";
   for ( const auto& profile : profiles )
     profile.Validate();
 
+
+  Profile::outputFile.open( "benchmark.txt" );
   std::cout << "\nMeasuring implementations\n";
   for ( const auto& profile : profiles )
     profile.Measure();
+
+  Profile::outputFile.close();
+
+  // Additional options to consider:
+  //  * std::simd (currently experimental; expected in C++26)
+  //  * CUDA (NVIDIA GPUs)
+  //  * Vulkan compute shader (GPU)
+  //  * Halide (fast image processing)
+  //  * AMD ROCm
+  //  * VMX (PowerPC CPUs)
+  //  * Neon (ARM)
+  //  * OpenMP
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////

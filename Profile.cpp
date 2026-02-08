@@ -113,7 +113,7 @@ void Profile::Validate() const
   // Test random string
   std::string random = GetTestInput();
   std::string randomLower;
-  if ( name_.contains( "5thBit" ) )
+  if ( name_.contains( "bit 5" ) )
   {
     randomLower = random;
     ToLower5thBit( randomLower );
@@ -140,6 +140,9 @@ void Profile::Measure() const
   if ( scale_ != 0.0 )
     microSecs /= scale_;
   std::cout << microSecs << " microSec\n";
+
+  if ( outputFile.is_open() )
+    outputFile << name_ << ", " << microSecs << '\n';
 }
 
 ///////////////////////////////////////////////////////////////////////////////

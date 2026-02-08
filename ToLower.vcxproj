@@ -209,8 +209,10 @@
     <ClInclude Include="LowerCaseAsciiTable.h" />
     <ClInclude Include="OpenCLContext.h" />
     <ClInclude Include="Profile.h" />
+    <ClInclude Include="SIMDSupport.h" />
     <ClInclude Include="Stopwatch.h" />
     <ClInclude Include="ToLowerAutoNoReturn.h" />
+    <ClInclude Include="ToLowerAVX512.h" />
     <ClInclude Include="ToLowerTemplatized.h" />
     <ClInclude Include="ToLowerAuto.h" />
     <ClInclude Include="ToLowerAutoConstexpr.h" />

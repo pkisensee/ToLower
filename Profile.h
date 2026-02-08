@@ -17,6 +17,7 @@
 
 #pragma once
 #include <execution>
+#include <fstream>
 #include <functional>
 #include <thread>
 #include <span>
@@ -65,6 +66,8 @@ public:
   void Validate() const; // Validate that the function does the correct thing
   void Measure() const; // Record the time required to run the given function
 
+  static std::ofstream outputFile; // Optional output file for storing benchmarks
+
 private:
 
   void Validate( std::string& input, const std::string& expectedOutput ) const;
@@ -106,15 +109,13 @@ private:
   ParPolicy parPolicy_ = std::execution::par;
   ParUnseqPolicy parunseqPolicy_ = std::execution::par_unseq;
 
-  // For functions that accept a threadPool
-  ThreadPoolType* threadPool_ = nullptr;
+  ThreadPoolType* threadPool_ = nullptr; // For functions that accept a threadPool
 
   // For OpenCL functions
   std::string_view kernel_; // e.g. "lowerLUT"
   OpenCLContext* openCLContext_ = nullptr;
 
-  // Store a single test string in mixed case
-  static std::string testStr_;
+  static std::string testStr_; // Store a single test string in mixed case
 
 }; // class Profile
 
