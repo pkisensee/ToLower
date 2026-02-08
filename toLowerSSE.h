@@ -1,24 +1,24 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  ToLowerSSE.h
+// ToLowerSSE.h
 //
-//  Notes: 
-//    * Same flexible interface
-//    * Streaming SIMD Extensions (SSE) vectorized solution
-//    * 16 characters at a time
+// Notes: 
+//   * Same flexible interface
+//   * Streaming SIMD Extensions (SSE) vectorized solution
+//   * 16 characters at a time
 //
-//  Issues:
-//    * Unreadable
+// Issues:
+//   * Unreadable
 //
-//  Copyright © Pete Isensee (PKIsensee@msn.com).
-//  All rights reserved worldwide.
+// Copyright © Pete Isensee (PKIsensee@msn.com).
+// All rights reserved worldwide.
 //
-//  Permission to copy, modify, reproduce or redistribute this source code is
-//  granted provided the above copyright notice is retained in the resulting 
-//  source code.
+// Permission to copy, modify, reproduce or redistribute this source code is
+// granted provided the above copyright notice is retained in the resulting 
+// source code.
 // 
-//  This software is provided "as is" and without any express or implied
-//  warranties.
+// This software is provided "as is" and without any express or implied
+// warranties.
 
 #pragma once
 #include <emmintrin.h>

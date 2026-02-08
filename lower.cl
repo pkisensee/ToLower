@@ -1,18 +1,18 @@
 ///////////////////////////////////////////////////////////////////////////////
 // 
-//  Lower.cl
+// Lower.cl
 // 
-//  Various OpenCL kernel implementations of toLower functions
+// Various OpenCL kernel implementations of toLower functions
 // 
-//  Copyright © Pete Isensee (PKIsensee@msn.com).
-//  All rights reserved worldwide.
+// Copyright © Pete Isensee (PKIsensee@msn.com).
+// All rights reserved worldwide.
 //
-//  Permission to copy, modify, reproduce or redistribute this source code is
-//  granted provided the above copyright notice is retained in the resulting 
-//  source code.
+// Permission to copy, modify, reproduce or redistribute this source code is
+// granted provided the above copyright notice is retained in the resulting 
+// source code.
 // 
-//  This software is provided "as is" and without any express or implied
-//  warranties.
+// This software is provided "as is" and without any express or implied
+// warranties.
 
 // TODO unsigned char?
 __constant char kLowerCaseAsciiTable[256] = {

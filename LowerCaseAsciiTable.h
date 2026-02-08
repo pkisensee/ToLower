@@ -1,22 +1,22 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  LowerCaseAsciiTable.h
+// LowerCaseAsciiTable.h
 //
-//  Notes: 
-//    * Only 256 bytes of memory required
+// Notes: 
+//   * Only 256 bytes of memory required
 //
-//  Issues:
-//    * 
+// Issues:
+//   * 
 // 
-//  Copyright © Pete Isensee (PKIsensee@msn.com).
-//  All rights reserved worldwide.
+// Copyright © Pete Isensee (PKIsensee@msn.com).
+// All rights reserved worldwide.
 //
-//  Permission to copy, modify, reproduce or redistribute this source code is
-//  granted provided the above copyright notice is retained in the resulting 
-//  source code.
+// Permission to copy, modify, reproduce or redistribute this source code is
+// granted provided the above copyright notice is retained in the resulting 
+// source code.
 // 
-//  This software is provided "as is" and without any express or implied
-//  warranties.
+// This software is provided "as is" and without any express or implied
+// warranties.
 
 #pragma once
 #include <array>

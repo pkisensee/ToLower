@@ -1,25 +1,25 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  ToLowerThreads.h
+// ToLowerThreads.h
 //
-//  Notes: 
-//    * Multi-threaded solution
+// Notes: 
+//   * Multi-threaded solution
 //
-//  Issues:
-//    * Threads are created within the function
-//    * Allocates memory
-//    * In practice, this function should create the jthread vector and
-//      then invoke toLowerD
+// Issues:
+//   * Threads are created within the function
+//   * Allocates memory
+//   * In practice, this function should create the jthread vector and
+//     then invoke toLowerD
 //
-//  Copyright © Pete Isensee (PKIsensee@msn.com).
-//  All rights reserved worldwide.
+// Copyright © Pete Isensee (PKIsensee@msn.com).
+// All rights reserved worldwide.
 //
-//  Permission to copy, modify, reproduce or redistribute this source code is
-//  granted provided the above copyright notice is retained in the resulting 
-//  source code.
+// Permission to copy, modify, reproduce or redistribute this source code is
+// granted provided the above copyright notice is retained in the resulting 
+// source code.
 // 
-//  This software is provided "as is" and without any express or implied
-//  warranties.
+// This software is provided "as is" and without any express or implied
+// warranties.
 
 #pragma once
 #include <algorithm>
