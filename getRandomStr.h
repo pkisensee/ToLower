@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  getRandomStr.h
+//  GetRandomStr.h
 //
 //  Generates a string with random ASCII characters from ' ' through 0xFF
 //
@@ -20,7 +20,7 @@
 #include <ranges>
 #include <string>
 
-inline std::string getRandomStr( size_t len )
+inline std::string GetRandomStr( size_t len )
 {
   auto seed = std::random_device{}( );
   std::mt19937 randGenerator( seed );

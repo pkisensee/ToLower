@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  toLowerAuto.h
+//  ToLowerAuto.h
 //
 //  Notes: 
 //    * Uses auto instead of templates
@@ -23,14 +23,14 @@
 #include <algorithm>
 #include <ranges>
 #include <utility>
-#include "getLowerChar.h"
+#include "GetLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-auto&& toLowerAuto( auto&& s )
+auto&& ToLowerAuto( auto&& s )
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
-    return getLowerChar( c );
+    return GetLowerChar( c );
   } );
   return std::forward< decltype(s) >(s);
 }

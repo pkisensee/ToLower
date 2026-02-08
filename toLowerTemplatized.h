@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  toLowerTemplatized.h
+//  ToLowerTemplatized.h
 //
 //  Notes: 
 //    * Templatized for any character sequence that can be modified in place
@@ -25,15 +25,15 @@
 #include <algorithm>
 #include <ranges>
 #include <utility>
-#include "getLowerChar.h"
+#include "GetLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
 template <typename String>
-constexpr String&& toLowerTemplatized( String&& s ) noexcept
+constexpr String&& ToLowerTemplatized( String&& s ) noexcept
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
-    return getLowerChar( c );
+    return GetLowerChar( c );
   } );
   return std::forward< String >( s );
 }

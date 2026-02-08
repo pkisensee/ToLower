@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  toLowerSpan.h
+//  ToLowerSpan.h
 //
 //  Notes: 
 //    * Uses std::span (C++20)
@@ -26,15 +26,15 @@
 
 #pragma once
 #include <span>
-#include "getLowerChar.h"
+#include "GetLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-inline char* toLowerSpan( std::span<char> s )
+inline char* ToLowerSpan( std::span<char> s )
 {
   size_t i = 0;
   for( char c : s )
   {
-    s[ i++ ] = getLowerChar( c );
+    s[ i++ ] = GetLowerChar( c );
   }
   return s.data();
 }

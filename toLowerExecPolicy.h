@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  toLowerExecPolicy.h
+//  ToLowerExecPolicy.h
 //
 //  Notes: 
 //    * Execution policy support
@@ -22,16 +22,16 @@
 #pragma once
 #include <algorithm>
 #include <utility>
-#include "getLowerChar.h"
+#include "GetLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-constexpr auto&& toLowerExecPolicy( auto&& s, auto&& execPolicy ) noexcept
+constexpr auto&& ToLowerExecPolicy( auto&& s, auto&& execPolicy ) noexcept
 {
   auto begin = std::begin( s );
   auto end = std::end( s );
   std::transform( execPolicy, begin, end, begin, []( char c )
   {
-    return getLowerChar( c );
+    return GetLowerChar( c );
   } );
   return std::forward< decltype( s ) >( s );
 }

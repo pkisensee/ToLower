@@ -28,32 +28,32 @@
 #include <utility>
 #include <vector>
 
-#include "getLowerByValue.h"
-#include "getRandomStr.h"
+#include "GetLowerByValue.h"
+#include "GetRandomStr.h"
 #include "LowerCaseAsciiTable.h"
-#include "lowerOriginal.h"
+#include "LowerOriginal.h"
 #include "Profile.h"
-#include "toLower5thBit.h"
-#include "toLowerAuto.h"
-#include "toLowerAutoConstexpr.h"
-#include "toLowerAutoNoReturn.h"
-#include "toLowerAVX2.h"
-#include "toLowerExecPolicy.h"
-#include "toLowerLookupTable.h"
-#include "toLowerOpenCL.h"
-#include "toLowerPtrNoStrlen.h"
-#include "toLowerSpan.h"
-#include "toLowerSSE.h"
-#include "toLowerStrRef.h"
-#include "toLowerStrView.h"
-#include "toLowerTemplatized.h"
-#include "toLowerThreadPool.h"
-#include "toLowerThreads.h"
+#include "ToLower5thBit.h"
+#include "ToLowerAuto.h"
+#include "ToLowerAutoConstexpr.h"
+#include "ToLowerAutoNoReturn.h"
+#include "ToLowerAVX2.h"
+#include "ToLowerExecPolicy.h"
+#include "ToLowerLookupTable.h"
+#include "ToLowerOpenCL.h"
+#include "ToLowerPtrNoStrlen.h"
+#include "ToLowerSpan.h"
+#include "ToLowerSSE.h"
+#include "ToLowerStrRef.h"
+#include "ToLowerStrView.h"
+#include "ToLowerTemplatized.h"
+#include "ToLowerThreadPool.h"
+#include "ToLowerThreads.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 
 size_t kRandomStrSize = 1024uz * 1024uz * 1uz; // 1 MB baseline for scale=1.0
-std::string Profile::testStr_ = getRandomStr( kRandomStrSize );
+std::string Profile::testStr_ = GetRandomStr( kRandomStrSize );
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -68,7 +68,7 @@ int __cdecl main()
   std::string bit5ASCII( 127uz - ' ', '\0' );
   std::ranges::iota( bit5ASCII, ' ' );
   std::cout << bit5ASCII << '\n';
-  toLower5thBit( bit5ASCII );
+  ToLower5thBit( bit5ASCII );
   std::cout << bit5ASCII << '\n';
 
   std::array<std::string, 5> openCLkernels =
@@ -81,8 +81,8 @@ int __cdecl main()
   } };
 
   std::cout << "\nCompiling OpenCL kernels\n";
-  OpenCLContext openCLContextCPU{ CL_DEVICE_TYPE_CPU, "lower.cl", openCLkernels };
-  OpenCLContext openCLContextGPU{ CL_DEVICE_TYPE_GPU, "lower.cl", openCLkernels };
+  OpenCLContext openCLContextCPU{ CL_DEVICE_TYPE_CPU, "Lower.cl", openCLkernels };
+  OpenCLContext openCLContextGPU{ CL_DEVICE_TYPE_GPU, "Lower.cl", openCLkernels };
 
   ThreadPoolType threadPool( std::max( std::thread::hardware_concurrency(), 1u ) );
 
@@ -95,35 +95,35 @@ int __cdecl main()
 
   std::vector<Profile> profiles =
   { {
-    { "Original",             lowerOriginal                    , 0.001 },
-    { "PtrNoStrlen",          toLowerPtrNoStrlen                       },
-    { "Span",                 toLowerSpan                              },
-    { "StrRef",               toLowerStrRef                            },
-    { "Auto",                 toLowerAuto         <std::string&>       },
-    { "AutoNoReturn",         toLowerAutoNoReturn <std::string&>       },
-    { "ByValue",              getLowerByValue     <std::string&>       },
-    { "Templatized",          toLowerTemplatized  <std::string&>       },
-    { "AutoConstexpr",        toLowerAutoConstexpr<std::string&>       },
-    { "5thBit",               toLower5thBit       <std::string&>       },
-    { "LookupTable",          toLowerLookupTable  <std::string&>       },
-    { "Threads",              toLowerThreads      <std::string&>       },
-    { "SSE",                  toLowerSSE          <std::string&>       },
-    { "AVX2 5thBit",          toLowerAVX2         <std::string&>       },
-    { "ExecPolicy par",       toLowerExecPolicy   <std::string&, const ParPolicy&>, execution::par },
-    { "ExecPolicy par_unseq", toLowerExecPolicy   <std::string&, const ParUnseqPolicy&>, execution::par_unseq },
-    { "ThreadPool",           toLowerThreadPool   <std::string&, ThreadPoolType&>, &threadPool},
+    { "Original",             LowerOriginal                    , 0.001 },
+    { "PtrNoStrlen",          ToLowerPtrNoStrlen                       },
+    { "Span",                 ToLowerSpan                              },
+    { "StrRef",               ToLowerStrRef                            },
+    { "Auto",                 ToLowerAuto         <std::string&>       },
+    { "AutoNoReturn",         ToLowerAutoNoReturn <std::string&>       },
+    { "ByValue",              GetLowerByValue     <std::string&>       },
+    { "Templatized",          ToLowerTemplatized  <std::string&>       },
+    { "AutoConstexpr",        ToLowerAutoConstexpr<std::string&>       },
+    { "5thBit",               ToLower5thBit       <std::string&>       },
+    { "LookupTable",          ToLowerLookupTable  <std::string&>       },
+    { "Threads",              ToLowerThreads      <std::string&>       },
+    { "SSE",                  ToLowerSSE          <std::string&>       },
+    { "AVX2 5thBit",          ToLowerAVX2         <std::string&>       },
+    { "ExecPolicy par",       ToLowerExecPolicy   <std::string&, const ParPolicy&>, execution::par },
+    { "ExecPolicy par_unseq", ToLowerExecPolicy   <std::string&, const ParUnseqPolicy&>, execution::par_unseq },
+    { "ThreadPool",           ToLowerThreadPool   <std::string&, ThreadPoolType&>, &threadPool},
 
-    { "OpenCL CPU LUT",       toLowerOpenCL, "lowerLUT",        &openCLContextCPU },
-    { "OpenCL CPU Branch",    toLowerOpenCL, "lowerBranch",     &openCLContextCPU },
-    { "OpenCL CPU Branchless",toLowerOpenCL, "lowerBranchless", &openCLContextCPU },
-    { "OpenCL CPU 5thBit",    toLowerOpenCL, "lower5thBit",     &openCLContextCPU },
-    { "OpenCL CPU Vector",    toLowerOpenCL, "lowerVector",     &openCLContextCPU },
+    { "OpenCL CPU LUT",       ToLowerOpenCL, "lowerLUT",        &openCLContextCPU },
+    { "OpenCL CPU Branch",    ToLowerOpenCL, "lowerBranch",     &openCLContextCPU },
+    { "OpenCL CPU Branchless",ToLowerOpenCL, "lowerBranchless", &openCLContextCPU },
+    { "OpenCL CPU 5thBit",    ToLowerOpenCL, "lower5thBit",     &openCLContextCPU },
+    { "OpenCL CPU Vector",    ToLowerOpenCL, "lowerVector",     &openCLContextCPU },
 
-    { "OpenCL GPU LUT",       toLowerOpenCL, "lowerLUT",        &openCLContextGPU },
-    { "OpenCL GPU Branch",    toLowerOpenCL, "lowerBranch",     &openCLContextGPU },
-    { "OpenCL GPU Branchless",toLowerOpenCL, "lowerBranchless", &openCLContextGPU },
-    { "OpenCL GPU 5thBit",    toLowerOpenCL, "lower5thBit",     &openCLContextGPU },
-    { "OpenCL GPU Vector",    toLowerOpenCL, "lowerVector",     &openCLContextGPU },
+    { "OpenCL GPU LUT",       ToLowerOpenCL, "lowerLUT",        &openCLContextGPU },
+    { "OpenCL GPU Branch",    ToLowerOpenCL, "lowerBranch",     &openCLContextGPU },
+    { "OpenCL GPU Branchless",ToLowerOpenCL, "lowerBranchless", &openCLContextGPU },
+    { "OpenCL GPU 5thBit",    ToLowerOpenCL, "lower5thBit",     &openCLContextGPU },
+    { "OpenCL GPU Vector",    ToLowerOpenCL, "lowerVector",     &openCLContextGPU },
   } };
 
   std::cout << "Validating implementations\n";

@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  toLowerThreads.h
+//  ToLowerThreads.h
 //
 //  Notes: 
 //    * Multi-threaded solution
@@ -29,16 +29,16 @@
 #include <thread>
 #include <vector>
 #include <utility>
-#include "getLowerChar.h"
+#include "GetLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-constexpr auto&& toLowerThreads( auto&& s ) noexcept
+constexpr auto&& ToLowerThreads( auto&& s ) noexcept
 {
   auto toLowerWorker = []( auto substr )
   {
     std::ranges::transform( substr, substr.begin(), []( auto c )
     {
-      return getLowerChar( c );
+      return GetLowerChar( c );
     } );
   };
 

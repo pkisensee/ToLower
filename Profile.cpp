@@ -18,9 +18,9 @@
 #pragma once
 #include <cassert>
 #include <iostream>
-#include "getLowerByValue.h"
-#include "toLower5thBit.h"
-#include "getRandomStr.h"
+#include "GetLowerByValue.h"
+#include "ToLower5thBit.h"
+#include "GetRandomStr.h"
 #include "Profile.h"
 #include "Stopwatch.h"
 
@@ -32,7 +32,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  Constructors
+// Constructors
 
 Profile::Profile( std::string_view name, char* ( *func )( char* ), double scale ) :
   name_( name ),
@@ -116,11 +116,11 @@ void Profile::Validate() const
   if ( name_.contains( "5thBit" ) )
   {
     randomLower = random;
-    toLower5thBit( randomLower );
+    ToLower5thBit( randomLower );
   }
   else
   {
-    randomLower = getLowerByValue( random );
+    randomLower = GetLowerByValue( random );
   }
   Validate( random, randomLower );
   std::cout << "Passed\n";

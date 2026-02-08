@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  toLowerAutoNoReturn.h
+//  ToLowerAutoNoReturn.h
 //
 //  Notes: 
 //    * Returns nothing
@@ -23,14 +23,14 @@
 #pragma once
 #include <algorithm>
 #include <ranges>
-#include "getLowerChar.h"
+#include "GetLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-void toLowerAutoNoReturn( auto&& s )
+void ToLowerAutoNoReturn( auto&& s )
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
-    return getLowerChar( c );
+    return GetLowerChar( c );
   } );
 }
 

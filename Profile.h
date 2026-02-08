@@ -86,20 +86,20 @@ private:
   };
 
   using FunctionVariant = std::variant<
-    std::function< char*        ( char* )>,           // e.g. lowerOriginal
-    std::function< char*        ( char*, size_t )>,   // e.g. toLowerPtrNoStrlen
-    std::function< char*        ( std::span<char> )>, // e.g. toLowerSpan
-    std::function< void         ( std::string& )>,    // e.g. toLowerAutoNoReturn
-    std::function< std::string  ( std::string& )>,    // e.g. getLowerByValue
-    std::function< std::string& ( std::string& )>,    // e.g. toLowerLookupTable
-    std::function< std::string& ( std::string&, const ParPolicy& )>, // e.g. toLowerExecPolicy
-    std::function< std::string& ( std::string&, const ParUnseqPolicy& )>, // e.g. toLowerExecPolicy
-    std::function< std::string& ( std::string&, ThreadPoolType& )>, // e.g. toLowerThreadPool
-    std::function< std::string& ( std::string&, OpenCLContext&, std::string_view )> // e.g. toLowerOpenCL
+    std::function< char*        ( char* )>,           // e.g. LowerOriginal
+    std::function< char*        ( char*, size_t )>,   // e.g. ToLowerPtrNoStrlen
+    std::function< char*        ( std::span<char> )>, // e.g. ToLowerSpan
+    std::function< void         ( std::string& )>,    // e.g. ToLowerAutoNoReturn
+    std::function< std::string  ( std::string& )>,    // e.g. GetLowerByValue
+    std::function< std::string& ( std::string& )>,    // e.g. ToLowerLookupTable
+    std::function< std::string& ( std::string&, const ParPolicy& )>, // e.g. ToLowerExecPolicy
+    std::function< std::string& ( std::string&, const ParUnseqPolicy& )>, // e.g. ToLowerExecPolicy
+    std::function< std::string& ( std::string&, ThreadPoolType& )>, // e.g. ToLowerThreadPool
+    std::function< std::string& ( std::string&, OpenCLContext&, std::string_view )> // e.g. ToLowerOpenCL
   >;
 
   std::string_view name_; // e.g. "LookupTable"
-  FunctionVariant  func_; // e.g. toLowerLookupTable
+  FunctionVariant  func_; // e.g. ToLowerLookupTable
   double           scale_ = 1.0; // decrease for slow funcs; increase for fast funcs to improve Measure() speed
 
   // For std::algorithms with policies

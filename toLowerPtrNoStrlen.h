@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  toLowerPtrNoStrlen.h
+//  ToLowerPtrNoStrlen.h
 //
 //  Notes: 
 //    * checks for nullptr (good)
@@ -23,7 +23,7 @@
 //  warranties.
 
 #pragma once
-#include "getLowerChar.h"
+#include "GetLowerChar.h"
 
 // ChatGPT suggests this (safer, faster and more readable), 
 // but note the call to strlen, then the traversal of the string: O(2N)
@@ -43,14 +43,14 @@ char* lower0( char* s ) {
 */
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-inline char* toLowerPtrNoStrlen( char* s, size_t count )
+inline char* ToLowerPtrNoStrlen( char* s, size_t count )
 {
   if( s == nullptr )
     return nullptr;
   
   for( size_t i = 0; s[i] != '\0' && i < count; ++i )
   {
-    s[ i ] = getLowerChar( s[ i ] );
+    s[ i ] = GetLowerChar( s[ i ] );
   }
   return s;
 }

@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  toLowerThreadPool.h
+//  ToLowerThreadPool.h
 //
 //  Notes: 
 //    * Thread pool passed as parameter
@@ -8,7 +8,7 @@
 //    * Explicitly joins all threads before exit
 //
 //  Issues:
-//    * Still calling getLowerChar, which calls tolower()
+//    * Still calling GetLowerChar, which calls tolower()
 //    * Might be faster with look up table
 //
 //  Copyright © Pete Isensee (PKIsensee@msn.com).
@@ -29,10 +29,10 @@
 #include <string>
 #include <thread>
 #include <utility>
-#include "getLowerChar.h"
+#include "GetLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-constexpr auto&& toLowerThreadPool( auto&& s, auto&& threadPool ) noexcept
+constexpr auto&& ToLowerThreadPool( auto&& s, auto&& threadPool ) noexcept
 {
   assert( !threadPool.empty() );
 
@@ -40,7 +40,7 @@ constexpr auto&& toLowerThreadPool( auto&& s, auto&& threadPool ) noexcept
   {
     std::ranges::transform( substr, substr.begin(), []( auto c )
     {
-      return getLowerChar( c );
+      return GetLowerChar( c );
     } );
   };
 

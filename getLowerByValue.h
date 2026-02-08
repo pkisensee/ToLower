@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  getLowerByValue.h
+//  GetLowerByValue.h
 //
 //  Notes: 
 //    * By value solution
@@ -24,13 +24,13 @@
 
 #pragma once
 #include <string>
-#include "toLowerSSE.h"
+#include "ToLowerSSE.h"
 
 // Returns a copy of the input character sequence converted to lower case.
-std::string getLowerByValue( const auto& s )
+std::string GetLowerByValue( const auto& s )
 {
   std::string tmp{ s };
-  return toLowerSSE( tmp );
+  return ToLowerSSE( tmp );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

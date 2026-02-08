@@ -187,38 +187,38 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="lowerOriginal.h" />
+    <ClCompile Include="LowerOriginal.h" />
     <ClCompile Include="Profile.cpp" />
-    <ClCompile Include="toLowerPtrNoStrlen.h" />
-    <ClCompile Include="toLowerSpan.h" />
-    <ClCompile Include="toLowerStrRef.h" />
-    <ClCompile Include="toLowerStrView.h" />
-    <ClCompile Include="toLowerSSE.h" />
-    <ClCompile Include="toLowerAVX2.h" />
-    <ClCompile Include="toLowerOpenCL.h" />
-    <ClCompile Include="getLowerByValue.h" />
-    <ClCompile Include="getRandomStr.h" />
+    <ClCompile Include="ToLowerPtrNoStrlen.h" />
+    <ClCompile Include="ToLowerSpan.h" />
+    <ClCompile Include="ToLowerStrRef.h" />
+    <ClCompile Include="ToLowerStrView.h" />
+    <ClCompile Include="ToLowerSSE.h" />
+    <ClCompile Include="ToLowerAVX2.h" />
+    <ClCompile Include="ToLowerOpenCL.h" />
+    <ClCompile Include="GetLowerByValue.h" />
+    <ClCompile Include="GetRandomStr.h" />
     <ClCompile Include="ToLower.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Tantalon\digipen\index.html" />
-    <None Include="lower.cl" />
+    <None Include="Lower.cl" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="getLowerChar.h" />
+    <ClInclude Include="GetLowerChar.h" />
     <ClInclude Include="LowerCaseAsciiTable.h" />
     <ClInclude Include="OpenCLContext.h" />
     <ClInclude Include="Profile.h" />
     <ClInclude Include="Stopwatch.h" />
-    <ClInclude Include="toLowerAutoNoReturn.h" />
-    <ClInclude Include="toLowerTemplatized.h" />
-    <ClInclude Include="toLowerAuto.h" />
-    <ClInclude Include="toLowerAutoConstexpr.h" />
-    <ClInclude Include="toLowerExecPolicy.h" />
-    <ClInclude Include="toLower5thBit.h" />
-    <ClInclude Include="toLowerLookupTable.h" />
-    <ClInclude Include="toLowerThreads.h" />
-    <ClInclude Include="toLowerThreadPool.h" />
+    <ClInclude Include="ToLowerAutoNoReturn.h" />
+    <ClInclude Include="ToLowerTemplatized.h" />
+    <ClInclude Include="ToLowerAuto.h" />
+    <ClInclude Include="ToLowerAutoConstexpr.h" />
+    <ClInclude Include="ToLowerExecPolicy.h" />
+    <ClInclude Include="ToLower5thBit.h" />
+    <ClInclude Include="ToLowerLookupTable.h" />
+    <ClInclude Include="ToLowerThreads.h" />
+    <ClInclude Include="ToLowerThreadPool.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="digipenCode.txt" />

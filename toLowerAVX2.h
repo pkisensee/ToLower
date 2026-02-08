@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  toLowerAVX2.h
+//  ToLowerAVX2.h
 //
 //  Notes: 
 //    * Same flexible interface
@@ -30,7 +30,7 @@
 #include <utility>
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-constexpr auto&& toLowerAVX2( auto&& s ) noexcept
+constexpr auto&& ToLowerAVX2( auto&& s ) noexcept
 { 
   static constexpr unsigned char kBit5Set = 0b0010'0000; // 0x20
   static const __m256i kBit5Set256 = _mm256_set1_epi8( kBit5Set );

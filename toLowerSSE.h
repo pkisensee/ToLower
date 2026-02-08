@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  toLowerSSE.h
+//  ToLowerSSE.h
 //
 //  Notes: 
 //    * Same flexible interface
@@ -24,10 +24,10 @@
 #include <emmintrin.h>
 #include <iterator>
 #include <utility>
-#include "getLowerChar.h"
+#include "GetLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-constexpr auto&& toLowerSSE( auto&& s ) noexcept
+constexpr auto&& ToLowerSSE( auto&& s ) noexcept
 {
   static const __m128i kAAAAs = _mm_set1_epi8( 'A' - 1 ); // no mm_cmpgte, so offset -1
   static const __m128i kZZZZs = _mm_set1_epi8( 'Z' + 1 ); // no mm_cmplte, so offset +1
@@ -78,7 +78,7 @@ constexpr auto&& toLowerSSE( auto&& s ) noexcept
   // Convert any remaining <kSSEbytes chars directly
   for( ; len > 0; ++data, --len )
   {
-    *data = getLowerChar( *data );
+    *data = GetLowerChar( *data );
   }
 
   return std::forward<decltype( s )>( s );

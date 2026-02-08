@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  toLower5thBit.h
+//  ToLower5thBit.h
 //
 //  Notes: 
 //    * Clever ASCII designers created an easy conversion; for all upper case
@@ -35,7 +35,7 @@
 #include <utility>
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-constexpr auto&& toLower5thBit( auto&& s ) noexcept
+constexpr auto&& ToLower5thBit( auto&& s ) noexcept
 {
   static constexpr unsigned char kBit5Set = 0b0010'0000; // 0x20
 

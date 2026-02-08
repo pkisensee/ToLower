@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  getLowerChar.h
+//  GetLowerChar.h
 //
 //  std::tolower has UB if incoming value is not representable as unsigned char, 
 //  hence requirement to cast.
@@ -24,7 +24,7 @@
 #include <cctype>
 
 // Converts the incoming character to lowercase
-inline char getLowerChar( char c ) noexcept
+inline char GetLowerChar( char c ) noexcept
 {
   auto uchar = static_cast<unsigned char>( c );
   auto lowered = std::tolower( uchar );

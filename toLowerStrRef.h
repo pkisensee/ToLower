@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  toLowerStrRef.h
+//  ToLowerStrRef.h
 //
 //  Notes: 
 //    * Uses std::string
@@ -28,14 +28,14 @@
 #include <algorithm>
 #include <ranges>
 #include <string>
-#include "getLowerChar.h"
+#include "GetLowerChar.h"
 
 // Convert string to lower case in place. Returns modified string.
-inline std::string& toLowerStrRef( std::string& s )
+inline std::string& ToLowerStrRef( std::string& s )
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
-    return getLowerChar( c );
+    return GetLowerChar( c );
   } );
   return s;
 }

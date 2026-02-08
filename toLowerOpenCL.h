@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  toLowerOpenCL.h
+//  ToLowerOpenCL.h
 //
 //  Notes: 
 //    * OpenCL solution
@@ -25,7 +25,7 @@
 #include "OpenCLContext.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-constexpr auto&& toLowerOpenCL( auto&& s, OpenCLContext& openCLContext, std::string_view kernelName ) noexcept
+constexpr auto&& ToLowerOpenCL( auto&& s, OpenCLContext& openCLContext, std::string_view kernelName ) noexcept
 {
   return openCLContext.ToLower( s, kernelName );
 }

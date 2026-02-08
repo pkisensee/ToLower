@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  toLowerStrView.h
+//  ToLowerStrView.h
 //
 //  Notes: 
 //    * Uses std::string_view C++17 -- more flexible
@@ -22,16 +22,16 @@
 #include <algorithm>
 #include <ranges>
 #include <string_view>
-#include "getLowerChar.h"
+#include "GetLowerChar.h"
 
 // Convert string view to lower case in place. Returns modified string view.
-inline std::string_view toLowerStrView( std::string_view s )
+inline std::string_view ToLowerStrView( std::string_view s )
 {
   // can't modify a string_view -- it's a read-only view!
   /*
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
-    return getLowerChar( c );
+    return GetLowerChar( c );
   } );
   */
   return s;

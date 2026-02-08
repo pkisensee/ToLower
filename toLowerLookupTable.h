@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  toLowerLookupTable.h
+//  ToLowerLookupTable.h
 //
 //  Notes: 
 //    * Look up table solution -- fast
@@ -30,7 +30,7 @@
 #pragma warning(disable: 5264)
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-constexpr auto&& toLowerLookupTable( auto&& s ) noexcept
+constexpr auto&& ToLowerLookupTable( auto&& s ) noexcept
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
