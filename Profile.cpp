@@ -17,7 +17,7 @@
 
 #pragma once
 #include <cassert>
-#include <iostream>
+#include <print>
 #include "GetLowerByValue.h"
 #include "ToLower5thBit.h"
 #include "GetRandomStr.h"
@@ -29,6 +29,9 @@
 #else
 #define test(e) static_cast<void>( (e) || ( __debugbreak(), 0 ) )
 #endif
+
+static constexpr size_t kNameColumnWidth = 22;
+static constexpr size_t kTimeColumnWidth = 8;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -99,7 +102,7 @@ Profile::Profile( std::string_view name, std::string& ( *func )( std::string&, O
 
 void Profile::Validate() const
 {
-  std::cout << name_ << ": ";
+  std::print( "{:{}}: ", name_, kNameColumnWidth );
 
   // Test empty string
   std::string empty;
@@ -123,7 +126,7 @@ void Profile::Validate() const
     randomLower = GetLowerByValue( random );
   }
   Validate( random, randomLower );
-  std::cout << "Passed\n";
+  std::println( "Passed" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -132,14 +135,14 @@ void Profile::Validate() const
 
 void Profile::Measure() const
 {
+  std::print( "{:{}}: ", name_, kNameColumnWidth );
   std::string input = GetTestInput();
-  std::cout << name_ << ": ";
   Stopwatch stopwatch;
   InvokeFunction( input );
   double microSecs = stopwatch.GetElapsedMicroseconds();
   if ( scale_ != 0.0 )
     microSecs /= scale_;
-  std::cout << microSecs << " microSec\n";
+  std::println( "{:{}.0f} microSecs", microSecs, kTimeColumnWidth );
 
   if ( outputFile.is_open() )
     outputFile << name_ << ", " << microSecs << '\n';

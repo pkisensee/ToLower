@@ -20,7 +20,7 @@
 #include <exception>
 #include <filesystem>
 #include <fstream>
-#include <iostream>
+#include <print>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -80,7 +80,7 @@ public:
     auto result = program_.build( device_, kBuildOptions );
     if( result != CL_SUCCESS )
     {
-      std::cout << program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>( device_ );
+      std::println( "{}", program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>( device_ ) );
       throw std::exception( "Error compiling OpenCL kernel" );
     }
     for ( const auto& kernelName : kernelNames )

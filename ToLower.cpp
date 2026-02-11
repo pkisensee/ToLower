@@ -19,7 +19,7 @@
 #include <clocale>
 #include <execution>
 #include <filesystem>
-#include <iostream>
+#include <print>
 #include <span>
 #include <string>
 #include <thread>
@@ -55,28 +55,28 @@ size_t kRandomStrSize = 1024uz * 1024uz * 10uz; // 10 MB baseline for scale=1.0
 std::string Profile::testStr_ = GetRandomStr( kRandomStrSize );
 std::ofstream Profile::outputFile;
 
+namespace execution = std::execution;
+using ParPolicy = execution::parallel_policy;
+using ParUnseqPolicy = execution::parallel_unsequenced_policy;
+using ThreadPoolType = std::vector<std::jthread>;
+
+static_assert( kLowerCaseAsciiTable == kLowerCaseAsciiTableHardCoded );
+
 ///////////////////////////////////////////////////////////////////////////////
 
 int __cdecl main()
 {
-  static_assert( kLowerCaseAsciiTable == kLowerCaseAsciiTableHardCoded );
-
   if ( !HasSIMDSupport( SIMDLevel::AVX2 ) )
-    std::cout << "Note: No AVX2 support\n";
+    std::println( "Note: No AVX2 support" );
   if ( !HasSIMDSupport( SIMDLevel::AVX512 ) )
-    std::cout << "Note: No AVX-512 support\n";
+    std::println( "Note: No AVX-512 support" );
 
-  namespace execution = std::execution;
-  using ParPolicy = execution::parallel_policy;
-  using ParUnseqPolicy = std::execution::parallel_unsequenced_policy;
-  using ThreadPoolType = std::vector<std::jthread>;
-
-  std::cout << "5th bit trick visualization\n";
+  std::println( "5th bit trick visualization" );
   std::string bit5ASCII( 127uz - ' ', '\0' );
   std::ranges::iota( bit5ASCII, ' ' );
-  std::cout << bit5ASCII << '\n';
+  std::println( "{}", bit5ASCII);
   ToLower5thBit( bit5ASCII );
-  std::cout << bit5ASCII << '\n';
+  std::println( "{}", bit5ASCII );
 
   std::array<std::string, 5> openCLkernels =
   { {
@@ -87,7 +87,7 @@ int __cdecl main()
     { "lowerVector" },
   } };
 
-  std::cout << "\nCompiling OpenCL kernels\n";
+  std::println( "\nCompiling OpenCL kernels" );
   //OpenCLContext openCLContextCPU{ CL_DEVICE_TYPE_CPU, "Lower.cl", openCLkernels };
   //OpenCLContext openCLContextGPU{ CL_DEVICE_TYPE_GPU, "Lower.cl", openCLkernels };
 
@@ -131,19 +131,19 @@ int __cdecl main()
     */
   } };
 
-  std::cout << "Validating implementations\n";
+  std::println( "Validating implementations" );
   for ( const auto& profile : profiles )
     profile.Validate();
 
 
   Profile::outputFile.open( "benchmark.txt" );
-  std::cout << "\nMeasuring implementations\n";
+  std::println( "\nMeasuring implementations" );
   for ( const auto& profile : profiles )
     profile.Measure();
 
   Profile::outputFile.close();
 
-  // Additional options to consider:
+  // Additional performance options to consider:
   //  * std::simd (currently experimental; expected in C++26)
   //  * CUDA (NVIDIA GPUs)
   //  * Vulkan compute shader (GPU)
@@ -152,7 +152,6 @@ int __cdecl main()
   //  * VMX (PowerPC CPUs)
   //  * Neon (ARM)
   //  * OpenMP
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////

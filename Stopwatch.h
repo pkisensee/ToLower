@@ -6,7 +6,7 @@
 //
 //   Stopwatch stopwatch;
 //   foo(); // measure foo
-//   std::cout << stopwatch.getElapsedMicroseconds() << " microseconds\n";
+//   std::println( "{} microseconds", stopwatch.getElapsedMicroseconds() );
 //
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.

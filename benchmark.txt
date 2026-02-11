@@ -1,20 +1,20 @@
-original, 8.5e+06
-ptr no strlen, 47361.5
-span<char>, 41600.2
-std::string&, 42421.3
-templatized, 41087.3
-auto&&, 41051.7
-auto&& no return, 43226.7
-constexpr noexcept, 40910.9
-return by value, 130047
-bit 5 trick, 10150.9
-lookup table, 21060.9
-threads, 15456.5
-thread pool, 13712.6
-thread pool bit 5, 6334.5
-thread pool SSE, 3377.5
-execution::par, 10721.3
-execution::par_unseq, 10567.4
-AVX2 with bit 5, 13100.3
-AVX512 bit 5, 13225.2
-SSE, 1274
+original, 9.2706e+06
+ptr no strlen, 155888
+span<char>, 193155
+std::string&, 263602
+templatized, 257145
+auto&&, 255120
+auto&& no return, 256901
+constexpr noexcept, 262182
+return by value, 145087
+bit 5 trick, 138826
+lookup table, 206308
+threads, 68027.1
+thread pool, 76480.9
+thread pool bit 5, 45424.9
+thread pool SSE, 5222.4
+execution::par, 47515.4
+execution::par_unseq, 42825.5
+AVX2 with bit 5, 13331.4
+AVX512 bit 5, 13406.1
+SSE, 7333.6
