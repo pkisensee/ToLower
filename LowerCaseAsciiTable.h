@@ -78,6 +78,6 @@ inline constexpr LowerCaseAsciiTable kLowerCaseAsciiTable = []
 
   return lowerAscii;
 
-}( ); // One-time function call here generates table
+}(); // One-time function call here generates table
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -59,8 +59,12 @@ std::ofstream Profile::outputFile;
 
 int __cdecl main()
 {
-  if ( !HasSIMDSupport( SIMDLevel::AVX2 ) ) std::cout << "Note: No AVX2 support\n";
-  if ( !HasSIMDSupport( SIMDLevel::AVX512 ) ) std::cout << "Note: No AVX-512 support\n";
+  static_assert( kLowerCaseAsciiTable == kLowerCaseAsciiTableHardCoded );
+
+  if ( !HasSIMDSupport( SIMDLevel::AVX2 ) )
+    std::cout << "Note: No AVX2 support\n";
+  if ( !HasSIMDSupport( SIMDLevel::AVX512 ) )
+    std::cout << "Note: No AVX-512 support\n";
 
   namespace execution = std::execution;
   using ParPolicy = execution::parallel_policy;
@@ -88,8 +92,6 @@ int __cdecl main()
   //OpenCLContext openCLContextGPU{ CL_DEVICE_TYPE_GPU, "Lower.cl", openCLkernels };
 
   ThreadPoolType threadPool( std::max( std::thread::hardware_concurrency(), 1u ) );
-
-  assert( std::ranges::equal( kLowerCaseAsciiTable, kLowerCaseAsciiTableHardCoded ) );
 
   std::vector<Profile> profiles =
   { {
