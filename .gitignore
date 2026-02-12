@@ -362,3 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /benchmark.txt
+/.opencl_cache/Lower_Baffin.bin
+/.opencl_cache/Lower_IntelRCoreTMi59400CPU290GHz.bin
