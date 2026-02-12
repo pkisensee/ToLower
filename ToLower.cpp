@@ -64,20 +64,28 @@ static_assert( kLowerCaseAsciiTable == kLowerCaseAsciiTableHardCoded );
 
 ///////////////////////////////////////////////////////////////////////////////
 
-int __cdecl main()
+void TestSIMDSupport()
 {
   if ( !HasSIMDSupport( SIMDLevel::AVX2 ) )
     std::println( "Note: No AVX2 support" );
   if ( !HasSIMDSupport( SIMDLevel::AVX512 ) )
     std::println( "Note: No AVX-512 support" );
+}
 
+void Bit5Visualizatiaon()
+{
   std::println( "5th bit trick visualization" );
   std::string bit5ASCII( 127uz - ' ', '\0' );
   std::ranges::iota( bit5ASCII, ' ' );
-  std::println( "{}", bit5ASCII);
+  std::println( "{}", bit5ASCII );
   ToLower5thBit( bit5ASCII );
   std::println( "{}", bit5ASCII );
+}
 
+///////////////////////////////////////////////////////////////////////////////
+
+void ValidateAndMeasure()
+{
   std::array<std::string, 5> openCLkernels =
   { {
     { "lowerLUT" },
@@ -88,9 +96,8 @@ int __cdecl main()
   } };
 
   std::println( "\nCompiling OpenCL kernels" );
-  //OpenCLContext openCLContextCPU{ CL_DEVICE_TYPE_CPU, "Lower.cl", openCLkernels };
-  //OpenCLContext openCLContextGPU{ CL_DEVICE_TYPE_GPU, "Lower.cl", openCLkernels };
-
+  OpenCLContext openCLContextCPU{ CL_DEVICE_TYPE_CPU, "Lower.cl", openCLkernels };
+  OpenCLContext openCLContextGPU{ CL_DEVICE_TYPE_GPU, "Lower.cl", openCLkernels };
   ThreadPoolType threadPool( std::max( std::thread::hardware_concurrency(), 1u ) );
 
   std::vector<Profile> profiles =
@@ -116,7 +123,6 @@ int __cdecl main()
     { "AVX512 bit 5",         ToLowerAVX512           <std::string&>    }, // flagged "bit 5" because of fall back to AVX2
     { "SSE",                  ToLowerSSE              <std::string&>    },
 
-    /*
     { "OpenCL CPU LUT",       ToLowerOpenCL, "lowerLUT",        &openCLContextCPU },
     { "OpenCL CPU branch",    ToLowerOpenCL, "lowerBranch",     &openCLContextCPU },
     { "OpenCL CPU branchless",ToLowerOpenCL, "lowerBranchless", &openCLContextCPU },
@@ -128,13 +134,12 @@ int __cdecl main()
     { "OpenCL GPU branchless",ToLowerOpenCL, "lowerBranchless", &openCLContextGPU },
     { "OpenCL GPU bit 5",     ToLowerOpenCL, "lower5thBit",     &openCLContextGPU },
     { "OpenCL GPU unrolled",  ToLowerOpenCL, "lowerVector",     &openCLContextGPU },
-    */
-  } };
+
+    } };
 
   std::println( "Validating implementations" );
   for ( const auto& profile : profiles )
     profile.Validate();
-
 
   Profile::outputFile.open( "benchmark.txt" );
   std::println( "\nMeasuring implementations" );
@@ -142,16 +147,34 @@ int __cdecl main()
     profile.Measure();
 
   Profile::outputFile.close();
-
-  // Additional performance options to consider:
-  //  * std::simd (currently experimental; expected in C++26)
-  //  * CUDA (NVIDIA GPUs)
-  //  * Vulkan compute shader (GPU)
-  //  * Halide (fast image processing)
-  //  * AMD ROCm
-  //  * VMX (PowerPC CPUs)
-  //  * Neon (ARM)
-  //  * OpenMP
 }
+
+///////////////////////////////////////////////////////////////////////////////
+
+int __cdecl main()
+{
+  try
+  {
+    TestSIMDSupport();
+    Bit5Visualizatiaon();
+    ValidateAndMeasure();
+    return 0;
+  }
+  catch ( std::exception& e )
+  {
+    std::println( "{}", e.what() );
+    return -1;
+  }
+}
+
+// Additional performance options to consider:
+//  * std::simd (currently experimental; expected in C++26)
+//  * CUDA (NVIDIA GPUs)
+//  * Vulkan compute shader (GPU)
+//  * Halide (fast image processing)
+//  * AMD ROCm
+//  * VMX (PowerPC CPUs)
+//  * Neon (ARM)
+//  * OpenMP
 
 ///////////////////////////////////////////////////////////////////////////////
