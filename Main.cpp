@@ -51,9 +51,12 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-size_t kRandomStrSize = 1024uz * 1024uz * 10uz; // 10 MB baseline for scale=1.0
-std::string Profiler::testStr_ = GetRandomStr( kRandomStrSize );
+size_t kValidateStrSize = 1024uz * 100uz; // 100K random string for validation
+size_t kMeasureStrSize = 1024uz * 1024uz * 10uz; // 10 MB baseline for scale=1.0
+std::string Profiler::validateStr_ = GetRandomStr( kValidateStrSize );
+std::string Profiler::measureStr_ = GetRandomStr( kMeasureStrSize );
 std::ofstream Profiler::outputFile;
+size_t Profiler::measurementRuns_ = 10;
 
 namespace execution = std::execution;
 using ParPolicy = execution::parallel_policy;

@@ -71,7 +71,7 @@ public:
 private:
 
   void Validate( std::string& input, const std::string& expectedOutput ) const;
-  std::string GetTestInput() const;
+  std::string GetMeasureInput() const;
   void InvokeFunction( std::string& ) const;
 
   enum FunctionType : size_t // Must match FunctionVariant order below
@@ -115,7 +115,9 @@ private:
   std::string_view kernel_; // e.g. "lowerLUT"
   OpenCLContext* openCLContext_ = nullptr;
 
-  static std::string testStr_; // Store a single test string in mixed case
+  static std::string validateStr_; // mixed case string used by Validate()
+  static std::string measureStr_;  // mixed case string used by Measure()
+  static size_t measurementRuns_;  // The fastest run is recorded
 
 }; // class Profiler
 

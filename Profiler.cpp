@@ -16,8 +16,10 @@
 // warranties.
 
 #pragma once
+#include <algorithm>
 #include <cassert>
 #include <print>
+#include <ranges>
 #include "GetLowerByValue.h"
 #include "ToLower5thBit.h"
 #include "GetRandomStr.h"
@@ -113,8 +115,8 @@ void Profiler::Validate() const
   std::string simpleLower = "abcdefghijklmnopqrstuvwxyz";
   Validate( simple, simpleLower );
 
-  // Test random string
-  std::string random = GetTestInput();
+  // Test validation string
+  std::string random = validateStr_;
   std::string randomLower;
   if ( name_.contains( "bit 5" ) )
   {
@@ -131,21 +133,29 @@ void Profiler::Validate() const
 
 ///////////////////////////////////////////////////////////////////////////////
 // 
-// Record the time required to run the given function on large input
+// Record the time required to run the given function on large input.
+// Executes measurementRuns_ and reports the lowest time measured.
 
 void Profiler::Measure() const
 {
   std::print( "{:{}}: ", name_, kNameColumnWidth );
-  std::string input = GetTestInput();
-  Stopwatch stopwatch;
-  InvokeFunction( input );
-  double microSecs = stopwatch.GetElapsedMicroseconds();
-  if ( scale_ != 0.0 )
-    microSecs /= scale_;
-  std::println( "{:{}.0f} microSecs", microSecs, kTimeColumnWidth );
+  std::string input = GetMeasureInput();
+  std::vector<double> measurements;
+  measurements.reserve( measurementRuns_ );
+  for ( size_t run = 0; run < measurementRuns_; ++run )
+  {
+    Stopwatch stopwatch;
+    InvokeFunction( input );
+    double microSecs = stopwatch.GetElapsedMicroseconds();
+    if ( scale_ != 0.0 )
+      microSecs /= scale_;
+    measurements.push_back( microSecs );
+  }
+  double minRuntimeMicroSecs = std::ranges::min( measurements );
+  std::println( "{:{}.0f} microSecs", minRuntimeMicroSecs, kTimeColumnWidth );
 
   if ( outputFile.is_open() )
-    outputFile << name_ << ", " << microSecs << '\n';
+    outputFile << name_ << ", " << minRuntimeMicroSecs << '\n';
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -160,15 +170,15 @@ void Profiler::Validate( std::string& input, const std::string& expectedOutput )
 
 ///////////////////////////////////////////////////////////////////////////////
 // 
-// Generate test string of appropriate size based on desired scale
+// Generate string of appropriate size based on desired scale
 
-std::string Profiler::GetTestInput() const // private
+std::string Profiler::GetMeasureInput() const // private
 {
-  std::string input{ testStr_ };
-  auto scaledSize = static_cast<double>( testStr_.size() ) * scale_;
+  std::string input{ measureStr_ };
+  auto scaledSize = static_cast<double>( measureStr_.size() ) * scale_;
   auto charCount = static_cast<size_t>( scaledSize );
   while ( input.size() < charCount )
-    input += testStr_;
+    input += measureStr_;
   input.resize( charCount );
   return input;
 }

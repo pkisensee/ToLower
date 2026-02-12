@@ -88,8 +88,7 @@ public:
   constexpr auto&& ToLower( auto&& s, std::string_view kernelName ) noexcept
   {
     // Grab relevant kernel
-    std::string kn{ kernelName }; // TODO fix
-    auto& kernel = kernels_[ kn ];
+    auto& kernel = kernels_[ kernelName ];
 
     // Point CL buffer to incoming char sequence
     size_t len = std::size( s );
@@ -141,7 +140,7 @@ private:
   cl::CommandQueue  queue_;
   cl::Program       program_;
 
-  using Key = std::string;
+  using Key = std::string_view;
   using Value = cl::Kernel;
   std::unordered_map< Key, Value > kernels_;
 };
