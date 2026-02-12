@@ -33,6 +33,9 @@
 #pragma warning(pop)
 
 inline const std::string kBuildOptions{ "-cl-std=CL3.0 -Werror" };
+inline const std::string kCacheFolder{ ".opencl_cache" };
+
+///////////////////////////////////////////////////////////////////////////////
 
 // Get the default GPU or CPU device
 inline cl::Device GetDefaultDevice( cl_device_type deviceType )
@@ -54,12 +57,67 @@ inline cl::Device GetDefaultDevice( cl_device_type deviceType )
   }
 }
 
-// Convert file into a string
+// Convert file into string
 inline std::string GetSourceCode( const std::filesystem::path& fileName )
 {
   std::ifstream fileStream( fileName );
   return std::string{ std::istreambuf_iterator<char>( fileStream ), {} };
 }
+
+// Generate cache filename based on source file and device
+inline std::filesystem::path GetCacheFilePath( const std::filesystem::path& sourceFile,
+  const cl::Device& device )
+{
+  auto deviceName = device.getInfo< CL_DEVICE_NAME >();
+  // Remove everything but alphanumeric characters from name
+  std::erase_if( deviceName, []( char c ) { return std::isspace( c ) || !std::isalnum( c ); } );
+
+  auto cacheDir = sourceFile.parent_path() / kCacheFolder;
+  std::filesystem::create_directories( cacheDir );
+
+  std::filesystem::path cacheFile = cacheDir / 
+    ( sourceFile.stem().string() + "_" + deviceName + ".bin" );
+  return cacheFile;
+}
+
+// Check if cached binary exists and is newer than source
+inline bool IsCacheValid( const std::filesystem::path& sourceFile,
+  const std::filesystem::path& cacheFile )
+{
+  if ( !std::filesystem::exists( cacheFile ) )
+    return false;
+
+  auto sourceTime = std::filesystem::last_write_time( sourceFile );
+  auto cacheTime = std::filesystem::last_write_time( cacheFile );
+
+  return cacheTime >= sourceTime;
+}
+
+// Save compiled binary to cache
+inline void SaveBinaryToCache( const cl::Program& program,
+  const std::filesystem::path& cacheFile )
+{
+  auto binaries = program.getInfo< CL_PROGRAM_BINARIES >();
+  if ( binaries.empty() || binaries[0].empty() )
+    return;
+
+  std::ofstream file( cacheFile, std::ios::binary );
+  auto size = binaries[ 0 ].size();
+  std::streamsize ssize = static_cast<std::streamsize>( size );
+  const auto* udata = binaries[ 0 ].data();
+  const auto* data = reinterpret_cast<const char*>( udata );
+
+  file.write( data, ssize );
+}
+
+// Load binary from cache
+inline std::vector<unsigned char> LoadBinaryFromCache( const std::filesystem::path& cacheFile )
+{
+  std::ifstream file( cacheFile, std::ios::binary );
+  return std::vector<unsigned char>{ std::istreambuf_iterator<char>( file ), {} };
+}
+
+///////////////////////////////////////////////////////////////////////////////
 
 class OpenCLContext
 {
@@ -67,27 +125,48 @@ public:
   OpenCLContext() = delete;
 
   // Establish context given device, .cl file and desired function
-  // kernelFunction must have prototype: void toLower( __global char* s, unsigned long len )
+  // kernelFunction must have prototype:
+  //    void toLower( __global char* s, unsigned long len )
   OpenCLContext( cl_device_type preferredDevice, 
                  const std::filesystem::path& sourceCodeFile,
                  const auto& kernelNames ) :
     device_{ GetDefaultDevice( preferredDevice ) },
     context_{ device_ },
-    queue_{ context_, device_ },
-    program_{ context_, GetSourceCode( sourceCodeFile ) }
+    queue_{ context_, device_ }
   {
-    // Build the kernels
+    // Attempt to load from binary cache first
+    auto cacheFile = GetCacheFilePath( sourceCodeFile, device_ );
+    if ( IsCacheValid( sourceCodeFile, cacheFile ) )
+    {
+      try // TODO need this?
+      {
+        auto binary = LoadBinaryFromCache( cacheFile );
+        cl::Program::Binaries binaries{ binary };
+        std::vector<cl::Device> devices{ device_ };
+
+        program_ = cl::Program( context_, devices, binaries );
+        auto result = program_.build( device_, kBuildOptions );
+        if ( result == CL_SUCCESS )
+        {
+          InitializeKernels( kernelNames );
+          return;
+        }
+      }
+      catch ( ... ) {} // Rebuild if errors loading
+    }
+
+    // No cache or cache didn't load properly; compile from source
+    program_ = cl::Program( context_, GetSourceCode( sourceCodeFile ) );
     auto result = program_.build( device_, kBuildOptions );
-    if( result != CL_SUCCESS )
+    if ( result != CL_SUCCESS )
     {
       std::println( "{}", program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>( device_ ) );
       throw std::exception( "Error compiling OpenCL kernel" );
     }
-    for ( const auto& kernelName : kernelNames )
-    {
-      cl::Kernel kernel{ program_, kernelName };
-      kernels_.insert( { kernelName, kernel } );
-    }
+
+    // Save compiled binary to cache
+    SaveBinaryToCache( program_, cacheFile );
+    InitializeKernels( kernelNames );
   }
 
   // Convert char sequence to lower case in place. Returns modified sequence.
@@ -120,6 +199,17 @@ public:
     queue_.enqueueReadBuffer( stringDataBuffer, blocking, 0, len, data );
 
     return std::forward<decltype( s )>( s );
+  }
+
+private:
+
+  void InitializeKernels( const auto& kernelNames )
+  {
+    for ( const auto& kernelName : kernelNames )
+    {
+      cl::Kernel kernel{ program_, kernelName };
+      kernels_.insert( { kernelName, kernel } );
+    }
   }
 
 private:

@@ -92,10 +92,10 @@ void ValidateAndMeasure()
     { "lowerBranch" },
     { "lowerBranchless" },
     { "lower5thBit" },
-    { "lowerUnrolled" },
+    { "lowerSIMD" },
   } };
 
-  std::println( "\nCompiling OpenCL kernels" );
+  std::println( "\nLoading OpenCL kernels" );
   OpenCLContext openCLContextCPU{ CL_DEVICE_TYPE_CPU, "Lower.cl", openCLkernels };
   OpenCLContext openCLContextGPU{ CL_DEVICE_TYPE_GPU, "Lower.cl", openCLkernels };
   ThreadPoolType threadPool( std::max( std::thread::hardware_concurrency(), 1u ) );
@@ -120,20 +120,20 @@ void ValidateAndMeasure()
     { "execution::par",       ToLowerExecPolicy       <std::string&, const ParPolicy&>, execution::par            },
     { "execution::par_unseq", ToLowerExecPolicy       <std::string&, const ParUnseqPolicy&>, execution::par_unseq },
     { "AVX2 with bit 5",      ToLowerAVX2             <std::string&>    },
-    { "AVX512 bit 5",         ToLowerAVX512           <std::string&>    }, // flagged "bit 5" because of fall back to AVX2
+    { "AVX512 bit 5",         ToLowerAVX512           <std::string&>    }, // "bit 5" because of fall back to AVX2
     { "SSE",                  ToLowerSSE              <std::string&>    },
 
     { "OpenCL CPU lookup",    ToLowerOpenCL, "lowerLookupTable",&openCLContextCPU },
     { "OpenCL CPU branch",    ToLowerOpenCL, "lowerBranch",     &openCLContextCPU },
     { "OpenCL CPU branchless",ToLowerOpenCL, "lowerBranchless", &openCLContextCPU },
     { "OpenCL CPU bit 5",     ToLowerOpenCL, "lower5thBit",     &openCLContextCPU },
-    { "OpenCL CPU unrolled",  ToLowerOpenCL, "lowerUnrolled",   &openCLContextCPU },
+    { "OpenCL CPU SIMD",      ToLowerOpenCL, "lowerSIMD",       &openCLContextCPU },
 
     { "OpenCL GPU lookup",    ToLowerOpenCL, "lowerLookupTable",&openCLContextGPU },
     { "OpenCL GPU branch",    ToLowerOpenCL, "lowerBranch",     &openCLContextGPU },
     { "OpenCL GPU branchless",ToLowerOpenCL, "lowerBranchless", &openCLContextGPU },
     { "OpenCL GPU bit 5",     ToLowerOpenCL, "lower5thBit",     &openCLContextGPU },
-    { "OpenCL GPU unrolled",  ToLowerOpenCL, "lowerUnrolled",   &openCLContextGPU },
+    { "OpenCL GPU SIMD",      ToLowerOpenCL, "lowerSIMD",       &openCLContextGPU },
 
     } };
 

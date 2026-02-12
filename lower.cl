@@ -73,7 +73,7 @@ __kernel void lower5thBit( __global char* s, unsigned long len )
   s[i] |= kBit5Set;
 }
 
-__kernel void lowerUnrolled( __global char* s, unsigned long len )
+__kernel void lowerSIMD( __global char* s, unsigned long len )
 {
   const size_t kBlockSize = 8;
   size_t i = get_global_id( 0 );
