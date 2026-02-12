@@ -16,10 +16,8 @@
 // warranties.
 
 #pragma once
-#include <cassert>
 #include <exception>
 #include <filesystem>
-#include <fstream>
 #include <print>
 #include <string>
 #include <string_view>
@@ -33,89 +31,6 @@
 #pragma warning(pop)
 
 inline const std::string kBuildOptions{ "-cl-std=CL3.0 -Werror" };
-inline const std::string kCacheFolder{ ".opencl_cache" };
-
-///////////////////////////////////////////////////////////////////////////////
-
-// Get the default GPU or CPU device
-inline cl::Device GetDefaultDevice( cl_device_type deviceType )
-{
-  std::vector<cl::Platform> platforms;
-  cl::Platform::get( &platforms );
-  for( const auto& platform : platforms )
-  {
-    std::vector<cl::Device> devices;
-    platform.getDevices( deviceType, &devices );
-    if( !devices.empty() )
-      return devices[0];
-  }
-  switch( deviceType )
-  {
-  case CL_DEVICE_TYPE_GPU: throw std::exception( "No OpenCL GPU detected" ); break;
-  case CL_DEVICE_TYPE_CPU: throw std::exception( "No OpenCL CPU detected" ); break;
-  default: throw std::exception( "Invalid device type" ); break;
-  }
-}
-
-// Convert file into string
-inline std::string GetSourceCode( const std::filesystem::path& fileName )
-{
-  std::ifstream fileStream( fileName );
-  return std::string{ std::istreambuf_iterator<char>( fileStream ), {} };
-}
-
-// Generate cache filename based on source file and device
-inline std::filesystem::path GetCacheFilePath( const std::filesystem::path& sourceFile,
-  const cl::Device& device )
-{
-  auto deviceName = device.getInfo< CL_DEVICE_NAME >();
-  // Remove everything but alphanumeric characters from name
-  std::erase_if( deviceName, []( char c ) { return std::isspace( c ) || !std::isalnum( c ); } );
-
-  auto cacheDir = sourceFile.parent_path() / kCacheFolder;
-  std::filesystem::create_directories( cacheDir );
-
-  std::filesystem::path cacheFile = cacheDir / 
-    ( sourceFile.stem().string() + "_" + deviceName + ".bin" );
-  return cacheFile;
-}
-
-// Check if cached binary exists and is newer than source
-inline bool IsCacheValid( const std::filesystem::path& sourceFile,
-  const std::filesystem::path& cacheFile )
-{
-  if ( !std::filesystem::exists( cacheFile ) )
-    return false;
-
-  auto sourceTime = std::filesystem::last_write_time( sourceFile );
-  auto cacheTime = std::filesystem::last_write_time( cacheFile );
-
-  return cacheTime >= sourceTime;
-}
-
-// Save compiled binary to cache
-inline void SaveBinaryToCache( const cl::Program& program,
-  const std::filesystem::path& cacheFile )
-{
-  auto binaries = program.getInfo< CL_PROGRAM_BINARIES >();
-  if ( binaries.empty() || binaries[0].empty() )
-    return;
-
-  std::ofstream file( cacheFile, std::ios::binary );
-  auto size = binaries[ 0 ].size();
-  std::streamsize ssize = static_cast<std::streamsize>( size );
-  const auto* udata = binaries[ 0 ].data();
-  const auto* data = reinterpret_cast<const char*>( udata );
-
-  file.write( data, ssize );
-}
-
-// Load binary from cache
-inline std::vector<unsigned char> LoadBinaryFromCache( const std::filesystem::path& cacheFile )
-{
-  std::ifstream file( cacheFile, std::ios::binary );
-  return std::vector<unsigned char>{ std::istreambuf_iterator<char>( file ), {} };
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -138,7 +53,7 @@ public:
     auto cacheFile = GetCacheFilePath( sourceCodeFile, device_ );
     if ( IsCacheValid( sourceCodeFile, cacheFile ) )
     {
-      try // TODO need this?
+      try
       {
         auto binary = LoadBinaryFromCache( cacheFile );
         cl::Program::Binaries binaries{ binary };
@@ -211,6 +126,13 @@ private:
       kernels_.insert( { kernelName, kernel } );
     }
   }
+
+  static cl::Device GetDefaultDevice( cl_device_type );
+  static std::string GetSourceCode( const std::filesystem::path& );
+  static std::filesystem::path GetCacheFilePath( const std::filesystem::path&, const cl::Device& );
+  static bool IsCacheValid( const std::filesystem::path&, const std::filesystem::path& );
+  static void SaveBinaryToCache( const cl::Program&, const std::filesystem::path& );
+  static std::vector<unsigned char> LoadBinaryFromCache( const std::filesystem::path& );
 
 private:
 
