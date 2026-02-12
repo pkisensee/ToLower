@@ -14,7 +14,6 @@
 // This software is provided "as is" and without any express or implied
 // warranties.
 
-// TODO unsigned char?
 __constant char kLowerCaseAsciiTable[256] = {
   0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 
   0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 
@@ -39,17 +38,13 @@ __constant char kLowerCaseAsciiTable[256] = {
   0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff
 };
 
-// CPU: 1400 us
-// GPU: 4600 us   <-- tied for fastest GPU
-__kernel void lowerLUT( __global char* s, unsigned long len )
+__kernel void lowerLookupTable( __global char* s, unsigned long len )
 {
   size_t i = get_global_id( 0 );
   unsigned char c = s[i];
   s[i] = kLowerCaseAsciiTable[c];
 }
 
-// CPU: 2900 us
-// GPU: 15500 us
 __kernel void lowerBranch( __global char* s, unsigned long len )
 {
   size_t i = get_global_id( 0 );
@@ -58,8 +53,6 @@ __kernel void lowerBranch( __global char* s, unsigned long len )
     s[i] = c + 'a' - 'A';
 }
 
-// CPU: 1300 us   <-- tied for fastest CPU
-// GPU: 4700 us   <-- tied for fastest GPU
 __kernel void lowerBranchless( __global char* s, unsigned long len )
 {
   // Branchless version using math
@@ -73,8 +66,6 @@ __kernel void lowerBranchless( __global char* s, unsigned long len )
   //s[i] += isUpper & kCaseOffset;
 }
 
-// CPU: 1300 us <-- tied for fastest CPU
-// GPU: 4800 us
 __kernel void lower5thBit( __global char* s, unsigned long len )
 {
   size_t i = get_global_id( 0 );
@@ -82,9 +73,7 @@ __kernel void lower5thBit( __global char* s, unsigned long len )
   s[i] |= kBit5Set;
 }
 
-// CPU: 2500 us
-// GPU: 5100 us
-__kernel void lowerVector( __global char* s, unsigned long len )
+__kernel void lowerUnrolled( __global char* s, unsigned long len )
 {
   const size_t kBlockSize = 8;
   size_t i = get_global_id( 0 );

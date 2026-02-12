@@ -12,10 +12,10 @@
     <ClCompile Include="getRandomStr.h" />
     <ClCompile Include="toLowerOpenCL.h" />
     <ClCompile Include="getLowerByValue.h" />
+    <ClCompile Include="Profile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lower.cl" />
-    <None Include="..\..\Tantalon\digipen\index.html" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OpenCLContext.h" />
@@ -32,9 +32,7 @@
     <ClInclude Include="LowerCaseAsciiTable.h" />
     <ClInclude Include="Stopwatch.h" />
     <ClInclude Include="Profile.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="digipenCode.txt" />
-    <Text Include="digipenLessons.txt" />
+    <ClInclude Include="SIMDSupport.h" />
+    <ClInclude Include="ToLowerAVX512.h" />
   </ItemGroup>
 </Project>

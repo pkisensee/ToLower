@@ -201,7 +201,6 @@
     <ClCompile Include="ToLower.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Tantalon\digipen\index.html" />
     <None Include="Lower.cl" />
   </ItemGroup>
   <ItemGroup>
@@ -221,10 +220,6 @@
     <ClInclude Include="ToLowerLookupTable.h" />
     <ClInclude Include="ToLowerThreads.h" />
     <ClInclude Include="ToLowerThreadPool.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="digipenCode.txt" />
-    <Text Include="digipenLessons.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

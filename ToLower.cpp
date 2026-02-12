@@ -88,11 +88,11 @@ void ValidateAndMeasure()
 {
   std::array<std::string, 5> openCLkernels =
   { {
-    { "lowerLUT" },
+    { "lowerLookupTable" },
     { "lowerBranch" },
     { "lowerBranchless" },
     { "lower5thBit" },
-    { "lowerVector" },
+    { "lowerUnrolled" },
   } };
 
   std::println( "\nCompiling OpenCL kernels" );
@@ -123,17 +123,17 @@ void ValidateAndMeasure()
     { "AVX512 bit 5",         ToLowerAVX512           <std::string&>    }, // flagged "bit 5" because of fall back to AVX2
     { "SSE",                  ToLowerSSE              <std::string&>    },
 
-    { "OpenCL CPU LUT",       ToLowerOpenCL, "lowerLUT",        &openCLContextCPU },
+    { "OpenCL CPU lookup",    ToLowerOpenCL, "lowerLookupTable",&openCLContextCPU },
     { "OpenCL CPU branch",    ToLowerOpenCL, "lowerBranch",     &openCLContextCPU },
     { "OpenCL CPU branchless",ToLowerOpenCL, "lowerBranchless", &openCLContextCPU },
     { "OpenCL CPU bit 5",     ToLowerOpenCL, "lower5thBit",     &openCLContextCPU },
-    { "OpenCL CPU unrolled",  ToLowerOpenCL, "lowerVector",     &openCLContextCPU },
+    { "OpenCL CPU unrolled",  ToLowerOpenCL, "lowerUnrolled",   &openCLContextCPU },
 
-    { "OpenCL GPU LUT",       ToLowerOpenCL, "lowerLUT",        &openCLContextGPU },
+    { "OpenCL GPU lookup",    ToLowerOpenCL, "lowerLookupTable",&openCLContextGPU },
     { "OpenCL GPU branch",    ToLowerOpenCL, "lowerBranch",     &openCLContextGPU },
     { "OpenCL GPU branchless",ToLowerOpenCL, "lowerBranchless", &openCLContextGPU },
     { "OpenCL GPU bit 5",     ToLowerOpenCL, "lower5thBit",     &openCLContextGPU },
-    { "OpenCL GPU unrolled",  ToLowerOpenCL, "lowerVector",     &openCLContextGPU },
+    { "OpenCL GPU unrolled",  ToLowerOpenCL, "lowerUnrolled",   &openCLContextGPU },
 
     } };
 
@@ -175,6 +175,5 @@ int __cdecl main()
 //  * AMD ROCm
 //  * VMX (PowerPC CPUs)
 //  * Neon (ARM)
-//  * OpenMP
 
 ///////////////////////////////////////////////////////////////////////////////
