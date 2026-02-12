@@ -188,7 +188,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="LowerOriginal.h" />
-    <ClCompile Include="Profile.cpp" />
+    <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="ToLowerPtrNoStrlen.h" />
     <ClCompile Include="ToLowerSpan.h" />
     <ClCompile Include="ToLowerStrRef.h" />
@@ -198,7 +198,7 @@
     <ClCompile Include="ToLowerOpenCL.h" />
     <ClCompile Include="GetLowerByValue.h" />
     <ClCompile Include="GetRandomStr.h" />
-    <ClCompile Include="ToLower.cpp" />
+    <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Lower.cl" />
@@ -207,7 +207,7 @@
     <ClInclude Include="GetLowerChar.h" />
     <ClInclude Include="LowerCaseAsciiTable.h" />
     <ClInclude Include="OpenCLContext.h" />
-    <ClInclude Include="Profile.h" />
+    <ClInclude Include="Profiler.h" />
     <ClInclude Include="SIMDSupport.h" />
     <ClInclude Include="Stopwatch.h" />
     <ClInclude Include="ToLowerAutoNoReturn.h" />

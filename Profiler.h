@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Profile.h
+// Profiler.h
 //
 // Information on functions to be profiled, with methods to validate the
 // functions and measure performance.
@@ -28,7 +28,7 @@
 
 class OpenCLContext;
 
-class Profile
+class Profiler
 {
 public:
 
@@ -36,18 +36,18 @@ public:
   using ParUnseqPolicy = std::execution::parallel_unsequenced_policy;
   using ThreadPoolType = std::vector<std::jthread>;
 
-  Profile( std::string_view, char* ( *func )( char* ), double = 1.0 );
-  Profile( std::string_view, char* ( *func )( char*, size_t ), double = 1.0 );
-  Profile( std::string_view, char* ( *func )( std::span<char> ), double = 1.0 );
-  Profile( std::string_view, void ( *func )( std::string& ), double = 1.0 );
-  Profile( std::string_view, std::string( *func )( std::string& ), double = 1.0 );
-  Profile( std::string_view, std::string& ( *func )( std::string& ), double = 1.0 );
-  Profile( std::string_view, std::string& ( *func )( std::string&, ThreadPoolType& ), ThreadPoolType* );
-  Profile( std::string_view, std::string& ( *func )( std::string&, OpenCLContext&, std::string_view ),
-           std::string_view kernel, OpenCLContext* );
+  Profiler( std::string_view, char* ( *func )( char* ), double = 1.0 );
+  Profiler( std::string_view, char* ( *func )( char*, size_t ), double = 1.0 );
+  Profiler( std::string_view, char* ( *func )( std::span<char> ), double = 1.0 );
+  Profiler( std::string_view, void ( *func )( std::string& ), double = 1.0 );
+  Profiler( std::string_view, std::string( *func )( std::string& ), double = 1.0 );
+  Profiler( std::string_view, std::string& ( *func )( std::string& ), double = 1.0 );
+  Profiler( std::string_view, std::string& ( *func )( std::string&, ThreadPoolType& ), ThreadPoolType* );
+  Profiler( std::string_view, std::string& ( *func )( std::string&, OpenCLContext&, std::string_view ),
+            std::string_view kernel, OpenCLContext* );
 
   template <typename Policy>
-  Profile( std::string_view name, std::string& ( *func )( std::string&, const Policy& ), const Policy& policy ) :
+  Profiler( std::string_view name, std::string& ( *func )( std::string&, const Policy& ), const Policy& policy ) :
     name_( name ),
     func_( func )
   {
@@ -57,11 +57,11 @@ public:
       parunseqPolicy_ = policy;
   }
 
-  Profile( const Profile& ) = default; // for storage in std::vector
+  Profiler( const Profiler& ) = default; // for storing in std::vector
 
-  Profile() = delete;
-  Profile& operator=( const Profile& ) = delete;
-  Profile& operator=( Profile&& ) = delete;
+  Profiler() = delete;
+  Profiler& operator=( const Profiler& ) = delete;
+  Profiler& operator=( Profiler&& ) = delete;
 
   void Validate() const; // Validate that the function does the correct thing
   void Measure() const; // Record the time required to run the given function
@@ -117,6 +117,6 @@ private:
 
   static std::string testStr_; // Store a single test string in mixed case
 
-}; // class Profile
+}; // class Profiler
 
 ///////////////////////////////////////////////////////////////////////////////

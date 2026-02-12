@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// ToLower.cpp
+// Main.cpp
 // 
 // Test and performance module for evaluating correctness and performance
 // of various case conversion functions.
@@ -30,7 +30,7 @@
 #include "GetRandomStr.h"
 #include "LowerCaseAsciiTable.h"
 #include "LowerOriginal.h"
-#include "Profile.h"
+#include "Profiler.h"
 #include "ToLower5thBit.h"
 #include "ToLowerAuto.h"
 #include "ToLowerAutoConstexpr.h"
@@ -52,8 +52,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 size_t kRandomStrSize = 1024uz * 1024uz * 10uz; // 10 MB baseline for scale=1.0
-std::string Profile::testStr_ = GetRandomStr( kRandomStrSize );
-std::ofstream Profile::outputFile;
+std::string Profiler::testStr_ = GetRandomStr( kRandomStrSize );
+std::ofstream Profiler::outputFile;
 
 namespace execution = std::execution;
 using ParPolicy = execution::parallel_policy;
@@ -100,7 +100,7 @@ void ValidateAndMeasure()
   OpenCLContext openCLContextGPU{ CL_DEVICE_TYPE_GPU, "Lower.cl", openCLkernels };
   ThreadPoolType threadPool( std::max( std::thread::hardware_concurrency(), 1u ) );
 
-  std::vector<Profile> profiles =
+  std::vector<Profiler> profilers =
   { {
     { "original",             LowerOriginal                    , 0.001 },
     { "ptr no strlen",        ToLowerPtrNoStrlen                       },
@@ -114,10 +114,10 @@ void ValidateAndMeasure()
     { "bit 5 trick",          ToLower5thBit           <std::string&>   },
     { "lookup table",         ToLowerLookupTable      <std::string&>   },
     { "threads",              ToLowerThreads          <std::string&>   },
-    { "thread pool",          ToLowerThreadPool       <std::string&, ThreadPoolType&>, &threadPool      },
-    { "thread pool bit 5",    ToLowerThreadPool5thBit <std::string&, ThreadPoolType&>, &threadPool      },
-    { "thread pool SSE",      ToLowerThreadPoolSSE    <std::string&, ThreadPoolType&>, &threadPool      },
-    { "execution::par",       ToLowerExecPolicy       <std::string&, const ParPolicy&>, execution::par  },
+    { "thread pool",          ToLowerThreadPool       <std::string&, ThreadPoolType&>, &threadPool },
+    { "thread pool bit 5",    ToLowerThreadPool5thBit <std::string&, ThreadPoolType&>, &threadPool },
+    { "thread pool SSE",      ToLowerThreadPoolSSE    <std::string&, ThreadPoolType&>, &threadPool },
+    { "execution::par",       ToLowerExecPolicy       <std::string&, const ParPolicy&>, execution::par            },
     { "execution::par_unseq", ToLowerExecPolicy       <std::string&, const ParUnseqPolicy&>, execution::par_unseq },
     { "AVX2 with bit 5",      ToLowerAVX2             <std::string&>    },
     { "AVX512 bit 5",         ToLowerAVX512           <std::string&>    }, // flagged "bit 5" because of fall back to AVX2
@@ -138,15 +138,15 @@ void ValidateAndMeasure()
     } };
 
   std::println( "Validating implementations" );
-  for ( const auto& profile : profiles )
-    profile.Validate();
+  for ( const auto& profiler : profilers )
+    profiler.Validate();
 
-  Profile::outputFile.open( "benchmark.txt" );
+  Profiler::outputFile.open( "benchmark.txt" );
   std::println( "\nMeasuring implementations" );
-  for ( const auto& profile : profiles )
-    profile.Measure();
+  for ( const auto& profiler : profilers )
+    profiler.Measure();
 
-  Profile::outputFile.close();
+  Profiler::outputFile.close();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

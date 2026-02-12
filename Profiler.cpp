@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Profile.cpp
+// Profiler.cpp
 //
 // Information on functions to be profiled, with methods to validate the
 // functions and measure performance.
@@ -21,7 +21,7 @@
 #include "GetLowerByValue.h"
 #include "ToLower5thBit.h"
 #include "GetRandomStr.h"
-#include "Profile.h"
+#include "Profiler.h"
 #include "Stopwatch.h"
 
 #ifdef _DEBUG
@@ -37,49 +37,49 @@ static constexpr size_t kTimeColumnWidth = 8;
 //
 // Constructors
 
-Profile::Profile( std::string_view name, char* ( *func )( char* ), double scale ) :
+Profiler::Profiler( std::string_view name, char* ( *func )( char* ), double scale ) :
   name_( name ),
   func_( std::function<char* ( char* )>( func ) ),
   scale_( scale )
 {
 }
 
-Profile::Profile( std::string_view name, char* ( *func )( char*, size_t ), double scale ) :
+Profiler::Profiler( std::string_view name, char* ( *func )( char*, size_t ), double scale ) :
   name_( name ),
   func_( std::function<char* ( char*, size_t )>( func ) ),
   scale_( scale )
 {
 }
 
-Profile::Profile( std::string_view name, char* ( *func )( std::span<char> ), double scale ) :
+Profiler::Profiler( std::string_view name, char* ( *func )( std::span<char> ), double scale ) :
   name_( name ),
   func_( std::function<char* ( std::span<char> )>( func ) ),
   scale_( scale )
 {
 }
 
-Profile::Profile( std::string_view name, void ( *func )( std::string& ), double scale ) :
+Profiler::Profiler( std::string_view name, void ( *func )( std::string& ), double scale ) :
   name_( name ),
   func_( std::function<void( std::string& )>( func ) ),
   scale_( scale )
 {
 }
 
-Profile::Profile( std::string_view name, std::string( *func )( std::string& ), double scale ) :
+Profiler::Profiler( std::string_view name, std::string( *func )( std::string& ), double scale ) :
   name_( name ),
   func_( std::function<std::string( std::string& )>( func ) ),
   scale_( scale )
 {
 }
 
-Profile::Profile( std::string_view name, std::string& ( *func )( std::string& ), double scale ) :
+Profiler::Profiler( std::string_view name, std::string& ( *func )( std::string& ), double scale ) :
   name_( name ),
   func_( std::function<std::string& ( std::string& )>( func ) ),
   scale_( scale )
 {
 }
 
-Profile::Profile( std::string_view name, std::string& ( *func )( std::string&, ThreadPoolType& ),
+Profiler::Profiler( std::string_view name, std::string& ( *func )( std::string&, ThreadPoolType& ),
   ThreadPoolType* threadPool ) :
   name_( name ),
   func_( std::function<std::string& ( std::string&, std::vector<std::jthread>& )>( func ) ),
@@ -87,7 +87,7 @@ Profile::Profile( std::string_view name, std::string& ( *func )( std::string&, T
 {
 }
 
-Profile::Profile( std::string_view name, std::string& ( *func )( std::string&, OpenCLContext&, std::string_view ),
+Profiler::Profiler( std::string_view name, std::string& ( *func )( std::string&, OpenCLContext&, std::string_view ),
   std::string_view kernel, OpenCLContext* openCLContext ) :
   name_( name ),
   func_( std::function<std::string& ( std::string&, OpenCLContext&, std::string_view )>( func ) ),
@@ -100,7 +100,7 @@ Profile::Profile( std::string_view name, std::string& ( *func )( std::string&, O
 // 
 // Validate that the function does the correct thing
 
-void Profile::Validate() const
+void Profiler::Validate() const
 {
   std::print( "{:{}}: ", name_, kNameColumnWidth );
 
@@ -133,7 +133,7 @@ void Profile::Validate() const
 // 
 // Record the time required to run the given function on large input
 
-void Profile::Measure() const
+void Profiler::Measure() const
 {
   std::print( "{:{}}: ", name_, kNameColumnWidth );
   std::string input = GetTestInput();
@@ -152,7 +152,7 @@ void Profile::Measure() const
 // 
 // Validate that the function converts input to expectedOutput
 
-void Profile::Validate( std::string& input, const std::string& expectedOutput ) const // private
+void Profiler::Validate( std::string& input, const std::string& expectedOutput ) const // private
 {
   InvokeFunction( input );
   test( std::ranges::equal( input, expectedOutput ) );
@@ -162,7 +162,7 @@ void Profile::Validate( std::string& input, const std::string& expectedOutput ) 
 // 
 // Generate test string of appropriate size based on desired scale
 
-std::string Profile::GetTestInput() const // private
+std::string Profiler::GetTestInput() const // private
 {
   std::string input{ testStr_ };
   auto scaledSize = static_cast<double>( testStr_.size() ) * scale_;
@@ -179,7 +179,7 @@ std::string Profile::GetTestInput() const // private
 // compiler can likely resolve this to a simple switch statement with
 // minimal overhead.
 
-void Profile::InvokeFunction( std::string& input ) const // private
+void Profiler::InvokeFunction( std::string& input ) const // private
 {
   auto visitorOp = [this, &input]( auto& func )
   {

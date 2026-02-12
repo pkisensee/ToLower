@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="ToLower.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="lowerOriginal.h" />
     <ClCompile Include="toLowerPtrNoStrlen.h" />
     <ClCompile Include="toLowerStrRef.h" />
@@ -12,7 +12,7 @@
     <ClCompile Include="getRandomStr.h" />
     <ClCompile Include="toLowerOpenCL.h" />
     <ClCompile Include="getLowerByValue.h" />
-    <ClCompile Include="Profile.cpp" />
+    <ClCompile Include="Profiler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lower.cl" />
@@ -31,7 +31,7 @@
     <ClInclude Include="toLowerThreadPool.h" />
     <ClInclude Include="LowerCaseAsciiTable.h" />
     <ClInclude Include="Stopwatch.h" />
-    <ClInclude Include="Profile.h" />
+    <ClInclude Include="Profiler.h" />
     <ClInclude Include="SIMDSupport.h" />
     <ClInclude Include="ToLowerAVX512.h" />
   </ItemGroup>
