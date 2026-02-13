@@ -76,8 +76,6 @@ using UnseqPolicy = execution::unsequenced_policy;
 using ParUnseqPolicy = execution::parallel_unsequenced_policy;
 using ThreadPoolType = std::vector<std::jthread>;
 
-static_assert( kLowerCaseAsciiTable == kLowerCaseAsciiTableHardCoded );
-
 ///////////////////////////////////////////////////////////////////////////////
 
 void TestSIMDSupport()

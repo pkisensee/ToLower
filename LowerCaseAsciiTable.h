@@ -2,12 +2,8 @@
 //
 // LowerCaseAsciiTable.h
 //
-// Notes: 
-//   * Only 256 bytes of memory required
+// Only 256 bytes of memory required
 //
-// Issues:
-//   * 
-// 
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.
 //
@@ -79,5 +75,7 @@ inline constexpr LowerCaseAsciiTable kLowerCaseAsciiTable = []
   return lowerAscii;
 
 }(); // One-time function call here generates table
+
+static_assert( kLowerCaseAsciiTable == kLowerCaseAsciiTableHardCoded );
 
 ///////////////////////////////////////////////////////////////////////////////

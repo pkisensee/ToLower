@@ -2,14 +2,6 @@
 //
 // GetLowerChar.h
 //
-// std::tolower has UB if incoming value is not representable as unsigned char, 
-// hence requirement to cast.
-// 
-// See https://en.cppreference.com/w/cpp/string/byte/tolower.html
-//
-// Note: std::tolower can't be constexpr because the behavior depends on the
-// current locale, which is runtime state.
-//
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.
 //
@@ -22,8 +14,17 @@
 
 #pragma once
 #include <cctype>
+#include "LowerCaseAsciiTable.h"
 
 // Converts the incoming character to lowercase using std::tolower
+// 
+// std::tolower has UB if incoming value is not representable as unsigned char, 
+// hence requirement to cast.
+// 
+// See https://en.cppreference.com/w/cpp/string/byte/tolower.html
+//
+// Note: std::tolower can't be constexpr because the behavior depends on the
+// current locale, which is runtime state.
 inline char GetLowerChar( char c ) noexcept
 {
   auto uchar = static_cast<unsigned char>( c );
@@ -31,8 +32,26 @@ inline char GetLowerChar( char c ) noexcept
   return static_cast<char>( lowered );
 }
 
+// Converts the incoming character to lowercase using some math
+// Only works for simple ASCII; may not be correct for other locales
+inline constexpr char GetLowerCharAZ( char c ) noexcept
+{
+  if ( c >= 'A' && c <= 'Z' )
+    return c + 'a' - 'A';
+}
+
+// Converts the incoming character to lowercase using a lookup table
+// Only works for simple ASCII; may not be correct for other locales
+inline constexpr char GetLowerCharLookupTable( char c ) noexcept
+{
+  auto uchar = static_cast<unsigned char>( c );
+  auto index = static_cast<size_t>( uchar );
+  return kLowerCaseAsciiTable[ index ];
+}
+
 // Converts the incoming character to lowercase using 5th bit trick
-inline char GetLowerChar5thBit( char c ) noexcept
+// Doesn't work correctly for all ASCII chars
+inline constexpr char GetLowerChar5thBit( char c ) noexcept
 {
   static constexpr unsigned char kBit5Set = 0b0010'0000; // 0x20
   auto uchar = static_cast<unsigned char>( c );

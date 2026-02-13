@@ -23,24 +23,16 @@
 #include <algorithm>
 #include <ranges>
 #include <utility>
-#include "LowerCaseAsciiTable.h"
-
-// VS may give false positive if constexpr var (kLowerCaseAsciiTable) used in templates
-#pragma warning(push)
-#pragma warning(disable: 5264)
+#include "GetLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
 constexpr auto&& ToLowerLookupTable( auto&& s ) noexcept
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
-    auto uchar = static_cast<unsigned char>( c );
-    auto index = static_cast<size_t>( uchar );
-    return kLowerCaseAsciiTable[ index ];
+    return GetLowerCharLookupTable( c );
   } );
   return std::forward<decltype( s )>( s );
 }
-
-#pragma warning(pop)
 
 ///////////////////////////////////////////////////////////////////////////////
