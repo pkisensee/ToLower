@@ -24,7 +24,7 @@
 //  * VMX (PowerPC CPUs)
 //  * Neon (ARM)
 
-//#define ENABLE_OPENCL 1
+#define ENABLE_OPENCL 1
 
 #include <cassert>
 #include <clocale>
