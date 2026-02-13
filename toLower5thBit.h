@@ -33,17 +33,14 @@
 #include <algorithm>
 #include <ranges>
 #include <utility>
+#include "GetLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
 constexpr auto&& ToLower5thBit( auto&& s ) noexcept
 {
-  static constexpr unsigned char kBit5Set = 0b0010'0000; // 0x20
-
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
-    auto uchar = static_cast<unsigned char>( c );
-    auto lower = uchar | kBit5Set;
-    return static_cast<char>( lower );
+    return GetLowerChar5thBit( c );
   } );
   return std::forward<decltype( s )>( s );
 }

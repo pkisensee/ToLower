@@ -191,6 +191,7 @@
     <ClCompile Include="OpenCLContext.cpp" />
     <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="ToLowerPtrNoStrlen.h" />
+    <ClCompile Include="ToLowerSSE5thBit.h" />
     <ClCompile Include="ToLowerSpan.h" />
     <ClCompile Include="ToLowerStrRef.h" />
     <ClCompile Include="ToLowerStrView.h" />
@@ -213,6 +214,8 @@
     <ClInclude Include="Stopwatch.h" />
     <ClInclude Include="ToLowerAutoNoReturn.h" />
     <ClInclude Include="ToLowerAVX512.h" />
+    <ClInclude Include="ToLowerRangeBasedFor.h" />
+    <ClInclude Include="ToLowerSSE5thBitAligned.h" />
     <ClInclude Include="ToLowerTemplatized.h" />
     <ClInclude Include="ToLowerAuto.h" />
     <ClInclude Include="ToLowerAutoConstexpr.h" />

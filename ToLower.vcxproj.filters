@@ -14,6 +14,7 @@
     <ClCompile Include="getLowerByValue.h" />
     <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="OpenCLContext.cpp" />
+    <ClCompile Include="ToLowerSSE5thBit.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lower.cl" />
@@ -35,5 +36,7 @@
     <ClInclude Include="Profiler.h" />
     <ClInclude Include="SIMDSupport.h" />
     <ClInclude Include="ToLowerAVX512.h" />
+    <ClInclude Include="ToLowerSSE5thBitAligned.h" />
+    <ClInclude Include="ToLowerRangeBasedFor.h" />
   </ItemGroup>
 </Project>

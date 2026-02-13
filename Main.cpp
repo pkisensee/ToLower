@@ -14,6 +14,15 @@
 // 
 // This software is provided "as is" and without any express or implied
 // warranties.
+//
+// Additional performance options to consider:
+//  * std::simd (currently experimental; expected in C++26)
+//  * CUDA (NVIDIA GPUs)
+//  * Vulkan compute shader (GPU)
+//  * Halide (fast image processing)
+//  * AMD ROCm
+//  * VMX (PowerPC CPUs)
+//  * Neon (ARM)
 
 #include <cassert>
 #include <clocale>
@@ -41,8 +50,11 @@
 #include "ToLowerLookupTable.h"
 #include "ToLowerOpenCL.h"
 #include "ToLowerPtrNoStrlen.h"
+#include "ToLowerRangeBasedFor.h"
 #include "ToLowerSpan.h"
 #include "ToLowerSSE.h"
+#include "ToLowerSSE5thBit.h"
+#include "ToLowerSSE5thBitAligned.h"
 #include "ToLowerStrRef.h"
 #include "ToLowerStrView.h"
 #include "ToLowerTemplatized.h"
@@ -60,6 +72,7 @@ size_t Profiler::measurementRuns_ = 10;
 
 namespace execution = std::execution;
 using ParPolicy = execution::parallel_policy;
+using UnseqPolicy = execution::unsequenced_policy;
 using ParUnseqPolicy = execution::parallel_unsequenced_policy;
 using ThreadPoolType = std::vector<std::jthread>;
 
@@ -113,6 +126,7 @@ void ValidateAndMeasure()
     { "auto&&",               ToLowerAuto             <std::string&>   },
     { "auto&& no return",     ToLowerAutoNoReturn     <std::string&>   },
     { "constexpr noexcept",   ToLowerAutoConstexpr    <std::string&>   },
+    { "range based for",      ToLowerRangeBasedFor    <std::string&>   },
     { "return by value",      GetLowerByValue         <std::string&>   },
     { "bit 5 trick",          ToLower5thBit           <std::string&>   },
     { "lookup table",         ToLowerLookupTable      <std::string&>   },
@@ -121,10 +135,13 @@ void ValidateAndMeasure()
     { "thread pool bit 5",    ToLowerThreadPool5thBit <std::string&, ThreadPoolType&>, &threadPool },
     { "thread pool SSE",      ToLowerThreadPoolSSE    <std::string&, ThreadPoolType&>, &threadPool },
     { "execution::par",       ToLowerExecPolicy       <std::string&, const ParPolicy&>, execution::par            },
+    { "execution::unseq",     ToLowerExecPolicy       <std::string&, const UnseqPolicy&>, execution::unseq        },
     { "execution::par_unseq", ToLowerExecPolicy       <std::string&, const ParUnseqPolicy&>, execution::par_unseq },
     { "AVX2 with bit 5",      ToLowerAVX2             <std::string&>    },
     { "AVX512 bit 5",         ToLowerAVX512           <std::string&>    }, // "bit 5" because of fall back to AVX2
     { "SSE",                  ToLowerSSE              <std::string&>    },
+    { "SSE bit 5",            ToLowerSSE5thBit        <std::string&>    },
+    { "SSE bit 5 aligned",    ToLowerSSE5thBitAligned <std::string&>    },
 
     { "OpenCL CPU lookup",    ToLowerOpenCL, "lowerLookupTable",&openCLContextCPU },
     { "OpenCL CPU branch",    ToLowerOpenCL, "lowerBranch",     &openCLContextCPU },
@@ -169,14 +186,5 @@ int __cdecl main()
     return -1;
   }
 }
-
-// Additional performance options to consider:
-//  * std::simd (currently experimental; expected in C++26)
-//  * CUDA (NVIDIA GPUs)
-//  * Vulkan compute shader (GPU)
-//  * Halide (fast image processing)
-//  * AMD ROCm
-//  * VMX (PowerPC CPUs)
-//  * Neon (ARM)
 
 ///////////////////////////////////////////////////////////////////////////////

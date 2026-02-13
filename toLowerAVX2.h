@@ -28,6 +28,7 @@
 #include <iterator>
 #include <string>
 #include <utility>
+#include "GetLowerChar.h"
 #include "ToLowerSSE.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
@@ -53,11 +54,7 @@ constexpr auto&& ToLowerAVX2( auto&& s ) noexcept
 
   // Convert any remaining <kAVX2bytes chars directly
   for( ; len > 0; ++data, --len )
-  {
-    auto uchar = static_cast<unsigned char>( *data );
-    auto lower = uchar | kBit5Set;
-    *data = static_cast<char>( lower );
-  }
+    *data = GetLowerChar5thBit( *data );
 
   return std::forward<decltype( s )>( s );
 }

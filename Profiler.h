@@ -33,6 +33,7 @@ class Profiler
 public:
 
   using ParPolicy = std::execution::parallel_policy;
+  using UnseqPolicy = std::execution::unsequenced_policy;
   using ParUnseqPolicy = std::execution::parallel_unsequenced_policy;
   using ThreadPoolType = std::vector<std::jthread>;
 
@@ -53,6 +54,8 @@ public:
   {
     if constexpr ( std::is_same_v<Policy, ParPolicy> )
       parPolicy_ = policy;
+    else if constexpr ( std::is_same_v<Policy, UnseqPolicy> )
+      unseqPolicy_ = policy;
     else
       parunseqPolicy_ = policy;
   }
@@ -83,6 +86,7 @@ private:
     Str_StrRef,
     StrRef_StrRef,
     StrRef_StrRefParPolicy,
+    StrRef_StrRefUnseqPolicy,
     StrRef_StrRefParUnseqPolicy,
     StrRef_StrRefThreadPool,
     StrRef_StrRefOpenCLContextStrView,
@@ -96,6 +100,7 @@ private:
     std::function< std::string  ( std::string& )>,    // e.g. GetLowerByValue
     std::function< std::string& ( std::string& )>,    // e.g. ToLowerLookupTable
     std::function< std::string& ( std::string&, const ParPolicy& )>, // e.g. ToLowerExecPolicy
+    std::function< std::string& ( std::string&, const UnseqPolicy& )>, // e.g. ToLowerExecPolicy
     std::function< std::string& ( std::string&, const ParUnseqPolicy& )>, // e.g. ToLowerExecPolicy
     std::function< std::string& ( std::string&, ThreadPoolType& )>, // e.g. ToLowerThreadPool
     std::function< std::string& ( std::string&, OpenCLContext&, std::string_view )> // e.g. ToLowerOpenCL
@@ -107,6 +112,7 @@ private:
 
   // For std::algorithms with policies
   ParPolicy parPolicy_ = std::execution::par;
+  UnseqPolicy unseqPolicy_ = std::execution::unseq;
   ParUnseqPolicy parunseqPolicy_ = std::execution::par_unseq;
 
   ThreadPoolType* threadPool_ = nullptr; // For functions that accept a threadPool

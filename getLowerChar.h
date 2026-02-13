@@ -23,12 +23,21 @@
 #pragma once
 #include <cctype>
 
-// Converts the incoming character to lowercase
+// Converts the incoming character to lowercase using std::tolower
 inline char GetLowerChar( char c ) noexcept
 {
   auto uchar = static_cast<unsigned char>( c );
   auto lowered = std::tolower( uchar );
   return static_cast<char>( lowered );
+}
+
+// Converts the incoming character to lowercase using 5th bit trick
+inline char GetLowerChar5thBit( char c ) noexcept
+{
+  static constexpr unsigned char kBit5Set = 0b0010'0000; // 0x20
+  auto uchar = static_cast<unsigned char>( c );
+  auto lower = uchar | kBit5Set;
+  return static_cast<char>( lower );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

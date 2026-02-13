@@ -152,7 +152,7 @@ void Profiler::Measure() const
     measurements.push_back( microSecs );
   }
   double minRuntimeMicroSecs = std::ranges::min( measurements );
-  std::println( "{:{}.0f} microSecs", minRuntimeMicroSecs, kTimeColumnWidth );
+  std::println( "{:{}.0f} microsecs", minRuntimeMicroSecs, kTimeColumnWidth );
 
   if ( outputFile.is_open() )
     outputFile << name_ << ", " << minRuntimeMicroSecs << '\n';
@@ -207,6 +207,8 @@ void Profiler::InvokeFunction( std::string& input ) const // private
     }
     else if constexpr ( std::is_invocable_v<Func, std::string&, const ParPolicy&> )
       func( input, parPolicy_ );
+    else if constexpr ( std::is_invocable_v<Func, std::string&, const UnseqPolicy&> )
+      func( input, unseqPolicy_ );
     else if constexpr ( std::is_invocable_v<Func, std::string&, const ParUnseqPolicy&> )
       func( input, parunseqPolicy_ );
     else if constexpr ( std::is_invocable_v<Func, std::string&, ThreadPoolType&> )

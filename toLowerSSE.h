@@ -81,9 +81,7 @@ constexpr auto&& ToLowerSSE( auto&& s ) noexcept
 
   // Convert any remaining <kSSEbytes chars directly
   for( ; len > 0; ++data, --len )
-  {
     *data = GetLowerChar( *data );
-  }
 
   return std::forward<decltype( s )>( s );
 }
