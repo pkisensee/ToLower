@@ -30,7 +30,7 @@ auto&& ToLowerAuto( auto&& s )
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
-    return GetLowerChar( c );
+    return GetLowerCharCondMove( c );
   } );
   return std::forward< decltype(s) >(s);
 }

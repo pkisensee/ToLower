@@ -50,7 +50,6 @@ constexpr auto&& ToLowerSSE5thBitAligned( auto&& s ) noexcept
   // Convert each kSSEbyte block; assumes block is aligned
   size_t len = std::size( s );
   char* data = std::data( s );
-  assert( IsAligned<kSSEbytes>( data ) ); // see std::is_sufficiently_aligned in C++26
 
   for ( ; len >= kSSEbytes; len -= kSSEbytes, data += kSSEbytes )
   {

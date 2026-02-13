@@ -63,6 +63,8 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+//static constexpr bool kEnableOpenCL = false;
+
 size_t kValidateStrSize = 1024uz * 100uz; // 100K random string for validation
 size_t kMeasureStrSize = 1024uz * 1024uz * 10uz; // 10 MB baseline for scale=1.0
 std::string Profiler::validateStr_ = GetRandomStr( kValidateStrSize );
@@ -153,7 +155,7 @@ void ValidateAndMeasure()
     { "OpenCL GPU bit 5",     ToLowerOpenCL, "lower5thBit",     &openCLContextGPU },
     { "OpenCL GPU SIMD",      ToLowerOpenCL, "lowerSIMD",       &openCLContextGPU },
 
-    } };
+  } };
 
   std::println( "Validating implementations" );
   for ( const auto& profiler : profilers )

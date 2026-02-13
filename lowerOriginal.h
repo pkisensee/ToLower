@@ -28,7 +28,7 @@
 #include <cctype>
 #include <cstring>
 
-// show that bad code will compile clean without level 4 warnings
+// Temporarily disable valid and useful level 4 warnings
 #pragma warning(push)
 #pragma warning(disable: 4018 4242 4244 4388)
 
