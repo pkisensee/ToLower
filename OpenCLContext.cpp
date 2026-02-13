@@ -17,11 +17,12 @@
 #include <fstream>
 #include "OpenCLContext.h"
 
-static const std::string kCacheFolder{ ".opencl_cache" };
+static const std::string kCacheFolder{ ".OpenCLCache" };
 
 ///////////////////////////////////////////////////////////////////////////////
-
+//
 // Get the default GPU or CPU device
+
 cl::Device OpenCLContext::GetDefaultDevice( cl_device_type deviceType ) // static
 {
   std::vector<cl::Platform> platforms;
@@ -41,14 +42,20 @@ cl::Device OpenCLContext::GetDefaultDevice( cl_device_type deviceType ) // stati
   }
 }
 
+///////////////////////////////////////////////////////////////////////////////
+//
 // Convert file into string
+
 std::string OpenCLContext::GetSourceCode( const std::filesystem::path& fileName ) // static
 {
   std::ifstream fileStream( fileName );
   return std::string{ std::istreambuf_iterator<char>( fileStream ), {} };
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// 
 // Generate cache filename based on source file and device
+
 std::filesystem::path OpenCLContext::GetCacheFilePath( const std::filesystem::path& sourceFile,
   const cl::Device& device ) // static
 {
@@ -64,7 +71,10 @@ std::filesystem::path OpenCLContext::GetCacheFilePath( const std::filesystem::pa
   return cacheFile;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// 
 // Check if cached binary exists and is newer than source
+
 bool OpenCLContext::IsCacheValid( const std::filesystem::path& sourceFile,
   const std::filesystem::path& cacheFile ) // static
 {
@@ -77,7 +87,10 @@ bool OpenCLContext::IsCacheValid( const std::filesystem::path& sourceFile,
   return cacheTime >= sourceTime;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// 
 // Save compiled binary to cache
+
 void OpenCLContext::SaveBinaryToCache( const cl::Program& program, 
   const std::filesystem::path& cacheFile ) // static
 {
@@ -94,7 +107,10 @@ void OpenCLContext::SaveBinaryToCache( const cl::Program& program,
   file.write( data, ssize );
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// 
 // Load binary from cache
+
 std::vector<unsigned char> OpenCLContext::LoadBinaryFromCache( 
   const std::filesystem::path& cacheFile ) // static
 {

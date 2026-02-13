@@ -24,6 +24,8 @@
 //  * VMX (PowerPC CPUs)
 //  * Neon (ARM)
 
+//#define ENABLE_OPENCL 1
+
 #include <cassert>
 #include <clocale>
 #include <execution>
@@ -102,6 +104,8 @@ void Bit5Visualizatiaon()
 
 void ValidateAndMeasure()
 {
+#if defined( ENABLE_OPENCL )
+  std::println( "\nLoading OpenCL kernels" );
   std::array<std::string, 5> openCLkernels =
   { {
     { "lowerLookupTable" },
@@ -110,10 +114,10 @@ void ValidateAndMeasure()
     { "lower5thBit" },
     { "lowerSIMD" },
   } };
-
-  std::println( "\nLoading OpenCL kernels" );
   OpenCLContext openCLContextCPU{ CL_DEVICE_TYPE_CPU, "Lower.cl", openCLkernels };
   OpenCLContext openCLContextGPU{ CL_DEVICE_TYPE_GPU, "Lower.cl", openCLkernels };
+#endif
+
   ThreadPoolType threadPool( std::max( std::thread::hardware_concurrency(), 1u ) );
 
   std::vector<Profiler> profilers =
@@ -143,6 +147,7 @@ void ValidateAndMeasure()
     { "SSE bit 5",            ToLowerSSE5thBit        <std::string&>    },
     { "SSE bit 5 aligned",    ToLowerSSE5thBitAligned <std::string&>    },
 
+#if defined( ENABLE_OPENCL )
     { "OpenCL CPU lookup",    ToLowerOpenCL, "lowerLookupTable",&openCLContextCPU },
     { "OpenCL CPU branch",    ToLowerOpenCL, "lowerBranch",     &openCLContextCPU },
     { "OpenCL CPU branchless",ToLowerOpenCL, "lowerBranchless", &openCLContextCPU },
@@ -154,7 +159,7 @@ void ValidateAndMeasure()
     { "OpenCL GPU branchless",ToLowerOpenCL, "lowerBranchless", &openCLContextGPU },
     { "OpenCL GPU bit 5",     ToLowerOpenCL, "lower5thBit",     &openCLContextGPU },
     { "OpenCL GPU SIMD",      ToLowerOpenCL, "lowerSIMD",       &openCLContextGPU },
-
+#endif
   } };
 
   std::println( "Validating implementations" );

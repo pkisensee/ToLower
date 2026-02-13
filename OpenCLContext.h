@@ -96,7 +96,7 @@ public:
     cl::Buffer stringDataBuffer( context_, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,
                                  len, data );
 
-    // Establish arguments to kernl function
+    // Establish arguments to OpenCL kernel function
     // void toLower( __global char* s, unsigned long len )
     kernel.setArg( 0, stringDataBuffer );
     kernel.setArg( 1, static_cast<uint64_t>( len ) );
