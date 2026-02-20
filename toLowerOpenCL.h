@@ -8,7 +8,9 @@
 //
 // Issues:
 //   * Must install OpenCL SDK
-//   * Must install runtime/drivers for AMD or NVIDIA GPU (Windows)
+//   * Must install runtime/drivers; this is non-trivial
+//   * OpenCL hasn't garnered industry traction; using lower-level solutions,
+//     e.g. SIMD (SSE/AVX) or CUDA, will likely generate better results
 //
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.
@@ -25,7 +27,8 @@
 #include "OpenCLContext.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-constexpr auto&& ToLowerOpenCL( auto&& s, OpenCLContext& openCLContext, std::string_view kernelName ) noexcept
+// Can't be noexcept because openCLContext.ToLower can throw.
+constexpr auto&& ToLowerOpenCL( auto&& s, OpenCLContext& openCLContext, std::string_view kernelName )
 {
   return openCLContext.ToLower( s, kernelName );
 }

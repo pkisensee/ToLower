@@ -85,7 +85,8 @@ public:
   }
 
   // Convert char sequence to lower case in place. Returns modified sequence.
-  constexpr auto&& ToLower( auto&& s, std::string_view kernelName ) noexcept
+  // Can't be noexcept because enqueue can throw.
+  constexpr auto&& ToLower( auto&& s, std::string_view kernelName )
   {
     // Grab relevant kernel
     auto& kernel = kernels_[ kernelName ];
