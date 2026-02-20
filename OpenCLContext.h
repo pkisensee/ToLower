@@ -30,12 +30,13 @@
 #include "CL/OpenCL.hpp"
 #pragma warning(pop)
 
-inline const std::string kBuildOptions{ "-cl-std=CL3.0 -Werror" };
-
 ///////////////////////////////////////////////////////////////////////////////
 
 class OpenCLContext
 {
+  static inline const std::string kBuildOptions{ "-cl-std=CL3.0 -Werror" };
+  static constexpr size_t kInitialCapacity = 1024 * 1024;
+
 public:
   OpenCLContext() = delete;
 
@@ -47,7 +48,8 @@ public:
                  const auto& kernelNames ) :
     device_{ GetDefaultDevice( preferredDevice ) },
     context_{ device_ },
-    queue_{ context_, device_ }
+    queue_{ context_, device_ },
+    dataBuffer_{ context_, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, kInitialCapacity }
   {
     // Attempt to load from binary cache first
     auto cacheFile = GetCacheFilePath( sourceCodeFile, device_ );
@@ -88,30 +90,35 @@ public:
   // Can't be noexcept because enqueue can throw.
   constexpr auto&& ToLower( auto&& s, std::string_view kernelName )
   {
-    // Grab relevant kernel
-    auto& kernel = kernels_[ kernelName ];
-
-    // Point CL buffer to incoming char sequence
     size_t len = std::size( s );
     char* data = std::data( s );
-    cl::Buffer stringDataBuffer( context_, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,
-                                 len, data );
+
+    // Update buffer size if necessary
+    if ( len > bufferCapacity_ )
+    {
+      bufferCapacity_ = len;
+      dataBuffer_ = cl::Buffer( context_, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, bufferCapacity_ );
+    }
+
+    // Write input data to pinned buffer
+    cl_bool blocking = CL_TRUE;
+    queue_.enqueueWriteBuffer( dataBuffer_, blocking, 0, len, data );
 
     // Establish arguments to OpenCL kernel function
     // void toLower( __global char* s, unsigned long len )
-    kernel.setArg( 0, stringDataBuffer );
+    auto& kernel = kernels_.at( kernelName );
+    kernel.setArg( 0, dataBuffer_ );
     kernel.setArg( 1, static_cast<uint64_t>( len ) );
 
     // Execute kernel on device
-    auto offset = cl::NullRange;           // process the entire string
-    auto threadCount = cl::NDRange{ len }; // 1 thread per character
-    auto localWork = cl::NullRange;        // no local threads
+    auto offset = cl::NullRange;              // process the entire string
+    auto threadCount = cl::NDRange{ len };    // 1 thread per character
+    auto localWork = cl::NullRange;           // no local threads
     queue_.enqueueNDRangeKernel( kernel, offset, threadCount, localWork );
     queue_.finish();
 
     // Read results back into s
-    cl_bool blocking = CL_TRUE;
-    queue_.enqueueReadBuffer( stringDataBuffer, blocking, 0, len, data );
+    queue_.enqueueReadBuffer( dataBuffer_, blocking, 0, len, data );
 
     return std::forward<decltype( s )>( s );
   }
@@ -140,6 +147,8 @@ private:
   cl::Context       context_;
   cl::CommandQueue  queue_;
   cl::Program       program_;
+  cl::Buffer        dataBuffer_;
+  size_t            bufferCapacity_{ kInitialCapacity };
 
   using Key = std::string_view;
   using Value = cl::Kernel;

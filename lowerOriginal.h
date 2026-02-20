@@ -3,6 +3,7 @@
 // LowerOriginal.h
 //
 // Issues: 
+//   * High level: do not use this code!
 //   * Compiler warnings; strlen returns size_t (unsigned) but loop uses int (signed)
 //   * UB if input is null
 //   * strlen is an unsafe function used for buffer overflow attacks

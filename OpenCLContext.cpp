@@ -14,7 +14,10 @@
 // This software is provided "as is" and without any express or implied
 // warranties.
 
+#include <cctype>
+#include <filesystem>
 #include <fstream>
+#include <vector>
 #include "OpenCLContext.h"
 
 static const std::string kCacheFolder{ ".OpenCLCache" };
@@ -38,7 +41,7 @@ cl::Device OpenCLContext::GetDefaultDevice( cl_device_type deviceType ) // stati
   {
     case CL_DEVICE_TYPE_GPU: throw std::exception( "No OpenCL GPU detected" ); break;
     case CL_DEVICE_TYPE_CPU: throw std::exception( "No OpenCL CPU detected" ); break;
-    default: throw std::exception( "Invalid device type" ); break;
+    default:                 throw std::exception( "Invalid device type" ); break;
   }
 }
 
@@ -59,8 +62,8 @@ std::string OpenCLContext::GetSourceCode( const std::filesystem::path& fileName 
 std::filesystem::path OpenCLContext::GetCacheFilePath( const std::filesystem::path& sourceFile,
   const cl::Device& device ) // static
 {
+  // Generate alphanumeric device name
   auto deviceName = device.getInfo< CL_DEVICE_NAME >();
-  // Remove everything but alphanumeric characters from name
   std::erase_if( deviceName, []( char c ) { return std::isspace( c ) || !std::isalnum( c ); } );
 
   auto cacheDir = sourceFile.parent_path() / kCacheFolder;
