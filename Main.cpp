@@ -23,6 +23,9 @@
 //  * AMD ROCm
 //  * VMX (PowerPC CPUs)
 //  * Neon (ARM)
+// 
+// Note: coroutines could be useful if input was async, but that's not true in
+// this case
 
 #define ENABLE_OPENCL 1
 
