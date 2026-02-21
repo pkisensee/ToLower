@@ -28,6 +28,7 @@
 // this case
 
 #define ENABLE_OPENCL 1
+#define ENABLE_CUDA 1
 
 #include <cassert>
 #include <clocale>
@@ -51,6 +52,7 @@
 #include "ToLowerAutoNoReturn.h"
 #include "ToLowerAVX2.h"
 #include "ToLowerAVX512.h"
+#include "ToLowerCUDA.h"
 #include "ToLowerExecPolicy.h"
 #include "ToLowerLookupTable.h"
 #include "ToLowerOpenCL.h"
@@ -121,6 +123,10 @@ void ValidateAndMeasure()
   OpenCLContext openCLContextGPU{ CL_DEVICE_TYPE_GPU, "Lower.cl", openCLkernels };
 #endif
 
+#if defined( ENABLE_CUDA )
+  CUDAContext cudaContext;
+#endif
+
   ThreadPoolType threadPool( std::max( std::thread::hardware_concurrency(), 1u ) );
 
   std::vector<Profiler> profilers =
@@ -162,6 +168,10 @@ void ValidateAndMeasure()
     { "OpenCL GPU branchless",ToLowerOpenCL, "lowerBranchless", &openCLContextGPU },
     { "OpenCL GPU bit 5",     ToLowerOpenCL, "lower5thBit",     &openCLContextGPU },
     { "OpenCL GPU SIMD",      ToLowerOpenCL, "lowerSIMD",       &openCLContextGPU },
+#endif
+
+#if defined( ENABLE_CUDA )
+    { "CUDA tolower", ToLowerCUDA, &cudaContext },
 #endif
   } };
 

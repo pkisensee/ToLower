@@ -38,5 +38,7 @@
     <ClInclude Include="ToLowerAVX512.h" />
     <ClInclude Include="ToLowerSSE5thBitAligned.h" />
     <ClInclude Include="ToLowerRangeBasedFor.h" />
+    <ClInclude Include="ToLowerCUDA.h" />
+    <ClInclude Include="CUDAContext.h" />
   </ItemGroup>
 </Project>

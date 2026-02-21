@@ -27,6 +27,7 @@
 #include <vector>
 
 class OpenCLContext;
+class CUDAContext;
 
 class Profiler
 {
@@ -46,6 +47,7 @@ public:
   Profiler( std::string_view, std::string& ( *func )( std::string&, ThreadPoolType& ), ThreadPoolType* );
   Profiler( std::string_view, std::string& ( *func )( std::string&, OpenCLContext&, std::string_view ),
             std::string_view kernel, OpenCLContext* );
+  Profiler( std::string_view, std::string& ( *func )( std::string&, CUDAContext& ), CUDAContext* );
 
   template <typename Policy>
   Profiler( std::string_view name, std::string& ( *func )( std::string&, const Policy& ), const Policy& policy ) :
@@ -90,6 +92,7 @@ private:
     StrRef_StrRefParUnseqPolicy,
     StrRef_StrRefThreadPool,
     StrRef_StrRefOpenCLContextStrView,
+    StrRef_StrRefCUDAContext
   };
 
   using FunctionVariant = std::variant<
@@ -103,7 +106,8 @@ private:
     std::function< std::string& ( std::string&, const UnseqPolicy& )>, // e.g. ToLowerExecPolicy
     std::function< std::string& ( std::string&, const ParUnseqPolicy& )>, // e.g. ToLowerExecPolicy
     std::function< std::string& ( std::string&, ThreadPoolType& )>, // e.g. ToLowerThreadPool
-    std::function< std::string& ( std::string&, OpenCLContext&, std::string_view )> // e.g. ToLowerOpenCL
+    std::function< std::string& ( std::string&, OpenCLContext&, std::string_view )>, // e.g. ToLowerOpenCL
+    std::function< std::string& ( std::string&, CUDAContext& )> // e.g. ToLowerCUDA
   >;
 
   std::string_view name_; // e.g. "LookupTable"
@@ -120,6 +124,9 @@ private:
   // For OpenCL functions
   std::string_view kernel_; // e.g. "lowerLUT"
   OpenCLContext* openCLContext_ = nullptr;
+
+  // For CUDA functions
+  CUDAContext* cudaContext_ = nullptr;
 
   static std::string validateStr_; // mixed case string used by Validate()
   static std::string measureStr_;  // mixed case string used by Measure()

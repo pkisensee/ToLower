@@ -27,7 +27,7 @@
 #include "OpenCLContext.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-// Can't be noexcept because openCLContext.ToLower can throw.
+// Can't be noexcept because openCLContext.ToLower() can throw.
 constexpr auto&& ToLowerOpenCL( auto&& s, OpenCLContext& openCLContext, std::string_view kernelName )
 {
   return openCLContext.ToLower( s, kernelName );

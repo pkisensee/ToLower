@@ -98,6 +98,14 @@ Profiler::Profiler( std::string_view name, std::string& ( *func )( std::string&,
 {
 }
 
+Profiler::Profiler( std::string_view name, std::string& ( *func )( std::string&, CUDAContext& ),
+  CUDAContext* cudaContext ) :
+  name_( name ),
+  func_( std::function<std::string& ( std::string&, CUDAContext& )>( func ) ),
+  cudaContext_( cudaContext )
+{
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // 
 // Validate that the function does the correct thing
@@ -215,6 +223,8 @@ void Profiler::InvokeFunction( std::string& input ) const // private
       func( input, *threadPool_ );
     else if constexpr ( std::is_invocable_v<Func, std::string&, OpenCLContext&, std::string_view> )
       func( input, *openCLContext_, kernel_ );
+    else if constexpr ( std::is_invocable_v<Func, std::string&, CUDAContext&> )
+      func( input, *cudaContext_ );
     else if constexpr ( std::is_invocable_r_v<std::string, Func, std::string&> )
       input = func( input );
     else // void(std::string&) or std::string&(std::string&)

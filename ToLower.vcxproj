@@ -206,6 +206,7 @@
     <None Include="Lower.cl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CUDAContext.h" />
     <ClInclude Include="GetLowerChar.h" />
     <ClInclude Include="LowerCaseAsciiTable.h" />
     <ClInclude Include="OpenCLContext.h" />
@@ -214,6 +215,7 @@
     <ClInclude Include="Stopwatch.h" />
     <ClInclude Include="ToLowerAutoNoReturn.h" />
     <ClInclude Include="ToLowerAVX512.h" />
+    <ClInclude Include="ToLowerCUDA.h" />
     <ClInclude Include="ToLowerRangeBasedFor.h" />
     <ClInclude Include="ToLowerSSE5thBitAligned.h" />
     <ClInclude Include="ToLowerTemplatized.h" />

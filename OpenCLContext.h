@@ -90,10 +90,10 @@ public:
   // Can't be noexcept because enqueue can throw.
   constexpr auto&& ToLower( auto&& s, std::string_view kernelName )
   {
-    size_t len = std::size( s );
+    const size_t len = std::size( s );
     char* data = std::data( s );
 
-    // Update buffer size if necessary
+    // Update buffer if too small
     if ( len > bufferCapacity_ )
     {
       bufferCapacity_ = len;
