@@ -165,7 +165,10 @@ private:
   void Free()
   {
     if ( data_ != nullptr )
+    {
       cudaFreeHost( data_ );
+      data_ = nullptr;
+    }
   }
 
 }; // CUDAHostBuffer
@@ -179,8 +182,7 @@ class CUDAContext
 public:
   CUDAContext() :
     hostBuffer_( SupportsCuda() ? kInitialCapacity : 0 ),
-    deviceBuffer_( SupportsCuda() ? kInitialCapacity : 0 ),
-    supportsCuda_( SupportsCuda() )
+    deviceBuffer_( SupportsCuda() ? kInitialCapacity : 0 )
   {
   }
 
@@ -192,11 +194,13 @@ public:
   // Can't be noexcept because CUDA operations can throw.
   constexpr auto&& ToLower( auto&& s )
   {
-    if ( !supportsCuda_ )
+    if ( !SupportsCuda() )
       return ToLowerSSE( s ); // fallback
 
     const size_t len = std::size( s );
     char* data = std::data( s );
+    if ( len == 0 )
+      return s;
 
     // Update buffers if too small
     if ( len > deviceBuffer_.size() )
@@ -213,7 +217,8 @@ public:
 
     // Launch kernel
     ToLowerCUDA( deviceBuffer_.data(), len ); // see Lower.cu
-    if ( cudaGetLastError() != cudaSuccess )
+    result = cudaGetLastError();
+    if ( result != cudaSuccess )
       throw std::runtime_error( "CUDA kernel launch failed" );
 
     // DMA result back into pinned buffer
@@ -229,16 +234,29 @@ public:
 
   static bool SupportsCuda()
   {
-    int deviceCount = 0;
-    cudaError_t err = cudaGetDeviceCount( &deviceCount );
-    return ( err != cudaSuccess && deviceCount > 0 );
+    static bool checkedForCudaSupport = false;
+    static bool supportsCuda = false;
+    if ( !checkedForCudaSupport )
+    {
+      int deviceCount = 0;
+      cudaError_t err = cudaGetDeviceCount( &deviceCount );
+      checkedForCudaSupport = true;
+      if ( err == cudaSuccess && deviceCount > 0 )
+      {
+        int driverVersion = 0;
+        int runtimeVersion = 0;
+        cudaDriverGetVersion( &driverVersion );
+        cudaRuntimeGetVersion( &runtimeVersion );
+        supportsCuda = ( driverVersion >= runtimeVersion );
+      }
+    }
+    return supportsCuda;
   }
 
 private:
 
   CUDAHostBuffer hostBuffer_;
   CUDADeviceBuffer deviceBuffer_;
-  bool supportsCuda_ = true;
 
 }; // CUDAContext
 

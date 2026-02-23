@@ -169,6 +169,7 @@
     </Link>
     <CudaCompile>
       <AdditionalOptions>-allow-unsupported-compiler -Xcompiler "/wd 4668 /wd 5039 /wd 4514 /wd 4711" %(AdditionalOptions)</AdditionalOptions>
+      <CodeGeneration>compute_89,sm_89</CodeGeneration>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -199,6 +200,7 @@
     </Link>
     <CudaCompile>
       <AdditionalOptions>-allow-unsupported-compiler -Xcompiler "/wd 4668 /wd 5039 /wd 4514 /wd 4711" %(AdditionalOptions)</AdditionalOptions>
+      <CodeGeneration>compute_89,sm_89</CodeGeneration>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>

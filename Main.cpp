@@ -27,7 +27,7 @@
 // Note: coroutines could be useful if input was async, but that's not true in
 // this case
 
-#define ENABLE_OPENCL 1
+//#define ENABLE_OPENCL 1
 #define ENABLE_CUDA 1
 
 #include <cassert>
@@ -89,8 +89,8 @@ using ThreadPoolType = std::vector<std::jthread>;
 
 void TestCUDASupport()
 {
-  if ( !CUDAContext::SupportsCuda() )
-    std::println( "Note: No CUDA support" );
+  std::println( "Note: CUDA support is {}present",
+                CUDAContext::SupportsCuda() ? "" : "not " );
 }
 
 void TestSIMDSupport()
