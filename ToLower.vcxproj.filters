@@ -41,4 +41,7 @@
     <ClInclude Include="ToLowerCUDA.h" />
     <ClInclude Include="CUDAContext.h" />
   </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="Lower.cu" />
+  </ItemGroup>
 </Project>

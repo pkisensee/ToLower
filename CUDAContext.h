@@ -23,35 +23,10 @@
 #include <stdexcept>
 #include <string_view>
 #include <utility>
-// #include "cuda_runtime.h"
+#include "cuda_runtime.h"
+#include "ToLowerSSE.h"
 
-using cudaError_t = size_t;
-cudaError_t cudaSuccess = 1;
-enum cudaMemcpyKind
-{
-  cudaMemcpyHostToDevice,
-  cudaMemcpyDeviceToHost
-};
-cudaError_t cudaMalloc( void** p, size_t sz )
-{
-  *p = std::malloc( sz );
-  return cudaSuccess;
-}
-cudaError_t cudaMallocHost( void** p, size_t sz )
-{
-  return cudaMalloc( p, sz );
-}
-cudaError_t cudaMemcpy( void*, const void*, size_t, enum cudaMemcpyKind ) { return cudaSuccess; }
-cudaError_t cudaFree( void* p )
-{ 
-  std::free( p );
-  return cudaSuccess;
-}
-cudaError_t cudaFreeHost( void* p )
-{
-  return cudaFree( p );
-}
-cudaError_t cudaGetLastError() { return cudaSuccess; }
+void __cdecl ToLowerCUDA( char* s, size_t len ); // kernel from Lower.cu
 
 ///////////////////////////////////////////////////////////////////////////////
 // 
@@ -109,6 +84,8 @@ public:
   explicit CUDADeviceBuffer( size_t size ) :
     CUDABuffer( size )
   {
+    if ( size == 0 )
+      return;
     auto result = cudaMalloc( reinterpret_cast<void**>( &data_ ), size_ );
     if ( result != cudaSuccess )
       throw std::runtime_error( "cudaMalloc failed" );
@@ -139,7 +116,10 @@ private:
   void Free()
   {
     if ( data_ != nullptr )
+    {
       cudaFree( data_ );
+      data_ = nullptr;
+    }
   }
 
 }; // CUDADeviceBuffer
@@ -153,6 +133,8 @@ public:
   explicit CUDAHostBuffer( size_t size ) :
     CUDABuffer( size )
   {
+    if ( size == 0 )
+      return;
     auto result = cudaMallocHost( reinterpret_cast<void**>( &data_ ), size_ );
     if ( result != cudaSuccess )
       throw std::runtime_error( "cudaMallocHost failed" );
@@ -196,8 +178,9 @@ class CUDAContext
 
 public:
   CUDAContext() :
-    hostBuffer_( kInitialCapacity ),
-    deviceBuffer_( kInitialCapacity )
+    hostBuffer_( SupportsCuda() ? kInitialCapacity : 0 ),
+    deviceBuffer_( SupportsCuda() ? kInitialCapacity : 0 ),
+    supportsCuda_( SupportsCuda() )
   {
   }
 
@@ -209,6 +192,9 @@ public:
   // Can't be noexcept because CUDA operations can throw.
   constexpr auto&& ToLower( auto&& s )
   {
+    if ( !supportsCuda_ )
+      return ToLowerSSE( s ); // fallback
+
     const size_t len = std::size( s );
     char* data = std::data( s );
 
@@ -226,11 +212,7 @@ public:
       throw std::runtime_error( "cudaMemcpy host to device failed" );
 
     // Launch kernel
-    constexpr int threadsPerBlock = 256; // TODO
-    const int blocks = static_cast<int>( ( len + threadsPerBlock - 1 ) / threadsPerBlock );
-    (void)blocks;
-    // ToLowerKernel << <blocks, threadsPerBlock >> > ( deviceData_, len );
-
+    ToLowerCUDA( deviceBuffer_.data(), len ); // see Lower.cu
     if ( cudaGetLastError() != cudaSuccess )
       throw std::runtime_error( "CUDA kernel launch failed" );
 
@@ -242,18 +224,22 @@ public:
     // Read results back into s
     std::memcpy( data, hostBuffer_.data(), len );
 
-    // TODO remove
-    ToLowerSSE( s );
-
     return std::forward<decltype( s )>( s );
+  }
+
+  static bool SupportsCuda()
+  {
+    int deviceCount = 0;
+    cudaError_t err = cudaGetDeviceCount( &deviceCount );
+    return ( err != cudaSuccess && deviceCount > 0 );
   }
 
 private:
 
   CUDAHostBuffer hostBuffer_;
   CUDADeviceBuffer deviceBuffer_;
+  bool supportsCuda_ = true;
 
-}; // CUDUContext
+}; // CUDAContext
 
 /////////////////////////////////////////////////////////////////////////////// 
-

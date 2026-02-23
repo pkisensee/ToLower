@@ -87,6 +87,12 @@ using ThreadPoolType = std::vector<std::jthread>;
 
 ///////////////////////////////////////////////////////////////////////////////
 
+void TestCUDASupport()
+{
+  if ( !CUDAContext::SupportsCuda() )
+    std::println( "Note: No CUDA support" );
+}
+
 void TestSIMDSupport()
 {
   if ( !HasSIMDSupport( SIMDLevel::AVX2 ) )
@@ -193,6 +199,7 @@ int __cdecl main()
 {
   try
   {
+    TestCUDASupport();
     TestSIMDSupport();
     Bit5Visualizatiaon();
     ValidateAndMeasure();

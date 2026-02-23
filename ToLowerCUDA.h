@@ -24,22 +24,6 @@
 #pragma once
 #include "CudaContext.h"
 
-/*
-__device__ char GetLowerCharDevice( char c ) noexcept
-{
-  if ( c >= 'A' && c <= 'Z' )
-    return c + ( 'a' - 'A' );
-  return c;
-}
-
-__global__ void ToLowerKernel( char* data, size_t len )
-{
-  const size_t i = blockIdx.x * blockDim.x + threadIdx.x;
-  if ( i < len )
-    data[ i ] = GetLowerCharDevice( data[ i ] );
-}
-*/
-
 // Convert char sequence to lower case in place. Returns modified sequence.
 // Can't be noexcept because cudaContext.ToLower() can throw.
 constexpr auto&& ToLowerCUDA( auto&& s, CUDAContext& cudaContext )
