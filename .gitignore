@@ -370,3 +370,5 @@ FodyWeavers.xsd
 /.OpenCLCache/Lower_NVIDIARTX3000AdaGenerationLaptopGPU.bin
 /.OpenCLCache/OpenCLKernels_Baffin.bin
 /.OpenCLCache/OpenCLKernels_IntelRCoreTMi59400CPU290GHz.bin
+/.OpenCLCache/OpenCLKernels_IntelRCoreTMUltra9185H.bin
+/.OpenCLCache/OpenCLKernels_NVIDIARTX3000AdaGenerationLaptopGPU.bin
