@@ -40,8 +40,9 @@
     <ClInclude Include="ToLowerRangeBasedFor.h" />
     <ClInclude Include="ToLowerCUDA.h" />
     <ClInclude Include="CUDAContext.h" />
+    <ClInclude Include="CUDAKernels.h" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="Lower.cu" />
+    <CudaCompile Include="CUDAKernels.cu" />
   </ItemGroup>
 </Project>

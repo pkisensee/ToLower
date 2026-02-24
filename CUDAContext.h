@@ -24,9 +24,8 @@
 #include <string_view>
 #include <utility>
 #include "cuda_runtime.h"
+#include "CUDAKernels.h"
 #include "ToLowerSSE.h"
-
-void __cdecl ToLowerCUDA( char* s, size_t len ); // kernel from Lower.cu
 
 ///////////////////////////////////////////////////////////////////////////////
 // 
@@ -192,7 +191,7 @@ public:
 
   // Convert char sequence to lower case in place. Returns modified sequence.
   // Can't be noexcept because CUDA operations can throw.
-  constexpr auto&& ToLower( auto&& s )
+  constexpr auto&& ToLower( auto&& s, CUDAKernelFnPtr kernelFn )
   {
     if ( !SupportsCuda() )
       return ToLowerSSE( s ); // fallback
@@ -216,7 +215,7 @@ public:
       throw std::runtime_error( "cudaMemcpy host to device failed" );
 
     // Launch kernel
-    ToLowerCUDA( deviceBuffer_.data(), len ); // see Lower.cu
+    kernelFn( deviceBuffer_.data(), len ); // see CUDAKernels.cu
     result = cudaGetLastError();
     if ( result != cudaSuccess )
       throw std::runtime_error( "CUDA kernel launch failed" );

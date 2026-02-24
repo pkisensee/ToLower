@@ -25,6 +25,7 @@
 #include <string_view>
 #include <variant>
 #include <vector>
+#include "CUDAKernels.h"
 
 class OpenCLContext;
 class CUDAContext;
@@ -38,6 +39,8 @@ public:
   using ParUnseqPolicy = std::execution::parallel_unsequenced_policy;
   using ThreadPoolType = std::vector<std::jthread>;
 
+  using CudaKernelFn = void (*)( char*, size_t );
+
   Profiler( std::string_view, char* ( *func )( char* ), double = 1.0 );
   Profiler( std::string_view, char* ( *func )( char*, size_t ), double = 1.0 );
   Profiler( std::string_view, char* ( *func )( std::span<char> ), double = 1.0 );
@@ -47,7 +50,8 @@ public:
   Profiler( std::string_view, std::string& ( *func )( std::string&, ThreadPoolType& ), ThreadPoolType* );
   Profiler( std::string_view, std::string& ( *func )( std::string&, OpenCLContext&, std::string_view ),
             std::string_view kernel, OpenCLContext* );
-  Profiler( std::string_view, std::string& ( *func )( std::string&, CUDAContext& ), CUDAContext* );
+  Profiler( std::string_view, std::string& ( *func )( std::string&, CUDAContext&, CUDAKernelFnPtr ), 
+            CUDAContext*, CUDAKernelFnPtr );
 
   template <typename Policy>
   Profiler( std::string_view name, std::string& ( *func )( std::string&, const Policy& ), const Policy& policy ) :
@@ -92,7 +96,7 @@ private:
     StrRef_StrRefParUnseqPolicy,
     StrRef_StrRefThreadPool,
     StrRef_StrRefOpenCLContextStrView,
-    StrRef_StrRefCUDAContext
+    StrRef_StrRefCUDAContextCUDAFnPtr
   };
 
   using FunctionVariant = std::variant<
@@ -107,7 +111,7 @@ private:
     std::function< std::string& ( std::string&, const ParUnseqPolicy& )>, // e.g. ToLowerExecPolicy
     std::function< std::string& ( std::string&, ThreadPoolType& )>, // e.g. ToLowerThreadPool
     std::function< std::string& ( std::string&, OpenCLContext&, std::string_view )>, // e.g. ToLowerOpenCL
-    std::function< std::string& ( std::string&, CUDAContext& )> // e.g. ToLowerCUDA
+    std::function< std::string& ( std::string&, CUDAContext&, CUDAKernelFnPtr )> // e.g. ToLowerCUDA
   >;
 
   std::string_view name_; // e.g. "LookupTable"
@@ -127,6 +131,7 @@ private:
 
   // For CUDA functions
   CUDAContext* cudaContext_ = nullptr;
+  CUDAKernelFnPtr cudaKernel_ = nullptr; // e.g. ToLowerCUDABranch
 
   static std::string validateStr_; // mixed case string used by Validate()
   static std::string measureStr_;  // mixed case string used by Measure()

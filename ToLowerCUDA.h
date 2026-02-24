@@ -10,6 +10,7 @@
 //   * Must install NVIDIA SDK
 //   * Must install runtime/drivers
 //   * Doesn't work unless NVIDIA GPU is present
+//   * Must ensure match between CUDA compiler code generation and drivers
 //
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.
@@ -22,13 +23,15 @@
 // warranties.
 
 #pragma once
-#include "CudaContext.h"
+#include "CUDAContext.h"
+#include "CUDAKernels.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
 // Can't be noexcept because cudaContext.ToLower() can throw.
-constexpr auto&& ToLowerCUDA( auto&& s, CUDAContext& cudaContext )
+constexpr auto&& ToLowerCUDA( auto&& s, 
+  CUDAContext& cudaContext, CUDAKernelFnPtr cudaKernel )
 {
-  return cudaContext.ToLower( s );
+  return cudaContext.ToLower( s, cudaKernel );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -224,6 +224,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CUDAContext.h" />
+    <ClInclude Include="CUDAKernels.h" />
     <ClInclude Include="GetLowerChar.h" />
     <ClInclude Include="LowerCaseAsciiTable.h" />
     <ClInclude Include="OpenCLContext.h" />
@@ -245,7 +246,7 @@
     <ClInclude Include="ToLowerThreadPool.h" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="Lower.cu">
+    <CudaCompile Include="CUDAKernels.cu">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CudaCompile>

@@ -41,6 +41,7 @@
 #include <utility>
 #include <vector>
 
+#include "CUDAKernels.h"
 #include "GetLowerByValue.h"
 #include "GetRandomStr.h"
 #include "LowerCaseAsciiTable.h"
@@ -177,7 +178,8 @@ void ValidateAndMeasure()
 #endif
 
 #if defined( ENABLE_CUDA )
-    { "CUDA tolower", ToLowerCUDA, &cudaContext },
+    { "CUDA lookup", ToLowerCUDA, &cudaContext, ToLowerCUDALookupTable },
+    { "CUDA branch", ToLowerCUDA, &cudaContext, ToLowerCUDABranch },
 #endif
   } };
 
