@@ -39,22 +39,53 @@ public:
   using ParUnseqPolicy = std::execution::parallel_unsequenced_policy;
   using ThreadPoolType = std::vector<std::jthread>;
 
+  using LowerOriginalFn = char* ( char* );
+  using LowerOriginalFnPtr = LowerOriginalFn*;
+
+  using ToLowerPtrNoStrlenFn = char* ( char*, size_t );
+  using ToLowerPtrNoStrlenFnPtr = ToLowerPtrNoStrlenFn*;
+
+  using ToLowerSpanFn = char* ( std::span<char> );
+  using ToLowerSpanFnPtr = ToLowerSpanFn*;
+
+  using ToLowerAutoNoReturnFn = void( std::string& );
+  using ToLowerAutoNoReturnFnPtr = ToLowerAutoNoReturnFn*;
+
+  using GetLowerByValueFn = std::string( std::string& );
+  using GetLowerByValueFnPtr = GetLowerByValueFn*;
+
+  using ToLowerLookupTableFn = std::string& ( std::string& );
+  using ToLowerLookupTableFnPtr = ToLowerLookupTableFn*;
+
+  using ToLowerExecPolicyParFn = std::string& ( std::string&, const ParPolicy& );
+  using ToLowerExecPolicyUnseqFn = std::string& ( std::string&, const UnseqPolicy& );
+  using ToLowerExecPolicyParUnseqFn = std::string& ( std::string&, const ParUnseqPolicy& );
+
+  using ToLowerThreadPoolFn = std::string& ( std::string&, ThreadPoolType& );
+  using ToLowerThreadPoolFnPtr = ToLowerThreadPoolFn*;
+
+  using ToLowerOpenCLFn = std::string& ( std::string&, OpenCLContext&, std::string_view );
+  using ToLowerOpenCLFnPtr = ToLowerOpenCLFn*;
+
+  using ToLowerCUDAFn = std::string& ( std::string&, CUDAContext&, CUDAKernelFnPtr );
+  using ToLowerCUDAFnPtr = ToLowerCUDAFn*;
+
   using CudaKernelFn = void (*)( char*, size_t );
 
-  Profiler( std::string_view, char* ( *func )( char* ), double = 1.0 );
-  Profiler( std::string_view, char* ( *func )( char*, size_t ), double = 1.0 );
-  Profiler( std::string_view, char* ( *func )( std::span<char> ), double = 1.0 );
-  Profiler( std::string_view, void ( *func )( std::string& ), double = 1.0 );
-  Profiler( std::string_view, std::string( *func )( std::string& ), double = 1.0 );
-  Profiler( std::string_view, std::string& ( *func )( std::string& ), double = 1.0 );
-  Profiler( std::string_view, std::string& ( *func )( std::string&, ThreadPoolType& ), ThreadPoolType* );
-  Profiler( std::string_view, std::string& ( *func )( std::string&, OpenCLContext&, std::string_view ),
-            std::string_view kernel, OpenCLContext* );
-  Profiler( std::string_view, std::string& ( *func )( std::string&, CUDAContext&, CUDAKernelFnPtr ), 
-            CUDAContext*, CUDAKernelFnPtr );
+  Profiler( std::string_view, LowerOriginalFnPtr, double = 1.0 );
+  Profiler( std::string_view, ToLowerPtrNoStrlenFnPtr, double = 1.0 );
+  Profiler( std::string_view, ToLowerSpanFnPtr, double = 1.0 );
+  Profiler( std::string_view, ToLowerAutoNoReturnFnPtr, double = 1.0 );
+  Profiler( std::string_view, GetLowerByValueFnPtr, double = 1.0 );
+  Profiler( std::string_view, ToLowerLookupTableFn, double = 1.0 );
+  Profiler( std::string_view, ToLowerThreadPoolFn, ThreadPoolType* );
+  Profiler( std::string_view, ToLowerOpenCLFn, OpenCLContext*, std::string_view );
+  Profiler( std::string_view, ToLowerCUDAFn, CUDAContext*, CUDAKernelFnPtr );
 
   template <typename Policy>
-  Profiler( std::string_view name, std::string& ( *func )( std::string&, const Policy& ), const Policy& policy ) :
+  Profiler( std::string_view name, 
+            std::string& ( *func )( std::string&, const Policy& ), 
+            const Policy& policy ) :
     name_( name ),
     func_( func )
   {
@@ -100,18 +131,18 @@ private:
   };
 
   using FunctionVariant = std::variant<
-    std::function< char*        ( char* )>,           // e.g. LowerOriginal
-    std::function< char*        ( char*, size_t )>,   // e.g. ToLowerPtrNoStrlen
-    std::function< char*        ( std::span<char> )>, // e.g. ToLowerSpan
-    std::function< void         ( std::string& )>,    // e.g. ToLowerAutoNoReturn
-    std::function< std::string  ( std::string& )>,    // e.g. GetLowerByValue
-    std::function< std::string& ( std::string& )>,    // e.g. ToLowerLookupTable
-    std::function< std::string& ( std::string&, const ParPolicy& )>, // e.g. ToLowerExecPolicy
-    std::function< std::string& ( std::string&, const UnseqPolicy& )>, // e.g. ToLowerExecPolicy
-    std::function< std::string& ( std::string&, const ParUnseqPolicy& )>, // e.g. ToLowerExecPolicy
-    std::function< std::string& ( std::string&, ThreadPoolType& )>, // e.g. ToLowerThreadPool
-    std::function< std::string& ( std::string&, OpenCLContext&, std::string_view )>, // e.g. ToLowerOpenCL
-    std::function< std::string& ( std::string&, CUDAContext&, CUDAKernelFnPtr )> // e.g. ToLowerCUDA
+    std::function< LowerOriginalFn >,
+    std::function< ToLowerPtrNoStrlenFn >,
+    std::function< ToLowerSpanFn >,
+    std::function< ToLowerAutoNoReturnFn >,
+    std::function< GetLowerByValueFn >,
+    std::function< ToLowerLookupTableFn >,
+    std::function< ToLowerExecPolicyParFn >,
+    std::function< ToLowerExecPolicyUnseqFn >,
+    std::function< ToLowerExecPolicyParUnseqFn >,
+    std::function< ToLowerThreadPoolFn >,
+    std::function< ToLowerOpenCLFn >,
+    std::function< ToLowerCUDAFn >
   >;
 
   std::string_view name_; // e.g. "LookupTable"
@@ -119,18 +150,18 @@ private:
   double           scale_ = 1.0; // decrease for slow funcs; increase for fast funcs to improve Measure() speed
 
   // For std::algorithms with policies
-  ParPolicy parPolicy_ = std::execution::par;
-  UnseqPolicy unseqPolicy_ = std::execution::unseq;
+  ParPolicy      parPolicy_ = std::execution::par;
+  UnseqPolicy    unseqPolicy_ = std::execution::unseq;
   ParUnseqPolicy parunseqPolicy_ = std::execution::par_unseq;
 
   ThreadPoolType* threadPool_ = nullptr; // For functions that accept a threadPool
 
   // For OpenCL functions
+  OpenCLContext*   openCLContext_ = nullptr;
   std::string_view kernel_; // e.g. "lowerLUT"
-  OpenCLContext* openCLContext_ = nullptr;
 
   // For CUDA functions
-  CUDAContext* cudaContext_ = nullptr;
+  CUDAContext*    cudaContext_ = nullptr;
   CUDAKernelFnPtr cudaKernel_ = nullptr; // e.g. ToLowerCUDABranch
 
   static std::string validateStr_; // mixed case string used by Validate()

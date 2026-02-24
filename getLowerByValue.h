@@ -29,8 +29,8 @@
 // Returns a copy of the input character sequence converted to lower case.
 std::string GetLowerByValue( const auto& s )
 {
-  std::string tmp{ s };
-  return ToLowerSSE( tmp );
+  std::string working{ s };
+  return ToLowerSSE( working );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

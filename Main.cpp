@@ -17,7 +17,6 @@
 //
 // Additional performance options to consider:
 //  * std::simd (currently experimental; expected in C++26)
-//  * CUDA (NVIDIA GPUs)
 //  * Vulkan compute shader (GPU)
 //  * Halide (fast image processing)
 //  * AMD ROCm
@@ -27,8 +26,8 @@
 // Note: coroutines could be useful if input was async, but that's not true in
 // this case
 
-//#define ENABLE_OPENCL 1
-#define ENABLE_CUDA 1
+#define ENABLE_OPENCL 1
+//#define ENABLE_CUDA 1
 
 #include <cassert>
 #include <clocale>
@@ -71,7 +70,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-//static constexpr bool kEnableOpenCL = false;
+using namespace std::literals;
 
 size_t kValidateStrSize = 1024uz * 100uz; // 100K random string for validation
 size_t kMeasureStrSize = 1024uz * 1024uz * 10uz; // 10 MB baseline for scale=1.0
@@ -79,6 +78,7 @@ std::string Profiler::validateStr_ = GetRandomStr( kValidateStrSize );
 std::string Profiler::measureStr_ = GetRandomStr( kMeasureStrSize );
 std::ofstream Profiler::outputFile;
 size_t Profiler::measurementRuns_ = 10;
+std::string_view kOpenCLKernelName = "OpenCLKernels.cl"sv;
 
 namespace execution = std::execution;
 using ParPolicy = execution::parallel_policy;
@@ -122,12 +122,12 @@ void ValidateAndMeasure()
   { {
     { "lowerLookupTable" },
     { "lowerBranch" },
-    { "lowerBranchless" },
+    { "lowerCondMove" },
     { "lower5thBit" },
     { "lowerSIMD" },
   } };
-  OpenCLContext openCLContextCPU{ CL_DEVICE_TYPE_CPU, "Lower.cl", openCLkernels };
-  OpenCLContext openCLContextGPU{ CL_DEVICE_TYPE_GPU, "Lower.cl", openCLkernels };
+  OpenCLContext openCLContextCPU{ CL_DEVICE_TYPE_CPU, kOpenCLKernelName, openCLkernels };
+  OpenCLContext openCLContextGPU{ CL_DEVICE_TYPE_GPU, kOpenCLKernelName, openCLkernels };
 #endif
 
 #if defined( ENABLE_CUDA )
@@ -138,7 +138,7 @@ void ValidateAndMeasure()
 
   std::vector<Profiler> profilers =
   { {
-    { "original",             LowerOriginal                    , 0.001 },
+    { "original",             LowerOriginal,         0.001             },
     { "ptr no strlen",        ToLowerPtrNoStrlen                       },
     { "span<char>",           ToLowerSpan                              },
     { "std::string&",         ToLowerStrRef                            },
@@ -164,22 +164,24 @@ void ValidateAndMeasure()
     { "SSE bit 5 aligned",    ToLowerSSE5thBitAligned <std::string&>    },
 
 #if defined( ENABLE_OPENCL )
-    { "OpenCL CPU lookup",    ToLowerOpenCL, "lowerLookupTable",&openCLContextCPU },
-    { "OpenCL CPU branch",    ToLowerOpenCL, "lowerBranch",     &openCLContextCPU },
-    { "OpenCL CPU branchless",ToLowerOpenCL, "lowerBranchless", &openCLContextCPU },
-    { "OpenCL CPU bit 5",     ToLowerOpenCL, "lower5thBit",     &openCLContextCPU },
-    { "OpenCL CPU SIMD",      ToLowerOpenCL, "lowerSIMD",       &openCLContextCPU },
+    { "OpenCL CPU lookup",    ToLowerOpenCL, &openCLContextCPU, "lowerLookupTable" },
+    { "OpenCL CPU branch",    ToLowerOpenCL, &openCLContextCPU, "lowerBranch"      },
+    { "OpenCL CPU cond move", ToLowerOpenCL, &openCLContextCPU, "lowerCondMove"    },
+    { "OpenCL CPU bit 5",     ToLowerOpenCL, &openCLContextCPU, "lower5thBit"      },
+    { "OpenCL CPU SIMD",      ToLowerOpenCL, &openCLContextCPU, "lowerSIMD"        },
 
-    { "OpenCL GPU lookup",    ToLowerOpenCL, "lowerLookupTable",&openCLContextGPU },
-    { "OpenCL GPU branch",    ToLowerOpenCL, "lowerBranch",     &openCLContextGPU },
-    { "OpenCL GPU branchless",ToLowerOpenCL, "lowerBranchless", &openCLContextGPU },
-    { "OpenCL GPU bit 5",     ToLowerOpenCL, "lower5thBit",     &openCLContextGPU },
-    { "OpenCL GPU SIMD",      ToLowerOpenCL, "lowerSIMD",       &openCLContextGPU },
+    { "OpenCL GPU lookup",    ToLowerOpenCL, &openCLContextGPU, "lowerLookupTable" },
+    { "OpenCL GPU branch",    ToLowerOpenCL, &openCLContextGPU, "lowerBranch"      },
+    { "OpenCL GPU cond move", ToLowerOpenCL, &openCLContextGPU, "lowerCondMove"    },
+    { "OpenCL GPU bit 5",     ToLowerOpenCL, &openCLContextGPU, "lower5thBit"      },
+    { "OpenCL GPU SIMD",      ToLowerOpenCL, &openCLContextGPU, "lowerSIMD"        },
 #endif
 
 #if defined( ENABLE_CUDA )
-    { "CUDA lookup", ToLowerCUDA, &cudaContext, ToLowerCUDALookupTable },
-    { "CUDA branch", ToLowerCUDA, &cudaContext, ToLowerCUDABranch },
+    { "CUDA lookup",          ToLowerCUDA, &cudaContext, ToLowerCUDALookupTable },
+    { "CUDA branch",          ToLowerCUDA, &cudaContext, ToLowerCUDABranch      },
+    { "CUDA cond move",       ToLowerCUDA, &cudaContext, ToLowerCUDACondMove    },
+    { "CUDA bit 5",           ToLowerCUDA, &cudaContext, ToLowerCUDA5thBit      },
 #endif
   } };
 

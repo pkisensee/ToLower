@@ -17,10 +17,13 @@
 
 #pragma once
 
-using CUDAKernelFnPtr = void ( * )( char*, size_t );
-using CUDAKernelFn = void ( char*, size_t );
+using CUDAKernelFn    = void( char*, size_t );
+using CUDAKernelFnPtr = CUDAKernelFn*;
 
+// TODO reorder based on perf
 void ToLowerCUDALookupTable( char*, size_t );
 void ToLowerCUDABranch( char*, size_t );
+void ToLowerCUDACondMove( char*, size_t );
+void ToLowerCUDA5thBit( char*, size_t );
 
 /////////////////////////////////////////////////////////////////////////////// 

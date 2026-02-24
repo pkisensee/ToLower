@@ -1,8 +1,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 // 
-// Lower.cl
+// OpenCLKernels.cl
 // 
-// Various OpenCL kernel implementations of toLower functions
+// Various OpenCL kernel implementations of ToLower functions
 // 
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.
@@ -40,44 +40,48 @@ __constant char kLowerCaseAsciiTable[256] = {
 
 __kernel void lowerLookupTable( __global char* s, unsigned long len )
 {
-  size_t i = get_global_id( 0 );
-  unsigned char c = s[i];
-  s[i] = kLowerCaseAsciiTable[c];
+  const size_t i = get_global_id( 0 );
+  const unsigned char c = s[ i ];
+  s[ i ] = kLowerCaseAsciiTable[ c ];
 }
 
 __kernel void lowerBranch( __global char* s, unsigned long len )
 {
-  size_t i = get_global_id( 0 );
-  char c = s[i];
-  if( c >= 'A' && c <= 'Z' ) 
-    s[i] = c + 'a' - 'A';
+  const char kLowerOffset = 'a' - 'A';
+  const size_t i = get_global_id( 0 );
+  const char c = s[ i ];
+  if ( c >= 'A' && c <= 'Z' )
+    s[ i ] = c + kLowerOffset;
 }
 
-__kernel void lowerBranchless( __global char* s, unsigned long len )
+__kernel void lowerCondMove( __global char* s, unsigned long len )
 {
-  // Branchless version using math
-  size_t i = get_global_id( 0 );
-  // TODO test +=
-  s[i] = s[i] + ((s[i] >= 'A' && s[i] <= 'Z') ? 'a'-'A' : 0);
+  const char kLetterCount = 'Z' - 'A' + 1; // 26
+  const char kLowerOffset = 'a' - 'A';     // 32
 
-  // TODO test the following:
-  //const unsigned char kCase Offset = 'a' - 'A';
-  //uchar isUpper = (s[i] >= 'A' && s[i] <= 'Z') ? 0xFF : 0;
-  //s[i] += isUpper & kCaseOffset;
+  // produces 0-25 for upper case letters, else value >25
+  const size_t i = get_global_id( 0 );
+  const char c = s[ i ];
+  const unsigned char upperAlphaLetterIndex = ( c - 'A' );
+
+  // produces kLowerOffset for upper case letters, else 0
+  const char offset = ( upperAlphaLetterIndex < kLetterCount ) * kLowerOffset;
+
+  s[ i ] = c + offset;
 }
 
 __kernel void lower5thBit( __global char* s, unsigned long len )
 {
-  size_t i = get_global_id( 0 );
+  const size_t i = get_global_id( 0 );
   const unsigned char kBit5Set = 0x20;
-  s[i] |= kBit5Set;
+  s[ i ] |= kBit5Set;
 }
 
 __kernel void lowerSIMD( __global char* s, unsigned long len )
 {
   const size_t kBlockSize = 8;
-  size_t i = get_global_id( 0 );
-  size_t blockStart = i * kBlockSize;
+  const size_t i = get_global_id( 0 );
+  const size_t blockStart = i * kBlockSize;
   if( ( blockStart + kBlockSize ) <= len )
   {
     __global uchar* p = (__global uchar*)(s + blockStart);

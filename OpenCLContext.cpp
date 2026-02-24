@@ -59,12 +59,16 @@ std::string OpenCLContext::GetSourceCode( const std::filesystem::path& fileName 
 // 
 // Generate cache filename based on source file and device
 
-std::filesystem::path OpenCLContext::GetCacheFilePath( const std::filesystem::path& sourceFile,
+std::filesystem::path OpenCLContext::GetCacheFilePath( 
+  const std::filesystem::path& sourceFile,
   const cl::Device& device ) // static
 {
   // Generate alphanumeric device name
   auto deviceName = device.getInfo< CL_DEVICE_NAME >();
-  std::erase_if( deviceName, []( char c ) { return std::isspace( c ) || !std::isalnum( c ); } );
+  std::erase_if( deviceName, []( char c )
+  {
+    return std::isspace( c ) || !std::isalnum( c );
+  } );
 
   auto cacheDir = sourceFile.parent_path() / kCacheFolder;
   std::filesystem::create_directories( cacheDir );

@@ -227,10 +227,11 @@ public:
 
     // Read results back into s
     std::memcpy( data, hostBuffer_.data(), len );
-
     return std::forward<decltype( s )>( s );
   }
 
+  // True if there's an NVIDIA GPU and 
+  // compiled runtime is supported by current device driver
   static bool SupportsCuda()
   {
     static bool checkedForCudaSupport = false;

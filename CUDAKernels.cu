@@ -46,17 +46,41 @@ __constant__ char kLowerCaseAsciiTable[ 256 ] = {
 //
 // GetLowerChar functions
 
+// TODO reorder based on performance
 __device__ char GetLowerChar_CUDALookupTable( char c ) noexcept
 {
-  unsigned char uc = c;
-  return kLowerCaseAsciiTable[ uc ];
+  auto uchar = static_cast<unsigned char>( c );
+  return kLowerCaseAsciiTable[ uchar ];
 }
 
 __device__ char GetLowerChar_CUDABranch( char c ) noexcept
 {
+  constexpr char kLowerOffset = 'a' - 'A';
   if ( c >= 'A' && c <= 'Z' )
-    return c + ( 'a' - 'A' );
+    return c + kLowerOffset;
   return c;
+}
+
+__device__ char GetLowerChar_CUDACondMove( char c ) noexcept
+{
+  constexpr char kLetterCount = 'Z' - 'A' + 1; // 26
+  constexpr char kLowerOffset = 'a' - 'A';     // 32
+
+  // produces 0-25 for upper case letters, else value >25
+  auto upperAlphaLetterIndex = static_cast<unsigned char>( c - 'A' );
+
+  // produces kLowerOffset for upper case letters, else 0
+  char offset = ( upperAlphaLetterIndex < kLetterCount ) * kLowerOffset;
+
+  return c + offset;
+}
+
+__device__ char GetLowerChar_CUDA5thBit( char c ) noexcept
+{
+  const unsigned char kBit5Set = 0x20;
+  unsigned char uc = c;
+  uc |= kBit5Set;
+  return static_cast<char>( uc );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -75,6 +99,20 @@ __global__ void ToLower_CUDABranch( char* data, size_t len )
   const size_t i = blockIdx.x * blockDim.x + threadIdx.x;
   if ( i < len )
     data[ i ] = GetLowerChar_CUDABranch( data[ i ] );
+}
+
+__global__ void ToLower_CUDACondMove( char* data, size_t len )
+{
+  const size_t i = blockIdx.x * blockDim.x + threadIdx.x;
+  if ( i < len )
+    data[ i ] = GetLowerChar_CUDACondMove( data[ i ] );
+}
+
+__global__ void ToLower_CUDA5thBit( char* data, size_t len )
+{
+  const size_t i = blockIdx.x * blockDim.x + threadIdx.x;
+  if ( i < len )
+    data[ i ] = GetLowerChar_CUDA5thBit( data[ i ] );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -101,6 +139,16 @@ void ToLowerCUDALookupTable( char* s, size_t len )
 void ToLowerCUDABranch( char* s, size_t len )
 {
   ToLower_CUDABranch <<< GetBlkCnt( len ), kThreadsPerBlock >>> ( s, len );
+}
+
+void ToLowerCUDACondMove( char* s, size_t len )
+{
+  ToLower_CUDACondMove <<< GetBlkCnt( len ), kThreadsPerBlock >>> ( s, len );
+}
+
+void ToLowerCUDA5thBit( char* s, size_t len )
+{
+  ToLower_CUDA5thBit <<< GetBlkCnt( len ), kThreadsPerBlock >>> ( s, len );
 }
 
 /////////////////////////////////////////////////////////////////////////////// 

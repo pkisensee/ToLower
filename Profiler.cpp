@@ -39,69 +39,69 @@ static constexpr size_t kTimeColumnWidth = 8;
 //
 // Constructors
 
-Profiler::Profiler( std::string_view name, char* ( *func )( char* ), double scale ) :
+Profiler::Profiler( std::string_view name, LowerOriginalFnPtr func, double scale ) :
   name_( name ),
-  func_( std::function<char* ( char* )>( func ) ),
+  func_( std::function<LowerOriginalFn>( func )),
   scale_( scale )
 {
 }
 
-Profiler::Profiler( std::string_view name, char* ( *func )( char*, size_t ), double scale ) :
+Profiler::Profiler( std::string_view name, ToLowerPtrNoStrlenFnPtr func, double scale ) :
   name_( name ),
-  func_( std::function<char* ( char*, size_t )>( func ) ),
+  func_( std::function<ToLowerPtrNoStrlenFn>( func ) ),
   scale_( scale )
 {
 }
 
-Profiler::Profiler( std::string_view name, char* ( *func )( std::span<char> ), double scale ) :
+Profiler::Profiler( std::string_view name, ToLowerSpanFnPtr func, double scale ) :
   name_( name ),
-  func_( std::function<char* ( std::span<char> )>( func ) ),
+  func_( std::function<ToLowerSpanFn>( func ) ),
   scale_( scale )
 {
 }
 
-Profiler::Profiler( std::string_view name, void ( *func )( std::string& ), double scale ) :
+Profiler::Profiler( std::string_view name, ToLowerAutoNoReturnFnPtr func, double scale ) :
   name_( name ),
-  func_( std::function<void( std::string& )>( func ) ),
+  func_( std::function<ToLowerAutoNoReturnFn>( func ) ),
   scale_( scale )
 {
 }
 
-Profiler::Profiler( std::string_view name, std::string( *func )( std::string& ), double scale ) :
+Profiler::Profiler( std::string_view name, GetLowerByValueFnPtr func, double scale ) :
   name_( name ),
-  func_( std::function<std::string( std::string& )>( func ) ),
+  func_( std::function<GetLowerByValueFn>( func ) ),
   scale_( scale )
 {
 }
 
-Profiler::Profiler( std::string_view name, std::string& ( *func )( std::string& ), double scale ) :
+Profiler::Profiler( std::string_view name, ToLowerLookupTableFnPtr func, double scale ) :
   name_( name ),
-  func_( std::function<std::string& ( std::string& )>( func ) ),
+  func_( std::function<ToLowerLookupTableFn>( func ) ),
   scale_( scale )
 {
 }
 
-Profiler::Profiler( std::string_view name, std::string& ( *func )( std::string&, ThreadPoolType& ),
+Profiler::Profiler( std::string_view name, ToLowerThreadPoolFnPtr func,
   ThreadPoolType* threadPool ) :
   name_( name ),
-  func_( std::function<std::string& ( std::string&, std::vector<std::jthread>& )>( func ) ),
+  func_( std::function<ToLowerThreadPoolFn>( func ) ),
   threadPool_( threadPool )
 {
 }
 
-Profiler::Profiler( std::string_view name, std::string& ( *func )( std::string&, OpenCLContext&, std::string_view ),
-  std::string_view kernel, OpenCLContext* openCLContext ) :
+Profiler::Profiler( std::string_view name, ToLowerOpenCLFnPtr func,
+  OpenCLContext* openCLContext, std::string_view kernel ) :
   name_( name ),
-  func_( std::function<std::string& ( std::string&, OpenCLContext&, std::string_view )>( func ) ),
-  kernel_( kernel ),
-  openCLContext_( openCLContext )
+  func_( std::function<ToLowerOpenCLFn>( func ) ),
+  openCLContext_( openCLContext ),
+  kernel_( kernel )
 {
 }
 
-Profiler::Profiler( std::string_view name, std::string& ( *func )( std::string&, CUDAContext&, CUDAKernelFnPtr ),
+Profiler::Profiler( std::string_view name, ToLowerCUDAFnPtr func,
   CUDAContext* cudaContext, CUDAKernelFn cudaKernel ) :
   name_( name ),
-  func_( std::function<std::string& ( std::string&, CUDAContext&, CUDAKernelFnPtr )>( func ) ),
+  func_( std::function<ToLowerCUDAFn>( func ) ),
   cudaContext_( cudaContext ),
   cudaKernel_( cudaKernel )
 {

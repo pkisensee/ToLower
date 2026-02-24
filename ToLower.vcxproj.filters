@@ -17,7 +17,7 @@
     <ClCompile Include="ToLowerSSE5thBit.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="lower.cl" />
+    <None Include="OpenCLKernels.cl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OpenCLContext.h" />

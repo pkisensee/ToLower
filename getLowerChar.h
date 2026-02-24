@@ -30,8 +30,8 @@
 
 inline char GetLowerChar( char c ) noexcept
 {
-  auto uchar = static_cast<unsigned char>( c );
-  auto lowered = std::tolower( uchar );
+  const auto uchar = static_cast<unsigned char>( c );
+  const auto lowered = std::tolower( uchar );
   return static_cast<char>( lowered );
 }
 
@@ -40,7 +40,7 @@ inline char GetLowerChar( char c ) noexcept
 // Converts the incoming character to lowercase using some branching and math
 // Only works for simple ASCII; may not be correct for other locales
 
-inline constexpr char GetLowerCharAZ( char c ) noexcept
+inline constexpr char GetLowerCharBranch( char c ) noexcept
 {
   static constexpr char kLowerOffset = 'a' - 'A';
   if ( c >= 'A' && c <= 'Z' )
@@ -60,10 +60,10 @@ inline constexpr char GetLowerCharCondMove( char c ) noexcept
   static constexpr char kLowerOffset = 'a' - 'A';     // 32
 
   // produces 0-25 for upper case letters, else value >25
-  auto upperAlphaLetterIndex = static_cast<unsigned char>( c - 'A' );
+  const auto upperAlphaLetterIndex = static_cast<unsigned char>( c - 'A' );
 
   // produces kLowerOffset for upper case letters, else 0
-  char offset = ( upperAlphaLetterIndex < kLetterCount ) * kLowerOffset;
+  const char offset = ( upperAlphaLetterIndex < kLetterCount ) * kLowerOffset;
 
   return c + offset;
 }
@@ -75,8 +75,8 @@ inline constexpr char GetLowerCharCondMove( char c ) noexcept
 
 inline constexpr char GetLowerCharLookupTable( char c ) noexcept
 {
-  auto uchar = static_cast<unsigned char>( c );
-  auto index = static_cast<size_t>( uchar );
+  const auto uchar = static_cast<unsigned char>( c );
+  const auto index = static_cast<size_t>( uchar );
   return kLowerCaseAsciiTable[ index ];
 }
 
@@ -104,8 +104,8 @@ inline constexpr char GetLowerCharLookupTable( char c ) noexcept
 inline constexpr char GetLowerChar5thBit( char c ) noexcept
 {
   static constexpr unsigned char kBit5Set = 0b0010'0000; // 0x20
-  auto uchar = static_cast<unsigned char>( c );
-  auto lower = uchar | kBit5Set;
+  const auto uchar = static_cast<unsigned char>( c );
+  const auto lower = uchar | kBit5Set;
   return static_cast<char>( lower );
 }
 
