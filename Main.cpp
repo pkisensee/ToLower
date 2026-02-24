@@ -27,7 +27,7 @@
 // this case
 
 #define ENABLE_OPENCL 1
-//#define ENABLE_CUDA 1
+#define ENABLE_CUDA 1
 
 #include <cassert>
 #include <clocale>

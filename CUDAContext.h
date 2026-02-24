@@ -15,17 +15,16 @@
 // warranties.
 
 #pragma once
-
-#pragma once
 #include <cassert>
 #include <span>
 #include <string>
 #include <stdexcept>
 #include <string_view>
 #include <utility>
+#include "Concepts.h"
 #include "cuda_runtime.h"
 #include "CUDAKernels.h"
-#include "ToLowerSSE.h"
+#include "ToLowerAutoConstexpr.h" // fallback
 
 ///////////////////////////////////////////////////////////////////////////////
 // 
@@ -60,10 +59,10 @@ public:
     return size_;
   }
 
-  void Read( const char* data, size_t size )
+  void CopyFrom( const char* data, size_t size )
   {
-    assert( size <= size_ );
-    assert( data_ != nullptr );
+    if ( size > size_ || data_ == nullptr )
+      throw std::runtime_error( "Buffer overflow in CUDABuffer::CopyFrom" );
     std::memcpy( data_, data, size );
   }
 
@@ -173,6 +172,46 @@ private:
 }; // CUDAHostBuffer
 
 ///////////////////////////////////////////////////////////////////////////////
+//
+// Pins an existing host allocation for direct DMA by the CUDA driver.
+
+class CUDAPinnedRegion
+{
+public:
+
+  CUDAPinnedRegion() = default;
+
+  CUDAPinnedRegion( void* data, size_t size ) :
+    data_( data )
+  {
+    auto result = cudaHostRegister( data_, size, cudaHostRegisterDefault );
+    isPinned_ = ( result == cudaSuccess );
+  }
+
+  ~CUDAPinnedRegion()
+  {
+    if ( isPinned_ )
+      cudaHostUnregister( data_ );
+  }
+
+  CUDAPinnedRegion( const CUDAPinnedRegion& ) = delete;
+  CUDAPinnedRegion& operator=( const CUDAPinnedRegion& ) = delete;
+  CUDAPinnedRegion( CUDAPinnedRegion&& ) noexcept = delete;
+  CUDAPinnedRegion& operator=( CUDAPinnedRegion&& ) = delete;
+
+  bool IsPinned() const
+  {
+    return isPinned_;
+  }
+
+private:
+
+  void* data_ = nullptr;
+  bool isPinned_ = false;
+
+}; // CUDAPinnedRegion
+
+///////////////////////////////////////////////////////////////////////////////
 
 class CUDAContext
 {
@@ -180,8 +219,8 @@ class CUDAContext
 
 public:
   CUDAContext() :
-    hostBuffer_( SupportsCuda() ? kInitialCapacity : 0 ),
-    deviceBuffer_( SupportsCuda() ? kInitialCapacity : 0 )
+    deviceBuffer_( SupportsCuda() ? kInitialCapacity : 0 ),
+    stagingBuffer_( 0 )
   {
   }
 
@@ -190,73 +229,99 @@ public:
   CUDAContext& operator=( const CUDAContext& ) = delete;
 
   // Convert char sequence to lower case in place. Returns modified sequence.
-  // Can't be noexcept because CUDA operations can throw.
-  constexpr auto&& ToLower( auto&& s, CUDAKernelFnPtr kernelFn )
+  // Can't be constexpr or noexcept because CUDA operations allocate and throw.
+  template <CharRange T>
+  T&& ToLower( T&& s, CUDAKernelFnPtr kernelFn )
   {
     if ( !SupportsCuda() )
-      return ToLowerSSE( s ); // fallback
+      return ToLowerAutoConstexpr( std::forward<T>( s ) ); // fallback
 
     const size_t len = std::size( s );
     char* data = std::data( s );
     if ( len == 0 )
-      return s;
+      return std::forward<T>( s );
 
     // Update buffers if too small
     if ( len > deviceBuffer_.size() )
-    {
       deviceBuffer_ = CUDADeviceBuffer( len );
-      hostBuffer_ = CUDAHostBuffer( len );
+
+    // Attempt to pin the caller's buffer directly for zero-copy DMA.
+    CUDAPinnedRegion pinned( data, len );
+    if ( pinned.IsPinned() )
+    {
+      // Typical path for heap allocated memory (e.g. large strings)
+      TransferAndRun( data, data, len, kernelFn );
+    }
+    else
+    {
+      // Fallback: stage through a pinned host buffer.
+      // Typical for small stack-allocated strings or unusual allocators.
+      if ( len > stagingBuffer_.size() )
+        stagingBuffer_ = CUDAHostBuffer( len );
+      stagingBuffer_.CopyFrom( data, len );
+      TransferAndRun( stagingBuffer_.data(), stagingBuffer_.data(), len, kernelFn );
+      std::memcpy( data, stagingBuffer_.data(), len );
     }
 
-    // Copy string to pinned buffer, then DMA to device
-    hostBuffer_.Read( data, len );
-    auto result = cudaMemcpy( deviceBuffer_.data(), hostBuffer_.data(), len, cudaMemcpyHostToDevice );
-    if ( result != cudaSuccess )
-      throw std::runtime_error( "cudaMemcpy host to device failed" );
-
-    // Launch kernel
-    kernelFn( deviceBuffer_.data(), len ); // see CUDAKernels.cu
-    result = cudaGetLastError();
-    if ( result != cudaSuccess )
-      throw std::runtime_error( "CUDA kernel launch failed" );
-
-    // DMA result back into pinned buffer
-    result = cudaMemcpy( hostBuffer_.data(), deviceBuffer_.data(), len, cudaMemcpyDeviceToHost );
-    if ( result != cudaSuccess )
-      throw std::runtime_error( "cudaMemcpy device to host failed" );
-
-    // Read results back into s
-    std::memcpy( data, hostBuffer_.data(), len );
-    return std::forward<decltype( s )>( s );
+    return std::forward<T>( s );
   }
 
-  // True if there's an NVIDIA GPU and 
-  // compiled runtime is supported by current device driver
   static bool SupportsCuda()
   {
-    static bool checkedForCudaSupport = false;
-    static bool supportsCuda = false;
-    if ( !checkedForCudaSupport )
-    {
-      int deviceCount = 0;
-      cudaError_t err = cudaGetDeviceCount( &deviceCount );
-      checkedForCudaSupport = true;
-      if ( err == cudaSuccess && deviceCount > 0 )
-      {
-        int driverVersion = 0;
-        int runtimeVersion = 0;
-        cudaDriverGetVersion( &driverVersion );
-        cudaRuntimeGetVersion( &runtimeVersion );
-        supportsCuda = ( driverVersion >= runtimeVersion );
-      }
-    }
+    // One-time check
+    static bool supportsCuda = []() { return IsCudaSupported(); }( );
     return supportsCuda;
   }
 
 private:
 
-  CUDAHostBuffer hostBuffer_;
-  CUDADeviceBuffer deviceBuffer_;
+  // DMA -> kernel -> DMA sequence given pinned src/dst pointers.
+  // src and dst may be the same pointer (in-place, direct DMA path) or
+  // different pointers (staging path, where both point into stagingBuffer_).
+  void TransferAndRun( const char* src, char* dst, size_t len, CUDAKernelFnPtr kernelFn )
+  {
+    // DMA host -> device
+    auto result = cudaMemcpy( deviceBuffer_.data(), src, len, cudaMemcpyHostToDevice );
+    if ( result != cudaSuccess )
+      throw std::runtime_error( "cudaMemcpy host to device failed" );
+
+    // Launch kernel
+    kernelFn( deviceBuffer_.data(), len );
+
+    // Catch any launch configuration errors.
+    // Kernel execution errors surface asynchronously; catching them requires
+    // cudaDeviceSynchronize(), which adds synchronization overhead but can be
+    // useful in debug builds.
+    result = cudaGetLastError();
+    if ( result != cudaSuccess )
+      throw std::runtime_error( "CUDA kernel launch failed" );
+
+    // DMA device -> host
+    result = cudaMemcpy( dst, deviceBuffer_.data(), len, cudaMemcpyDeviceToHost );
+    if ( result != cudaSuccess )
+      throw std::runtime_error( "cudaMemcpy device to host failed" );
+  }
+
+  // True if there's an NVIDIA GPU and compiled runtime is supported 
+  // by current device driver
+  static bool IsCudaSupported()
+  {
+    int deviceCount = 0;
+    cudaError_t err = cudaGetDeviceCount( &deviceCount );
+    if ( err != cudaSuccess || deviceCount < 1 )
+      return false;
+
+    int driverVersion = 0;
+    int runtimeVersion = 0;
+    cudaDriverGetVersion( &driverVersion );
+    cudaRuntimeGetVersion( &runtimeVersion );
+    return ( driverVersion >= runtimeVersion );
+  }
+
+private:
+
+  CUDADeviceBuffer deviceBuffer_; // for common path
+  CUDAHostBuffer stagingBuffer_;  // for fallback path
 
 }; // CUDAContext
 

@@ -223,6 +223,7 @@
     <None Include="OpenCLKernels.cl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Concepts.h" />
     <ClInclude Include="CUDAContext.h" />
     <ClInclude Include="CUDAKernels.h" />
     <ClInclude Include="GetLowerChar.h" />

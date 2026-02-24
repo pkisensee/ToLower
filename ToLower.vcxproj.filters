@@ -41,6 +41,7 @@
     <ClInclude Include="ToLowerCUDA.h" />
     <ClInclude Include="CUDAContext.h" />
     <ClInclude Include="CUDAKernels.h" />
+    <ClInclude Include="Concepts.h" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="CUDAKernels.cu" />

@@ -119,6 +119,11 @@ void Profiler::Validate() const
   std::string empty;
   Validate( empty, empty );
 
+  // Test small string (small string optimization on stack)
+  std::string small = "mNoP";
+  std::string smallLower = "mnop";
+  Validate( small, smallLower );
+
   // Test simple string
   std::string simple = "AbCdEfGhIJKlmnoPQRSTuVWxyz";
   std::string simpleLower = "abcdefghijklmnopqrstuvwxyz";
