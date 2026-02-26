@@ -6,6 +6,7 @@
 //   * By value solution
 //   * Input is not modified
 //   * Returns a copy of the input sequence converted to lower case
+//   * Uses what is often the fastest in-place solution: SSE
 //
 // Issues:
 //   * Two copies required: copy to temp, and return by value
@@ -27,7 +28,7 @@
 #include "ToLowerSSE.h"
 
 // Returns a copy of the input character sequence converted to lower case.
-std::string GetLowerByValue( const auto& s )
+inline std::string GetLowerByValue( const auto& s ) noexcept
 {
   std::string working{ s };
   return ToLowerSSE( working );

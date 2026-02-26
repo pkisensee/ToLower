@@ -18,7 +18,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // 
-// Converts the incoming character to lowercase using std::tolower
+// Converts the incoming character to lowercase using std::tolower.
 // 
 // std::tolower has UB if incoming value is not representable as unsigned char, 
 // hence requirement to cast.
@@ -37,8 +37,8 @@ inline char GetLowerChar( char c ) noexcept
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Converts the incoming character to lowercase using some branching and math
-// Only works for simple ASCII; may not be correct for other locales
+// Converts the incoming character to lowercase using some branching and math.
+// Only works for simple ASCII; may not be correct for other locales.
 
 inline constexpr char GetLowerCharBranch( char c ) noexcept
 {
@@ -50,9 +50,9 @@ inline constexpr char GetLowerCharBranch( char c ) noexcept
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Converts the incoming character to lowercase using math and a single branch.
-// Compiler will typically generate a conditional move.
-// Only works for simple ASCII; may not be correct for other locales
+// Converts the incoming character to lowercase using math.
+// Compiler will typically generate a conditional move rather than a branch.
+// Only works for simple ASCII; may not be correct for other locales.
 
 inline constexpr char GetLowerCharCondMove( char c ) noexcept
 {

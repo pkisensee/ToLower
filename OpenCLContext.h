@@ -24,6 +24,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include "Concepts.h"
 
 #pragma warning(push)
 #pragma warning(disable: 4365 4623 4626 5027 5039 5246)
@@ -86,9 +87,10 @@ public:
     InitializeKernels( kernelNames );
   }
 
-  // Convert char sequence to lower case in place. Returns modified sequence.
+  // Invoke the given kernel function on s.
   // Can't be noexcept because enqueue can throw.
-  constexpr auto&& ToLower( auto&& s, std::string_view kernelName )
+  template <CharRange T>
+  T&& RunKernel( std::string_view kernelName, T&& s )
   {
     const size_t len = std::size( s );
     char* data = std::data( s );

@@ -2,7 +2,7 @@
 //
 // GetRandomStr.h
 //
-// Generates a string with random ASCII characters from ' ' through 0xFF
+// Generates a string with random ASCII characters from ' ' through 0xFF.
 //
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.

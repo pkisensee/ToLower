@@ -228,14 +228,11 @@ public:
   CUDAContext( const CUDAContext& ) = delete;
   CUDAContext& operator=( const CUDAContext& ) = delete;
 
-  // Convert char sequence to lower case in place. Returns modified sequence.
+  // Invoke the given kernel function on s.
   // Can't be constexpr or noexcept because CUDA operations allocate and throw.
   template <CharRange T>
-  T&& ToLower( T&& s, CUDAKernelFnPtr kernelFn )
+  T&& RunKernel( CUDAKernelFnPtr kernelFn, T&& s )
   {
-    if ( !SupportsCuda() )
-      return ToLowerAutoConstexpr( std::forward<T>( s ) ); // fallback
-
     const size_t len = std::size( s );
     char* data = std::data( s );
     if ( len == 0 )

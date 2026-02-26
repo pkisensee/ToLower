@@ -46,13 +46,6 @@ __constant__ char kLowerCaseAsciiTable[ 256 ] = {
 //
 // GetLowerChar functions
 
-// TODO reorder based on performance
-__device__ char GetLowerChar_CUDALookupTable( char c ) noexcept
-{
-  auto uchar = static_cast<unsigned char>( c );
-  return kLowerCaseAsciiTable[ uchar ];
-}
-
 __device__ char GetLowerChar_CUDABranch( char c ) noexcept
 {
   constexpr char kLowerOffset = 'a' - 'A';
@@ -73,6 +66,12 @@ __device__ char GetLowerChar_CUDACondMove( char c ) noexcept
   char offset = ( upperAlphaLetterIndex < kLetterCount ) * kLowerOffset;
 
   return c + offset;
+}
+
+__device__ char GetLowerChar_CUDALookupTable( char c ) noexcept
+{
+  auto uchar = static_cast<unsigned char>( c );
+  return kLowerCaseAsciiTable[ uchar ];
 }
 
 __device__ char GetLowerChar_CUDA5thBit( char c ) noexcept

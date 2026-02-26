@@ -38,14 +38,11 @@ __constant char kLowerCaseAsciiTable[256] = {
   0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff
 };
 
-__kernel void lowerLookupTable( __global char* s, unsigned long len )
-{
-  const size_t i = get_global_id( 0 );
-  const unsigned char c = s[ i ];
-  s[ i ] = kLowerCaseAsciiTable[ c ];
-}
+///////////////////////////////////////////////////////////////////////////////
+//
+// GetLowerChar functions
 
-__kernel void lowerBranch( __global char* s, unsigned long len )
+__kernel void GetLowerChar_OpenCLBranch( __global char* s, unsigned long len )
 {
   const char kLowerOffset = 'a' - 'A';
   const size_t i = get_global_id( 0 );
@@ -54,7 +51,7 @@ __kernel void lowerBranch( __global char* s, unsigned long len )
     s[ i ] = c + kLowerOffset;
 }
 
-__kernel void lowerCondMove( __global char* s, unsigned long len )
+__kernel void GetLowerChar_OpenCLCondMove( __global char* s, unsigned long len )
 {
   const char kLetterCount = 'Z' - 'A' + 1; // 26
   const char kLowerOffset = 'a' - 'A';     // 32
@@ -70,14 +67,23 @@ __kernel void lowerCondMove( __global char* s, unsigned long len )
   s[ i ] = c + offset;
 }
 
-__kernel void lower5thBit( __global char* s, unsigned long len )
+__kernel void GetLowerChar_OpenCLLookupTable( __global char* s, unsigned long len )
 {
   const size_t i = get_global_id( 0 );
-  const unsigned char kBit5Set = 0x20;
-  s[ i ] |= kBit5Set;
+  const unsigned char c = s[ i ];
+  s[ i ] = kLowerCaseAsciiTable[ c ];
 }
 
-__kernel void lowerSIMD( __global char* s, unsigned long len )
+__kernel void GetLowerChar_OpenCL5thBit( __global char* s, unsigned long len )
+{
+  const unsigned char kBit5Set = 0x20;
+  const size_t i = get_global_id( 0 );
+  unsigned char uc = s[ i ];
+  uc |= kBit5Set;
+  s[ i ] = (char)( uc );
+}
+
+__kernel void GetLowerChar_OpenCLSIMD( __global char* s, unsigned long len )
 {
   const size_t kBlockSize = 8;
   const size_t i = get_global_id( 0 );

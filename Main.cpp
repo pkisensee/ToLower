@@ -23,7 +23,7 @@
 //  * VMX (PowerPC CPUs)
 //  * Neon (ARM)
 // 
-// Note: coroutines could be useful if input was async, but that's not true in
+// Note: std::coroutines could be useful if input was async, but that's not true in
 // this case
 
 #define ENABLE_OPENCL 1
@@ -45,6 +45,7 @@
 #include "GetRandomStr.h"
 #include "LowerCaseAsciiTable.h"
 #include "LowerOriginal.h"
+#include "OpenCLKernels.h"
 #include "Profiler.h"
 #include "ToLower5thBit.h"
 #include "ToLowerAuto.h"
@@ -72,14 +73,18 @@
 
 using namespace std::literals;
 
-size_t kValidateStrSize = 1024uz * 100uz; // 100K random string for validation
-size_t kMeasureStrSize = 1024uz * 1024uz * 10uz; // 10 MB baseline for scale=1.0
+// Constants
+static constexpr size_t kValidateStrSize = 1024uz * 100uz; // 100K random string for validation
+static constexpr size_t kMeasureStrSize = 1024uz * 1024uz * 10uz; // 10 MB baseline for scale=1.0
+static std::string_view kOpenCLKernelName = "OpenCLKernels.cl"sv;
+
+// Establish profiler data
 std::string Profiler::validateStr_ = GetRandomStr( kValidateStrSize );
 std::string Profiler::measureStr_ = GetRandomStr( kMeasureStrSize );
 std::ofstream Profiler::outputFile;
 size_t Profiler::measurementRuns_ = 10;
-std::string_view kOpenCLKernelName = "OpenCLKernels.cl"sv;
 
+// Aliases
 namespace execution = std::execution;
 using ParPolicy = execution::parallel_policy;
 using UnseqPolicy = execution::unsequenced_policy;
@@ -120,11 +125,11 @@ void ValidateAndMeasure()
   std::println( "\nLoading OpenCL kernels" );
   std::array<std::string, 5> openCLkernels =
   { {
-    { "lowerLookupTable" },
-    { "lowerBranch" },
-    { "lowerCondMove" },
-    { "lower5thBit" },
-    { "lowerSIMD" },
+    { kOpenCLKernelBranch },
+    { kOpenCLKernelCondMove },
+    { kOpenCLKernelLookupTable },
+    { kOpenCLKernel5thBit },
+    { kOpenCLKernelSIMD },
   } };
   OpenCLContext openCLContextCPU{ CL_DEVICE_TYPE_CPU, kOpenCLKernelName, openCLkernels };
   OpenCLContext openCLContextGPU{ CL_DEVICE_TYPE_GPU, kOpenCLKernelName, openCLkernels };
@@ -164,23 +169,23 @@ void ValidateAndMeasure()
     { "SSE bit 5 aligned",    ToLowerSSE5thBitAligned <std::string&>    },
 
 #if defined( ENABLE_OPENCL )
-    { "OpenCL CPU lookup",    ToLowerOpenCL, &openCLContextCPU, "lowerLookupTable" },
-    { "OpenCL CPU branch",    ToLowerOpenCL, &openCLContextCPU, "lowerBranch"      },
-    { "OpenCL CPU cond move", ToLowerOpenCL, &openCLContextCPU, "lowerCondMove"    },
-    { "OpenCL CPU bit 5",     ToLowerOpenCL, &openCLContextCPU, "lower5thBit"      },
-    { "OpenCL CPU SIMD",      ToLowerOpenCL, &openCLContextCPU, "lowerSIMD"        },
+    { "OpenCL CPU branch",    ToLowerOpenCL, &openCLContextCPU, kOpenCLKernelBranch      },
+    { "OpenCL CPU cond move", ToLowerOpenCL, &openCLContextCPU, kOpenCLKernelCondMove    },
+    { "OpenCL CPU lookup",    ToLowerOpenCL, &openCLContextCPU, kOpenCLKernelLookupTable },
+    { "OpenCL CPU bit 5",     ToLowerOpenCL, &openCLContextCPU, kOpenCLKernel5thBit      },
+    { "OpenCL CPU SIMD",      ToLowerOpenCL, &openCLContextCPU, kOpenCLKernelSIMD        },
 
-    { "OpenCL GPU lookup",    ToLowerOpenCL, &openCLContextGPU, "lowerLookupTable" },
-    { "OpenCL GPU branch",    ToLowerOpenCL, &openCLContextGPU, "lowerBranch"      },
-    { "OpenCL GPU cond move", ToLowerOpenCL, &openCLContextGPU, "lowerCondMove"    },
-    { "OpenCL GPU bit 5",     ToLowerOpenCL, &openCLContextGPU, "lower5thBit"      },
-    { "OpenCL GPU SIMD",      ToLowerOpenCL, &openCLContextGPU, "lowerSIMD"        },
+    { "OpenCL GPU branch",    ToLowerOpenCL, &openCLContextGPU, kOpenCLKernelBranch      },
+    { "OpenCL GPU cond move", ToLowerOpenCL, &openCLContextGPU, kOpenCLKernelCondMove    },
+    { "OpenCL GPU lookup",    ToLowerOpenCL, &openCLContextGPU, kOpenCLKernelLookupTable },
+    { "OpenCL GPU bit 5",     ToLowerOpenCL, &openCLContextGPU, kOpenCLKernel5thBit      },
+    { "OpenCL GPU SIMD",      ToLowerOpenCL, &openCLContextGPU, kOpenCLKernelSIMD        },
 #endif
 
 #if defined( ENABLE_CUDA )
-    { "CUDA lookup",          ToLowerCUDA, &cudaContext, ToLowerCUDALookupTable },
     { "CUDA branch",          ToLowerCUDA, &cudaContext, ToLowerCUDABranch      },
     { "CUDA cond move",       ToLowerCUDA, &cudaContext, ToLowerCUDACondMove    },
+    { "CUDA lookup",          ToLowerCUDA, &cudaContext, ToLowerCUDALookupTable },
     { "CUDA bit 5",           ToLowerCUDA, &cudaContext, ToLowerCUDA5thBit      },
 #endif
   } };

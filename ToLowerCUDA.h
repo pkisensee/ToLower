@@ -28,10 +28,18 @@
 
 // Convert char sequence to lower case in place. Returns modified sequence.
 // Can't be noexcept because cudaContext.ToLower() can throw.
-constexpr auto&& ToLowerCUDA( auto&& s, 
-  CUDAContext& cudaContext, CUDAKernelFnPtr cudaKernel )
+constexpr auto&& ToLowerCUDA( auto&& s, CUDAContext& cudaContext, 
+  CUDAKernelFnPtr cudaKernel )
 {
-  return cudaContext.ToLower( s, cudaKernel );
+  if ( !CUDAContext::SupportsCuda() )
+  {
+    // fallback if no CUDA support
+    return ( cudaKernel == ToLowerCUDA5thBit ) ?
+      ToLower5thBit       ( s ) :
+      ToLowerAutoConstexpr( s );
+  }
+
+  return cudaContext.RunKernel( cudaKernel, s );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

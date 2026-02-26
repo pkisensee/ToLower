@@ -229,6 +229,7 @@
     <ClInclude Include="GetLowerChar.h" />
     <ClInclude Include="LowerCaseAsciiTable.h" />
     <ClInclude Include="OpenCLContext.h" />
+    <ClInclude Include="OpenCLKernels.h" />
     <ClInclude Include="Profiler.h" />
     <ClInclude Include="SIMDSupport.h" />
     <ClInclude Include="Stopwatch.h" />

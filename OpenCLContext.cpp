@@ -2,7 +2,7 @@
 //
 // OpenCLContext.cpp
 //
-// Helper functions for OpenCL
+// Helper functions for OpenCL.
 //
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.
@@ -70,6 +70,7 @@ std::filesystem::path OpenCLContext::GetCacheFilePath(
     return std::isspace( c ) || !std::isalnum( c );
   } );
 
+  // Determine path for cache
   auto cacheDir = sourceFile.parent_path() / kCacheFolder;
   std::filesystem::create_directories( cacheDir );
 
@@ -98,7 +99,8 @@ bool OpenCLContext::IsCacheValid( const std::filesystem::path& sourceFile,
 // 
 // Save compiled binary to cache
 
-void OpenCLContext::SaveBinaryToCache( const cl::Program& program, 
+void OpenCLContext::SaveBinaryToCache(
+  const cl::Program& program, 
   const std::filesystem::path& cacheFile ) // static
 {
   auto binaries = program.getInfo< CL_PROGRAM_BINARIES >();

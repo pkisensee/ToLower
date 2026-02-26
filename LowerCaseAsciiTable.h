@@ -2,7 +2,7 @@
 //
 // LowerCaseAsciiTable.h
 //
-// Only 256 bytes of memory required
+// Only 256 bytes of memory required.
 //
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.
