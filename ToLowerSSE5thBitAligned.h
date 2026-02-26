@@ -28,6 +28,7 @@
 #include <iterator>
 #include <memory>
 #include <utility>
+#include "Concepts.h"
 #include "GetLowerChar.h"
 #include "SIMDSupport.h"
 
@@ -39,10 +40,10 @@ bool IsAligned( T* p )
 }
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-constexpr auto&& ToLowerSSE5thBitAligned( auto&& s ) noexcept
+template <CharRange Str>
+constexpr Str&& ToLowerSSE5thBitAligned( Str&& s ) noexcept
 {
-  if ( !HasSIMDSupport( SIMDLevel::SSE2 ) )
-    return s;
+  assert( HasSIMDSupport( SIMDLevel::SSE2 ) );
 
   static const size_t kSSEbytes = sizeof( __m128i ); // typically 16
   static const __m128i kBits5Set = _mm_set1_epi8( 0b0010'0000 ); // 0x20 0x20 0x20 0x20...
@@ -63,7 +64,7 @@ constexpr auto&& ToLowerSSE5thBitAligned( auto&& s ) noexcept
   for ( ; len > 0; ++data, --len )
     *data = GetLowerChar5thBit( *data );
 
-  return std::forward<decltype( s )>( s );
+  return std::forward<Str>( s );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

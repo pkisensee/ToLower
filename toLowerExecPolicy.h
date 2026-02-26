@@ -22,10 +22,12 @@
 #pragma once
 #include <algorithm>
 #include <utility>
+#include "Concepts.h"
 #include "GetLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-constexpr auto&& ToLowerExecPolicy( auto&& s, auto&& execPolicy ) noexcept
+template <CharRange Str, typename Policy>
+constexpr Str&& ToLowerExecPolicy( Str&& s, Policy&& execPolicy ) noexcept
 {
   auto begin = std::begin( s );
   auto end = std::end( s );
@@ -33,7 +35,7 @@ constexpr auto&& ToLowerExecPolicy( auto&& s, auto&& execPolicy ) noexcept
   {
     return GetLowerChar( c );
   } );
-  return std::forward< decltype( s ) >( s );
+  return std::forward<Str>( s );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

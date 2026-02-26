@@ -28,14 +28,14 @@
 #include "GetLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-template <typename String>
-constexpr String&& ToLowerTemplatized( String&& s ) noexcept
+template <CharRange Str>
+constexpr Str&& ToLowerTemplatized( Str&& s ) noexcept
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
     return GetLowerChar( c );
   } );
-  return std::forward< String >( s );
+  return std::forward<Str>( s );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

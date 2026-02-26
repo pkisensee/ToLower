@@ -50,7 +50,7 @@
 #include "ToLower5thBit.h"
 #include "ToLowerAuto.h"
 #include "ToLowerAutoConstexpr.h"
-#include "ToLowerAutoNoReturn.h"
+#include "ToLowerNoReturn.h"
 #include "ToLowerAVX2.h"
 #include "ToLowerAVX512.h"
 #include "ToLowerCUDA.h"
@@ -82,7 +82,7 @@ static std::string_view kOpenCLKernelName = "OpenCLKernels.cl"sv;
 std::string Profiler::validateStr_ = GetRandomStr( kValidateStrSize );
 std::string Profiler::measureStr_ = GetRandomStr( kMeasureStrSize );
 std::ofstream Profiler::outputFile;
-size_t Profiler::measurementRuns_ = 10;
+size_t Profiler::measurementRunCount_ = 10;
 
 // Aliases
 namespace execution = std::execution;
@@ -148,8 +148,8 @@ void ValidateAndMeasure()
     { "span<char>",           ToLowerSpan                              },
     { "std::string&",         ToLowerStrRef                            },
     { "templatized",          ToLowerTemplatized      <std::string&>   },
-    { "auto&&",               ToLowerAuto             <std::string&>   },
-    { "auto&& no return",     ToLowerAutoNoReturn     <std::string&>   },
+    { "Str&&",                ToLowerAuto             <std::string&>   },
+    { "Str&& no return",      ToLowerNoReturn         <std::string&>   },
     { "constexpr noexcept",   ToLowerAutoConstexpr    <std::string&>   },
     { "range based for",      ToLowerRangeBasedFor    <std::string&>   },
     { "return by value",      GetLowerByValue         <std::string&>   },
@@ -169,24 +169,24 @@ void ValidateAndMeasure()
     { "SSE bit 5 aligned",    ToLowerSSE5thBitAligned <std::string&>    },
 
 #if defined( ENABLE_OPENCL )
-    { "OpenCL CPU branch",    ToLowerOpenCL, &openCLContextCPU, kOpenCLKernelBranch      },
-    { "OpenCL CPU cond move", ToLowerOpenCL, &openCLContextCPU, kOpenCLKernelCondMove    },
-    { "OpenCL CPU lookup",    ToLowerOpenCL, &openCLContextCPU, kOpenCLKernelLookupTable },
-    { "OpenCL CPU bit 5",     ToLowerOpenCL, &openCLContextCPU, kOpenCLKernel5thBit      },
-    { "OpenCL CPU SIMD",      ToLowerOpenCL, &openCLContextCPU, kOpenCLKernelSIMD        },
+    { "OpenCL CPU branch",    ToLowerOpenCL<std::string&>, &openCLContextCPU, kOpenCLKernelBranch      },
+    { "OpenCL CPU cond move", ToLowerOpenCL<std::string&>, &openCLContextCPU, kOpenCLKernelCondMove    },
+    { "OpenCL CPU lookup",    ToLowerOpenCL<std::string&>, &openCLContextCPU, kOpenCLKernelLookupTable },
+    { "OpenCL CPU bit 5",     ToLowerOpenCL<std::string&>, &openCLContextCPU, kOpenCLKernel5thBit      },
+    { "OpenCL CPU SIMD",      ToLowerOpenCL<std::string&>, &openCLContextCPU, kOpenCLKernelSIMD        },
 
-    { "OpenCL GPU branch",    ToLowerOpenCL, &openCLContextGPU, kOpenCLKernelBranch      },
-    { "OpenCL GPU cond move", ToLowerOpenCL, &openCLContextGPU, kOpenCLKernelCondMove    },
-    { "OpenCL GPU lookup",    ToLowerOpenCL, &openCLContextGPU, kOpenCLKernelLookupTable },
-    { "OpenCL GPU bit 5",     ToLowerOpenCL, &openCLContextGPU, kOpenCLKernel5thBit      },
-    { "OpenCL GPU SIMD",      ToLowerOpenCL, &openCLContextGPU, kOpenCLKernelSIMD        },
+    { "OpenCL GPU branch",    ToLowerOpenCL<std::string&>, &openCLContextGPU, kOpenCLKernelBranch      },
+    { "OpenCL GPU cond move", ToLowerOpenCL<std::string&>, &openCLContextGPU, kOpenCLKernelCondMove    },
+    { "OpenCL GPU lookup",    ToLowerOpenCL<std::string&>, &openCLContextGPU, kOpenCLKernelLookupTable },
+    { "OpenCL GPU bit 5",     ToLowerOpenCL<std::string&>, &openCLContextGPU, kOpenCLKernel5thBit      },
+    { "OpenCL GPU SIMD",      ToLowerOpenCL<std::string&>, &openCLContextGPU, kOpenCLKernelSIMD        },
 #endif
 
 #if defined( ENABLE_CUDA )
-    { "CUDA branch",          ToLowerCUDA, &cudaContext, ToLowerCUDABranch      },
-    { "CUDA cond move",       ToLowerCUDA, &cudaContext, ToLowerCUDACondMove    },
-    { "CUDA lookup",          ToLowerCUDA, &cudaContext, ToLowerCUDALookupTable },
-    { "CUDA bit 5",           ToLowerCUDA, &cudaContext, ToLowerCUDA5thBit      },
+    { "CUDA branch",     ToLowerCUDA<std::string&>, &cudaContext, ToLowerCUDABranch      },
+    { "CUDA cond move",  ToLowerCUDA<std::string&>, &cudaContext, ToLowerCUDACondMove    },
+    { "CUDA lookup",     ToLowerCUDA<std::string&>, &cudaContext, ToLowerCUDALookupTable },
+    { "CUDA bit 5",      ToLowerCUDA<std::string&>, &cudaContext, ToLowerCUDA5thBit      },
 #endif
   } };
 

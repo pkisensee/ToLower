@@ -28,12 +28,15 @@
 #include <string>
 #include <thread>
 #include <utility>
+#include "Concepts.h"
 #include "GetLowerChar.h"
 #include "ToLower5thBit.h"
 #include "ToLowerSSE.h"
 
-// Helper function that accepts the worker function
-constexpr auto&& ToLowerThreadPoolWithWorker( auto&& s, auto&& threadPool, auto&& toLowerWorker ) noexcept
+// Helper that accepts the worker function
+template <CharRange Str, typename ThreadPool, typename Worker>
+constexpr Str&& ToLowerThreadPoolWithWorker( Str&& s,
+  ThreadPool&& threadPool, Worker&& toLowerWorker ) noexcept
 {
   assert( !threadPool.empty() );
 
@@ -58,12 +61,13 @@ constexpr auto&& ToLowerThreadPoolWithWorker( auto&& s, auto&& threadPool, auto&
 
   // Wait for case conversion to complete
   std::ranges::for_each( threadPool, []( auto& thread ) { thread.join(); } );
-  return std::forward<decltype( s )>( s );
+  return std::forward<Str>( s );
 }
 
 // Convert char sequence to lower case in place. Returns modified sequence.
 // Uses ToLowerSSE().
-constexpr auto&& ToLowerThreadPoolSSE( auto&& s, auto&& threadPool ) noexcept
+template <CharRange Str, typename ThreadPool>
+constexpr Str&& ToLowerThreadPoolSSE( Str&& s, ThreadPool&& threadPool ) noexcept
 {
   return ToLowerThreadPoolWithWorker( s, threadPool, []( auto&& substr )
   {
@@ -73,7 +77,8 @@ constexpr auto&& ToLowerThreadPoolSSE( auto&& s, auto&& threadPool ) noexcept
 
 // Convert char sequence to lower case in place. Returns modified sequence.
 // Uses ToLower5thBit().
-constexpr auto&& ToLowerThreadPool5thBit( auto&& s, auto&& threadPool ) noexcept
+template <CharRange Str, typename ThreadPool>
+constexpr Str&& ToLowerThreadPool5thBit( Str&& s, ThreadPool&& threadPool ) noexcept
 {
   return ToLowerThreadPoolWithWorker( s, threadPool, []( auto&& substr )
   { 
@@ -82,8 +87,9 @@ constexpr auto&& ToLowerThreadPool5thBit( auto&& s, auto&& threadPool ) noexcept
 }
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-// Uses GetLowerChar().
-constexpr auto&& ToLowerThreadPool( auto&& s, auto&& threadPool ) noexcept
+// Uses ToLowerAuto().
+template <CharRange Str, typename ThreadPool>
+constexpr Str&& ToLowerThreadPool( Str&& s, ThreadPool&& threadPool ) noexcept
 {
   return ToLowerThreadPoolWithWorker( s, threadPool, []( auto&& substr )
   {

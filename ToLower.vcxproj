@@ -233,7 +233,7 @@
     <ClInclude Include="Profiler.h" />
     <ClInclude Include="SIMDSupport.h" />
     <ClInclude Include="Stopwatch.h" />
-    <ClInclude Include="ToLowerAutoNoReturn.h" />
+    <ClInclude Include="ToLowerNoReturn.h" />
     <ClInclude Include="ToLowerAVX512.h" />
     <ClInclude Include="ToLowerCUDA.h" />
     <ClInclude Include="ToLowerRangeBasedFor.h" />

@@ -89,8 +89,8 @@ public:
 
   // Invoke the given kernel function on s.
   // Can't be noexcept because enqueue can throw.
-  template <CharRange T>
-  T&& RunKernel( std::string_view kernelName, T&& s )
+  template <CharRange Str>
+  Str&& RunKernel( std::string_view kernelName, Str&& s )
   {
     const size_t len = std::size( s );
     char* data = std::data( s );
@@ -122,7 +122,7 @@ public:
     // Read results back into s
     queue_.enqueueReadBuffer( dataBuffer_, blocking, 0, len, data );
 
-    return std::forward<decltype( s )>( s );
+    return std::forward<Str>( s );
   }
 
 private:

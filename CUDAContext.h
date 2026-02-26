@@ -230,13 +230,13 @@ public:
 
   // Invoke the given kernel function on s.
   // Can't be constexpr or noexcept because CUDA operations allocate and throw.
-  template <CharRange T>
-  T&& RunKernel( CUDAKernelFnPtr kernelFn, T&& s )
+  template <CharRange Str>
+  Str&& RunKernel( CUDAKernelFnPtr kernelFn, Str&& s ) // TODO const-ify?
   {
     const size_t len = std::size( s );
     char* data = std::data( s );
     if ( len == 0 )
-      return std::forward<T>( s );
+      return std::forward<Str>( s );
 
     // Update buffers if too small
     if ( len > deviceBuffer_.size() )
@@ -260,7 +260,7 @@ public:
       std::memcpy( data, stagingBuffer_.data(), len );
     }
 
-    return std::forward<T>( s );
+    return std::forward<Str>( s );
   }
 
   static bool SupportsCuda()

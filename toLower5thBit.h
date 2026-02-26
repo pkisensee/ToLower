@@ -24,16 +24,18 @@
 #include <algorithm>
 #include <ranges>
 #include <utility>
+#include "Concepts.h"
 #include "GetLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-constexpr auto&& ToLower5thBit( auto&& s ) noexcept
+template <CharRange Str>
+constexpr Str&& ToLower5thBit( Str&& s ) noexcept
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
     return GetLowerChar5thBit( c );
   } );
-  return std::forward<decltype( s )>( s );
+  return std::forward<Str>( s );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

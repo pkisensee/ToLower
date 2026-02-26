@@ -46,38 +46,33 @@ Profiler::Profiler( std::string_view name, LowerOriginalFnPtr func, double scale
 {
 }
 
-Profiler::Profiler( std::string_view name, ToLowerPtrNoStrlenFnPtr func, double scale ) :
+Profiler::Profiler( std::string_view name, ToLowerPtrNoStrlenFnPtr func ) :
   name_( name ),
-  func_( std::function<ToLowerPtrNoStrlenFn>( func ) ),
-  scale_( scale )
+  func_( std::function<ToLowerPtrNoStrlenFn>( func ) )
 {
 }
 
-Profiler::Profiler( std::string_view name, ToLowerSpanFnPtr func, double scale ) :
+Profiler::Profiler( std::string_view name, ToLowerSpanFnPtr func ) :
   name_( name ),
-  func_( std::function<ToLowerSpanFn>( func ) ),
-  scale_( scale )
+  func_( std::function<ToLowerSpanFn>( func ) )
 {
 }
 
-Profiler::Profiler( std::string_view name, ToLowerAutoNoReturnFnPtr func, double scale ) :
+Profiler::Profiler( std::string_view name, ToLowerAutoNoReturnFnPtr func ) :
   name_( name ),
-  func_( std::function<ToLowerAutoNoReturnFn>( func ) ),
-  scale_( scale )
+  func_( std::function<ToLowerAutoNoReturnFn>( func ) )
 {
 }
 
-Profiler::Profiler( std::string_view name, GetLowerByValueFnPtr func, double scale ) :
+Profiler::Profiler( std::string_view name, GetLowerByValueFnPtr func ) :
   name_( name ),
-  func_( std::function<GetLowerByValueFn>( func ) ),
-  scale_( scale )
+  func_( std::function<GetLowerByValueFn>( func ) )
 {
 }
 
-Profiler::Profiler( std::string_view name, ToLowerLookupTableFnPtr func, double scale ) :
+Profiler::Profiler( std::string_view name, ToLowerLookupTableFnPtr func ) :
   name_( name ),
-  func_( std::function<ToLowerLookupTableFn>( func ) ),
-  scale_( scale )
+  func_( std::function<ToLowerLookupTableFn>( func ) )
 {
 }
 
@@ -99,7 +94,7 @@ Profiler::Profiler( std::string_view name, ToLowerOpenCLFnPtr func,
 }
 
 Profiler::Profiler( std::string_view name, ToLowerCUDAFnPtr func,
-  CUDAContext* cudaContext, CUDAKernelFn cudaKernel ) :
+  CUDAContext* cudaContext, CUDAKernelFnPtr cudaKernel ) :
   name_( name ),
   func_( std::function<ToLowerCUDAFn>( func ) ),
   cudaContext_( cudaContext ),
@@ -155,11 +150,11 @@ void Profiler::Measure() const
   std::print( "{:{}}: ", name_, kNameColumnWidth );
   std::string input = GetMeasureInput();
   std::vector<double> measurements;
-  measurements.reserve( measurementRuns_ );
-  for ( size_t run = 0; run < measurementRuns_; ++run )
+  measurements.reserve( measurementRunCount_ );
+  for ( size_t run = 0; run < measurementRunCount_; ++run )
   {
     Stopwatch stopwatch;
-    InvokeFunction( input );
+    InvokeFunction( input ); // Only measuring this call
     double microSecs = stopwatch.GetElapsedMicroseconds();
     if ( scale_ != 0.0 )
       microSecs /= scale_;
@@ -176,7 +171,8 @@ void Profiler::Measure() const
 // 
 // Validate that the function converts input to expectedOutput
 
-void Profiler::Validate( std::string& input, const std::string& expectedOutput ) const // private
+void Profiler::Validate( std::string& input, 
+  const std::string& expectedOutput ) const // private
 {
   InvokeFunction( input );
   test( std::ranges::equal( input, expectedOutput ) );
@@ -199,9 +195,9 @@ std::string Profiler::GetMeasureInput() const // private
 
 ///////////////////////////////////////////////////////////////////////////////
 // 
-// Invoke the appropriate function. With std::visit and if constexpr, optimizing
-// compiler can likely resolve this to a simple switch statement with
-// minimal overhead.
+// Invoke the appropriate function. With std::visit and if constexpr,
+// compiler will likely resolve this to a simple switch statement with
+// low overhead.
 
 void Profiler::InvokeFunction( std::string& input ) const // private
 {

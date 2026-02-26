@@ -29,10 +29,12 @@
 #include <thread>
 #include <vector>
 #include <utility>
+#include "Concepts.h"
 #include "GetLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-constexpr auto&& ToLowerThreads( auto&& s ) noexcept
+template <CharRange Str>
+constexpr Str&& ToLowerThreads( Str&& s ) noexcept
 {
   auto toLowerWorker = []( auto substr )
   {
@@ -64,7 +66,7 @@ constexpr auto&& ToLowerThreads( auto&& s ) noexcept
 
   // jthreads automatically join when thread vector exits scope,
   // so conversion is complete upon function return
-  return std::forward<decltype( s )>( s );
+  return std::forward<Str>( s );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

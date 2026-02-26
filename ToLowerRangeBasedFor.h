@@ -23,15 +23,17 @@
 #include <algorithm>
 #include <ranges>
 #include <utility>
+#include "Concepts.h"
 #include "GetLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-constexpr auto&& ToLowerRangeBasedFor( auto&& s ) noexcept
+template <CharRange Str>
+constexpr Str&& ToLowerRangeBasedFor( Str&& s ) noexcept
 {
   for( char& c : s )
     c = GetLowerChar( c );
 
-  return std::forward< decltype( s ) >( s );
+  return std::forward<Str>( s );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

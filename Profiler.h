@@ -27,6 +27,7 @@
 #include <vector>
 #include "CUDAKernels.h"
 
+// Forward declarations
 class OpenCLContext;
 class CUDAContext;
 
@@ -34,11 +35,13 @@ class Profiler
 {
 public:
 
+  // Policy aliases
   using ParPolicy = std::execution::parallel_policy;
   using UnseqPolicy = std::execution::unsequenced_policy;
   using ParUnseqPolicy = std::execution::parallel_unsequenced_policy;
   using ThreadPoolType = std::vector<std::jthread>;
 
+  // Function aliases
   using LowerOriginalFn = char* ( char* );
   using LowerOriginalFnPtr = LowerOriginalFn*;
 
@@ -70,17 +73,15 @@ public:
   using ToLowerCUDAFn = std::string& ( std::string&, CUDAContext&, CUDAKernelFnPtr );
   using ToLowerCUDAFnPtr = ToLowerCUDAFn*;
 
-  using CudaKernelFn = void (*)( char*, size_t );
-
   Profiler( std::string_view, LowerOriginalFnPtr, double = 1.0 );
-  Profiler( std::string_view, ToLowerPtrNoStrlenFnPtr, double = 1.0 );
-  Profiler( std::string_view, ToLowerSpanFnPtr, double = 1.0 );
-  Profiler( std::string_view, ToLowerAutoNoReturnFnPtr, double = 1.0 );
-  Profiler( std::string_view, GetLowerByValueFnPtr, double = 1.0 );
-  Profiler( std::string_view, ToLowerLookupTableFn, double = 1.0 );
-  Profiler( std::string_view, ToLowerThreadPoolFn, ThreadPoolType* );
-  Profiler( std::string_view, ToLowerOpenCLFn, OpenCLContext*, std::string_view );
-  Profiler( std::string_view, ToLowerCUDAFn, CUDAContext*, CUDAKernelFnPtr );
+  Profiler( std::string_view, ToLowerPtrNoStrlenFnPtr );
+  Profiler( std::string_view, ToLowerSpanFnPtr );
+  Profiler( std::string_view, ToLowerAutoNoReturnFnPtr );
+  Profiler( std::string_view, GetLowerByValueFnPtr );
+  Profiler( std::string_view, ToLowerLookupTableFnPtr );
+  Profiler( std::string_view, ToLowerThreadPoolFnPtr, ThreadPoolType* );
+  Profiler( std::string_view, ToLowerOpenCLFnPtr, OpenCLContext*, std::string_view );
+  Profiler( std::string_view, ToLowerCUDAFnPtr, CUDAContext*, CUDAKernelFnPtr );
 
   template <typename Policy>
   Profiler( std::string_view name, 
@@ -114,22 +115,6 @@ private:
   std::string GetMeasureInput() const;
   void InvokeFunction( std::string& ) const;
 
-  enum FunctionType : size_t // Must match FunctionVariant order below
-  {
-    CharPtr_CharPtr = 0,
-    CharPtr_CharPtrSizeT,
-    CharPtr_SpanChar,
-    Void_StrRef,
-    Str_StrRef,
-    StrRef_StrRef,
-    StrRef_StrRefParPolicy,
-    StrRef_StrRefUnseqPolicy,
-    StrRef_StrRefParUnseqPolicy,
-    StrRef_StrRefThreadPool,
-    StrRef_StrRefOpenCLContextStrView,
-    StrRef_StrRefCUDAContextCUDAFnPtr
-  };
-
   using FunctionVariant = std::variant<
     std::function< LowerOriginalFn >,
     std::function< ToLowerPtrNoStrlenFn >,
@@ -146,8 +131,8 @@ private:
   >;
 
   std::string_view name_; // e.g. "LookupTable"
-  FunctionVariant  func_; // e.g. ToLowerLookupTable
-  double           scale_ = 1.0; // decrease for slow funcs; increase for fast funcs to improve Measure() speed
+  FunctionVariant func_; // e.g. ToLowerLookupTable
+  double scale_ = 1.0; // decrease for slow funcs; increase to improve Measure() speed
 
   // For std::algorithms with policies
   ParPolicy      parPolicy_ = std::execution::par;
@@ -166,7 +151,7 @@ private:
 
   static std::string validateStr_; // mixed case string used by Validate()
   static std::string measureStr_;  // mixed case string used by Measure()
-  static size_t measurementRuns_;  // The fastest run is recorded
+  static size_t measurementRunCount_;  // the fastest run is recorded
 
 }; // class Profiler
 

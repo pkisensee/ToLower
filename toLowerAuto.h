@@ -23,16 +23,18 @@
 #include <algorithm>
 #include <ranges>
 #include <utility>
+#include "Concepts.h"
 #include "GetLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-auto&& ToLowerAuto( auto&& s )
+template <CharRange Str>
+Str&& ToLowerAuto( Str&& s ) // TODO rename
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
     return GetLowerCharCondMove( c );
   } );
-  return std::forward< decltype(s) >(s);
+  return std::forward<Str>( s );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

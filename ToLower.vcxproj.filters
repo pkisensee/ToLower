@@ -22,7 +22,7 @@
   <ItemGroup>
     <ClInclude Include="OpenCLContext.h" />
     <ClInclude Include="getLowerChar.h" />
-    <ClInclude Include="toLowerAutoNoReturn.h" />
+    <ClInclude Include="ToLowerNoReturn.h" />
     <ClInclude Include="toLowerTemplatized.h" />
     <ClInclude Include="toLowerAuto.h" />
     <ClInclude Include="toLowerAutoConstexpr.h" />

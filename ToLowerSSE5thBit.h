@@ -22,16 +22,18 @@
 // warranties.
 
 #pragma once
+#include <cassert>
 #include <emmintrin.h>
 #include <iterator>
 #include <utility>
+#include "Concepts.h"
 #include "SIMDSupport.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-constexpr auto&& ToLowerSSE5thBit( auto&& s ) noexcept
+template <CharRange Str>
+constexpr Str&& ToLowerSSE5thBit( Str&& s ) noexcept
 {
-  if ( !HasSIMDSupport( SIMDLevel::SSE2 ) )
-    return s;
+  assert( HasSIMDSupport( SIMDLevel::SSE2 ) );
 
   static const size_t kSSEbytes = sizeof( __m128i ); // typically 16
   static const __m128i kBits5Set = _mm_set1_epi8( 0b0010'0000 ); // 0x20 0x20 0x20 0x20...
@@ -51,7 +53,7 @@ constexpr auto&& ToLowerSSE5thBit( auto&& s ) noexcept
   for ( ; len > 0; ++data, --len )
     *data = GetLowerChar5thBit( *data );
 
-  return std::forward<decltype( s )>( s );
+  return std::forward<Str>( s );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

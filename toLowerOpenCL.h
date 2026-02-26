@@ -24,11 +24,13 @@
 
 #pragma once
 #include <string_view>
+#include "Concepts.h"
 #include "OpenCLContext.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
 // Can't be noexcept because openCLContext.RunKernel() can throw.
-constexpr auto&& ToLowerOpenCL( auto&& s, OpenCLContext& openCLContext,
+template <CharRange Str>
+constexpr Str&& ToLowerOpenCL( Str&& s, OpenCLContext& openCLContext,
   std::string_view kernelName )
 {
   return openCLContext.RunKernel( kernelName, s );

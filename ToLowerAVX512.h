@@ -26,10 +26,12 @@
 #include <iterator>
 #include <string>
 #include <utility>
+#include "Concepts.h"
 #include "ToLowerAVX2.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-constexpr auto&& ToLowerAVX512( auto&& s ) noexcept
+template <CharRange Str>
+constexpr Str&& ToLowerAVX512( Str&& s ) noexcept
 {
   if ( !HasSIMDSupport( SIMDLevel::AVX512 ) )
     return ToLowerAVX2( s );
@@ -59,7 +61,7 @@ constexpr auto&& ToLowerAVX512( auto&& s ) noexcept
     *data = GetLowerChar( *data );
   }
 
-  return std::forward<decltype( s )>( s );
+  return std::forward<Str>( s );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
