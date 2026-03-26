@@ -20,11 +20,11 @@
 #include <cassert>
 #include <print>
 #include <ranges>
-#include "GetLowerByValue.h"
-#include "ToLower5thBit.h"
+#include "GetLower.h"
 #include "GetRandomStr.h"
 #include "Profiler.h"
 #include "Stopwatch.h"
+#include "ToLowerInner.h"
 
 #ifdef _DEBUG
 #define test(e) assert(e)
@@ -126,16 +126,9 @@ void Profiler::Validate() const
 
   // Test validation string
   std::string random = validateStr_;
-  std::string randomLower;
+  std::string randomLower = GetLower( random );
   if ( name_.contains( "bit 5" ) )
-  {
-    randomLower = random;
-    ToLower5thBit( randomLower );
-  }
-  else
-  {
-    randomLower = GetLowerByValue( random );
-  }
+    ToLowerInner5thBit( randomLower );
   Validate( random, randomLower );
   std::println( "Passed" );
 }

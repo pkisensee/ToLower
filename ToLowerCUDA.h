@@ -26,6 +26,7 @@
 #include "Concepts.h"
 #include "CUDAContext.h"
 #include "CUDAKernels.h"
+#include "ToLowerInner.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
 // Can't be noexcept because cudaContext.RunKernel() can throw.
@@ -37,7 +38,7 @@ Str&& ToLowerCUDA( Str&& s, CUDAContext& cudaContext, CUDAKernelFnPtr cudaKernel
   {
     // fallback
     return ( cudaKernel == ToLowerCUDA5thBit ) ?
-             ToLower5thBit( s ) : ToLowerAutoConstexpr( s );
+             ToLowerInner5thBit( s ) : ToLowerAutoConstexpr( s );
   }
 
   return cudaContext.RunKernel( cudaKernel, s );

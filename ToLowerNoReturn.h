@@ -27,11 +27,11 @@
 
 // Convert char sequence to lower case in place. Returns modified sequence.
 template <CharRange Str>
-void ToLowerNoReturn( Str&& s ) noexcept
+constexpr void ToLowerNoReturn( Str&& s ) noexcept
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
-    return GetLowerChar( c );
+    return GetLowerCharCondMove( c );
   } );
 }
 

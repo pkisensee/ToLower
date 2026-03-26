@@ -1,15 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-// GetLowerByValue.h
+// GetLower.h
 //
 // Notes: 
 //   * By value solution
 //   * Input is not modified
 //   * Returns a copy of the input sequence converted to lower case
-//   * Uses what is often the fastest in-place solution: SSE
 //
 // Issues:
-//   * Two copies required: copy to temp, and return by value
+//   * Two copies required: copy to working, and return by value
 //   * Can't be constexpr because std::string allocates memory
 //   * Can't be noexcept because std::string allocation could throw
 //
@@ -25,13 +24,14 @@
 
 #pragma once
 #include <string>
-#include "ToLowerSSE.h"
+#include "Concepts.h"
+#include "ToLowerAutoConstexpr.h"
 
 // Returns a copy of the input character sequence converted to lower case.
-inline std::string GetLowerByValue( const auto& s ) noexcept
+inline std::string GetLower( const CharRange auto& s )
 {
   std::string working{ s };
-  return ToLowerSSE( working );
+  return ToLowerAutoConstexpr( working );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

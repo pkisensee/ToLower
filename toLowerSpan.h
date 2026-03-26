@@ -29,12 +29,12 @@
 #include "GetLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-inline char* ToLowerSpan( std::span<char> s )
+constexpr char* ToLowerSpan( std::span<char> s ) noexcept
 {
   size_t i = 0;
   for( char c : s )
   {
-    s[ i++ ] = GetLowerChar( c );
+    s[ i++ ] = GetLowerCharCondMove( c );
   }
   return s.data();
 }

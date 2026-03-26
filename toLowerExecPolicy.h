@@ -33,7 +33,7 @@ constexpr Str&& ToLowerExecPolicy( Str&& s, Policy&& execPolicy ) noexcept
   auto end = std::end( s );
   std::transform( execPolicy, begin, end, begin, []( char c )
   {
-    return GetLowerChar( c );
+    return GetLowerCharCondMove( c );
   } );
   return std::forward<Str>( s );
 }

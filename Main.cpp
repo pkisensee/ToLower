@@ -41,21 +41,20 @@
 #include <vector>
 
 #include "CUDAKernels.h"
-#include "GetLowerByValue.h"
+#include "GetLower.h"
 #include "GetRandomStr.h"
 #include "LowerCaseAsciiTable.h"
 #include "LowerOriginal.h"
 #include "OpenCLKernels.h"
 #include "Profiler.h"
-#include "ToLower5thBit.h"
 #include "ToLowerAuto.h"
 #include "ToLowerAutoConstexpr.h"
-#include "ToLowerNoReturn.h"
 #include "ToLowerAVX2.h"
 #include "ToLowerAVX512.h"
 #include "ToLowerCUDA.h"
 #include "ToLowerExecPolicy.h"
-#include "ToLowerLookupTable.h"
+#include "ToLowerInner.h"
+#include "ToLowerNoReturn.h"
 #include "ToLowerOpenCL.h"
 #include "ToLowerPtrNoStrlen.h"
 #include "ToLowerRangeBasedFor.h"
@@ -82,7 +81,7 @@ static std::string_view kOpenCLKernelName = "OpenCLKernels.cl"sv;
 std::string Profiler::validateStr_ = GetRandomStr( kValidateStrSize );
 std::string Profiler::measureStr_ = GetRandomStr( kMeasureStrSize );
 std::ofstream Profiler::outputFile;
-size_t Profiler::measurementRunCount_ = 10;
+size_t Profiler::measurementRunCount_ = 1000;
 
 // Aliases
 namespace execution = std::execution;
@@ -109,11 +108,11 @@ void TestSIMDSupport()
 
 void Bit5Visualizatiaon()
 {
-  std::println( "5th bit trick visualization" );
+  std::println( "5th bit visualization" );
   std::string bit5ASCII( 127uz - ' ', '\0' );
   std::ranges::iota( bit5ASCII, ' ' );
   std::println( "{}", bit5ASCII );
-  ToLower5thBit( bit5ASCII );
+  ToLowerInner5thBit( bit5ASCII );
   std::println( "{}", bit5ASCII );
 }
 
@@ -125,11 +124,11 @@ void ValidateAndMeasure()
   std::println( "\nLoading OpenCL kernels" );
   std::array<std::string, 5> openCLkernels =
   { {
-    { kOpenCLKernelBranch },
-    { kOpenCLKernelCondMove },
-    { kOpenCLKernelLookupTable },
-    { kOpenCLKernel5thBit },
     { kOpenCLKernelSIMD },
+    { kOpenCLKernelLookupTable },
+    { kOpenCLKernelBranch },
+    { kOpenCLKernel5thBit },
+    { kOpenCLKernelCondMove },
   } };
   OpenCLContext openCLContextCPU{ CL_DEVICE_TYPE_CPU, kOpenCLKernelName, openCLkernels };
   OpenCLContext openCLContextGPU{ CL_DEVICE_TYPE_GPU, kOpenCLKernelName, openCLkernels };
@@ -143,30 +142,41 @@ void ValidateAndMeasure()
 
   std::vector<Profiler> profilers =
   { {
-    { "original",             LowerOriginal,         0.001             },
-    { "ptr no strlen",        ToLowerPtrNoStrlen                       },
+    //{ "original",             LowerOriginal,         0.001             },
+    //{ "strlen hoisted out",   ToLowerPtrNoStrlen                       },
+
+    // Evaluate different GetLowerChar versions
+    { "inner tolower",        ToLowerInnerDefault     <std::string&>   },
+    { "inner branch",         ToLowerInnerBranch      <std::string&>   },
+    { "inner cond move",      ToLowerInnerCondMove    <std::string&>   },
+    { "inner lookup table",   ToLowerInnerLookupTable <std::string&>   },
+    { "inner bit 5",          ToLowerInner5thBit      <std::string&>   },
+
+    /*
     { "span<char>",           ToLowerSpan                              },
     { "std::string&",         ToLowerStrRef                            },
-    { "templatized",          ToLowerTemplatized      <std::string&>   },
-    { "Str&&",                ToLowerAuto             <std::string&>   },
-    { "Str&& no return",      ToLowerNoReturn         <std::string&>   },
-    { "constexpr noexcept",   ToLowerAutoConstexpr    <std::string&>   },
     { "range based for",      ToLowerRangeBasedFor    <std::string&>   },
-    { "return by value",      GetLowerByValue         <std::string&>   },
-    { "bit 5 trick",          ToLower5thBit           <std::string&>   },
-    { "lookup table",         ToLowerLookupTable      <std::string&>   },
+    { "auto&&",               ToLowerAuto             <std::string&>   },
+    { "auto&& no return",     ToLowerNoReturn         <std::string&>   },
+    { "constexpr noexcept",   ToLowerAutoConstexpr    <std::string&>   },
+    { "templatized",          ToLowerTemplatized      <std::string&>   },
+
     { "threads",              ToLowerThreads          <std::string&>   },
     { "thread pool",          ToLowerThreadPool       <std::string&, ThreadPoolType&>, &threadPool },
     { "thread pool bit 5",    ToLowerThreadPool5thBit <std::string&, ThreadPoolType&>, &threadPool },
     { "thread pool SSE",      ToLowerThreadPoolSSE    <std::string&, ThreadPoolType&>, &threadPool },
+
     { "execution::par",       ToLowerExecPolicy       <std::string&, const ParPolicy&>, execution::par            },
     { "execution::unseq",     ToLowerExecPolicy       <std::string&, const UnseqPolicy&>, execution::unseq        },
     { "execution::par_unseq", ToLowerExecPolicy       <std::string&, const ParUnseqPolicy&>, execution::par_unseq },
-    { "AVX2 with bit 5",      ToLowerAVX2             <std::string&>    },
-    { "AVX512 bit 5",         ToLowerAVX512           <std::string&>    }, // "bit 5" because of fall back to AVX2
+
     { "SSE",                  ToLowerSSE              <std::string&>    },
     { "SSE bit 5",            ToLowerSSE5thBit        <std::string&>    },
     { "SSE bit 5 aligned",    ToLowerSSE5thBitAligned <std::string&>    },
+
+    { "AVX2 with bit 5",      ToLowerAVX2             <std::string&>    },
+    { "AVX512 bit 5",         ToLowerAVX512           <std::string&>    }, // "bit 5" because of fall back to AVX2
+    { "return by value",      GetLower                <std::string&>   },
 
 #if defined( ENABLE_OPENCL )
     { "OpenCL CPU branch",    ToLowerOpenCL<std::string&>, &openCLContextCPU, kOpenCLKernelBranch      },
@@ -183,11 +193,12 @@ void ValidateAndMeasure()
 #endif
 
 #if defined( ENABLE_CUDA )
-    { "CUDA branch",     ToLowerCUDA<std::string&>, &cudaContext, ToLowerCUDABranch      },
-    { "CUDA cond move",  ToLowerCUDA<std::string&>, &cudaContext, ToLowerCUDACondMove    },
     { "CUDA lookup",     ToLowerCUDA<std::string&>, &cudaContext, ToLowerCUDALookupTable },
     { "CUDA bit 5",      ToLowerCUDA<std::string&>, &cudaContext, ToLowerCUDA5thBit      },
+    { "CUDA branch",     ToLowerCUDA<std::string&>, &cudaContext, ToLowerCUDABranch      },
+    { "CUDA cond move",  ToLowerCUDA<std::string&>, &cudaContext, ToLowerCUDACondMove    },
 #endif
+*/
   } };
 
   std::println( "Validating implementations" );
@@ -210,7 +221,7 @@ int __cdecl main()
   {
     TestCUDASupport();
     TestSIMDSupport();
-    Bit5Visualizatiaon();
+    //Bit5Visualizatiaon();
     ValidateAndMeasure();
     return 0;
   }

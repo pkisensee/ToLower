@@ -5,11 +5,10 @@
 // Notes: 
 //   * Templatized for any character sequence that can be modified in place
 //   * Returns a reference to the input sequence
-//   * Correctly handles input that's an rvalue reference (temporary)
+//   * Correctly handles rvalue reference inputs (temporaries)
 //
 // Issues:
-//   * Potential inscrutable compiler errors
-//   * Not constexpr or noexcept
+//   * Performance issues
 //
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.
@@ -25,6 +24,7 @@
 #include <algorithm>
 #include <ranges>
 #include <utility>
+#include "Concepts.h"
 #include "GetLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
@@ -33,7 +33,7 @@ constexpr Str&& ToLowerTemplatized( Str&& s ) noexcept
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
-    return GetLowerChar( c );
+    return GetLowerCharCondMove( c );
   } );
   return std::forward<Str>( s );
 }

@@ -10,6 +10,7 @@
 //   * Allocates memory
 //   * In practice, this function should create the jthread vector and
 //     then invoke toLowerD
+//   * Can't be noexcept, because vector can throw
 //
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.
@@ -34,13 +35,13 @@
 
 // Convert char sequence to lower case in place. Returns modified sequence.
 template <CharRange Str>
-constexpr Str&& ToLowerThreads( Str&& s ) noexcept
+constexpr Str&& ToLowerThreads( Str&& s )
 {
   auto toLowerWorker = []( auto substr )
   {
     std::ranges::transform( substr, substr.begin(), []( auto c )
     {
-      return GetLowerChar( c );
+      return GetLowerCharCondMove( c );
     } );
   };
 

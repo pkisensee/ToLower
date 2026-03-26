@@ -5,11 +5,6 @@
 // Notes: 
 //   * Uses std::string
 //   * Obvious that input is being modified (passed by non-const ref)
-//   * Uses ranges
-//   * Uses standard algorithms
-//   * Uses relevant and obvious name: transform
-//   * Proven containers and algorithms
-//   * Less ambiguous function name (lower() could be noun or adj)
 //
 // Issues:
 //   * Doesn't work for anything but std::string
@@ -31,11 +26,11 @@
 #include "GetLowerChar.h"
 
 // Convert string to lower case in place. Returns modified string.
-inline std::string& ToLowerStrRef( std::string& s )
+constexpr std::string& ToLowerStrRef( std::string& s ) noexcept
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
-    return GetLowerChar( c );
+    return GetLowerCharCondMove( c );
   } );
   return s;
 }

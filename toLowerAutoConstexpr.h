@@ -4,9 +4,13 @@
 //
 // Notes: 
 //   * constexpr and noexcept
+//   * Uses concepts for improved compiler error messages
 //
 // Issues:
 //   * Potential inscrutable compiler errors
+//   * std::forward requires unreadable decltype(s)
+//   * In theory, decltype(s) always yields an lvalue, so althought this
+//     works with most compilers, it is not technically correct
 // 
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.
@@ -26,14 +30,13 @@
 #include "GetLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-template <CharRange Str>
-constexpr Str&& ToLowerAutoConstexpr( Str&& s ) noexcept // TODO rename
+constexpr CharRange auto&& ToLowerAutoConstexpr( CharRange auto&& s ) noexcept
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
-    return GetLowerChar( c );
+    return GetLowerCharCondMove( c );
   } );
-  return std::forward<Str>( s );
+  return std::forward<decltype( s )>( s );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

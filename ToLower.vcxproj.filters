@@ -11,10 +11,11 @@
     <ClCompile Include="toLowerAVX2.h" />
     <ClCompile Include="getRandomStr.h" />
     <ClCompile Include="toLowerOpenCL.h" />
-    <ClCompile Include="getLowerByValue.h" />
+    <ClCompile Include="GetLower.h" />
     <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="OpenCLContext.cpp" />
     <ClCompile Include="ToLowerSSE5thBit.h" />
+    <ClCompile Include="ToLowerInner.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="OpenCLKernels.cl" />
@@ -27,8 +28,6 @@
     <ClInclude Include="toLowerAuto.h" />
     <ClInclude Include="toLowerAutoConstexpr.h" />
     <ClInclude Include="toLowerExecPolicy.h" />
-    <ClInclude Include="toLower5thBit.h" />
-    <ClInclude Include="toLowerLookupTable.h" />
     <ClInclude Include="toLowerThreads.h" />
     <ClInclude Include="toLowerThreadPool.h" />
     <ClInclude Include="LowerCaseAsciiTable.h" />

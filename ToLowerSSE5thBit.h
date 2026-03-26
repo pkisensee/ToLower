@@ -9,7 +9,8 @@
 //   * 16 characters at a time
 //
 // Issues:
-//   * Unreadable, but not as bad as ToLowerSSE
+//   * Unreadable, though not as bad as ToLowerSSE
+//   * Can't be constexpr because SSE requires intrinsics
 //
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.
@@ -31,7 +32,7 @@
 
 // Convert char sequence to lower case in place. Returns modified sequence.
 template <CharRange Str>
-constexpr Str&& ToLowerSSE5thBit( Str&& s ) noexcept
+Str&& ToLowerSSE5thBit( Str&& s ) noexcept
 {
   assert( HasSIMDSupport( SIMDLevel::SSE2 ) );
 

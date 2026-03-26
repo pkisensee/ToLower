@@ -25,7 +25,7 @@
 #include "GetLowerChar.h"
 
 // Convert string view to lower case in place. Returns modified string view.
-inline std::string_view ToLowerStrView( std::string_view s )
+constexpr std::string_view ToLowerStrView( std::string_view s ) noexcept
 {
   // can't modify a string_view -- it's a read-only view!
   /*

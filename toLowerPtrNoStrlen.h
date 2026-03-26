@@ -43,14 +43,14 @@ char* lower0( char* s ) {
 */
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-inline char* ToLowerPtrNoStrlen( char* s, size_t count )
+constexpr char* ToLowerPtrNoStrlen( char* s, size_t count ) noexcept
 {
   if( s == nullptr )
     return nullptr;
   
   for( size_t i = 0; s[i] != '\0' && i < count; ++i )
   {
-    s[ i ] = GetLowerChar( s[ i ] );
+    s[ i ] = GetLowerCharCondMove( s[ i ] );
   }
   return s;
 }

@@ -9,6 +9,7 @@
 //
 // Issues:
 //   * Default version still calling GetLowerChar, which calls tolower()
+//   * Can't be noexcept; jthread ctor could throw
 //
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.
@@ -30,13 +31,13 @@
 #include <utility>
 #include "Concepts.h"
 #include "GetLowerChar.h"
-#include "ToLower5thBit.h"
+#include "ToLowerInner.h"
 #include "ToLowerSSE.h"
 
 // Helper that accepts the worker function
 template <CharRange Str, typename ThreadPool, typename Worker>
 constexpr Str&& ToLowerThreadPoolWithWorker( Str&& s,
-  ThreadPool&& threadPool, Worker&& toLowerWorker ) noexcept
+  ThreadPool&& threadPool, Worker&& toLowerWorker )
 {
   assert( !threadPool.empty() );
 
@@ -67,7 +68,7 @@ constexpr Str&& ToLowerThreadPoolWithWorker( Str&& s,
 // Convert char sequence to lower case in place. Returns modified sequence.
 // Uses ToLowerSSE().
 template <CharRange Str, typename ThreadPool>
-constexpr Str&& ToLowerThreadPoolSSE( Str&& s, ThreadPool&& threadPool ) noexcept
+Str&& ToLowerThreadPoolSSE( Str&& s, ThreadPool&& threadPool )
 {
   return ToLowerThreadPoolWithWorker( s, threadPool, []( auto&& substr )
   {
@@ -78,22 +79,22 @@ constexpr Str&& ToLowerThreadPoolSSE( Str&& s, ThreadPool&& threadPool ) noexcep
 // Convert char sequence to lower case in place. Returns modified sequence.
 // Uses ToLower5thBit().
 template <CharRange Str, typename ThreadPool>
-constexpr Str&& ToLowerThreadPool5thBit( Str&& s, ThreadPool&& threadPool ) noexcept
+constexpr Str&& ToLowerThreadPool5thBit( Str&& s, ThreadPool&& threadPool )
 {
   return ToLowerThreadPoolWithWorker( s, threadPool, []( auto&& substr )
   { 
-    ToLower5thBit( substr ); 
+    ToLowerInner5thBit( substr ); 
   } );
 }
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-// Uses ToLowerAuto().
+// Uses ToLowerInnerCondMove().
 template <CharRange Str, typename ThreadPool>
-constexpr Str&& ToLowerThreadPool( Str&& s, ThreadPool&& threadPool ) noexcept
+constexpr Str&& ToLowerThreadPool( Str&& s, ThreadPool&& threadPool )
 {
   return ToLowerThreadPoolWithWorker( s, threadPool, []( auto&& substr )
   {
-    ToLowerAuto( substr );
+    ToLowerInnerCondMove( substr );
   } );
 }
 

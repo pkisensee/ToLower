@@ -18,7 +18,8 @@
 #include <concepts>
 #include <ranges>
 
-template<typename T>
+// Contiguous range of type char
+template <typename T>
 concept CharRange = std::ranges::contiguous_range<T> &&
                     std::same_as<std::ranges::range_value_t<T>, char>;
 

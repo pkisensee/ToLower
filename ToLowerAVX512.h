@@ -10,6 +10,7 @@
 //
 // Issues:
 //   * Unreadable
+//   * Can't be constexpr because AVX requires intrinsics
 //
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.
@@ -31,7 +32,7 @@
 
 // Convert char sequence to lower case in place. Returns modified sequence.
 template <CharRange Str>
-constexpr Str&& ToLowerAVX512( Str&& s ) noexcept
+Str&& ToLowerAVX512( Str&& s ) noexcept
 {
   if ( !HasSIMDSupport( SIMDLevel::AVX512 ) )
     return ToLowerAVX2( s );
@@ -57,9 +58,7 @@ constexpr Str&& ToLowerAVX512( Str&& s ) noexcept
 
   // Convert any remaining <kAVX512bytes chars directly
   for ( ; len > 0; ++data, --len )
-  {
-    *data = GetLowerChar( *data );
-  }
+    *data = GetLowerCharCondMove( *data );
 
   return std::forward<Str>( s );
 }

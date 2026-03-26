@@ -9,6 +9,7 @@
 //
 // Issues:
 //   * Unreadable
+//   * Can't be constexpr because SSE requires intrinsics
 //
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.
@@ -31,7 +32,7 @@
 
 // Convert char sequence to lower case in place. Returns modified sequence.
 template <CharRange Str>
-constexpr Str&& ToLowerSSE( Str&& s ) noexcept
+Str&& ToLowerSSE( Str&& s ) noexcept
 {
   assert( HasSIMDSupport( SIMDLevel::SSE2 ) );
 
@@ -83,7 +84,7 @@ constexpr Str&& ToLowerSSE( Str&& s ) noexcept
 
   // Convert any remaining <kSSEbytes chars directly
   for( ; len > 0; ++data, --len )
-    *data = GetLowerChar( *data ); // TODO evaluate
+    *data = GetLowerCharCondMove( *data );
 
   return std::forward<Str>( s );
 }

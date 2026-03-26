@@ -10,7 +10,8 @@
 //   * Assumes input in properly aligned; may be slightly faster
 //
 // Issues:
-//   * Unreadable, but not as bad as ToLowerSSE
+//   * Unreadable, though not as bad as ToLowerSSE
+//   * Can't be constexpr because SSE requires intrinsics
 //
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.
@@ -41,7 +42,7 @@ bool IsAligned( T* p )
 
 // Convert char sequence to lower case in place. Returns modified sequence.
 template <CharRange Str>
-constexpr Str&& ToLowerSSE5thBitAligned( Str&& s ) noexcept
+Str&& ToLowerSSE5thBitAligned( Str&& s ) noexcept
 {
   assert( HasSIMDSupport( SIMDLevel::SSE2 ) );
 

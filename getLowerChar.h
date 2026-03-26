@@ -82,13 +82,12 @@ inline constexpr char GetLowerCharLookupTable( char c ) noexcept
 
 ///////////////////////////////////////////////////////////////////////////////
 // 
-// Converts the incoming character to lowercase using 5th bit trick
+// Converts the incoming character to lowercase using the 5th bit
 // 
 // Notes: 
-//   * Clever ASCII designers created an easy conversion; for all upper case
-//     letters, set the 5th bit to convert to lower case. Because almost all 
-//     printable ASCII characters already have the 5th bit set, this trick
-//     works in many cases.
+//   * Clever ASCII designers created an easy conversion: set the 5th bit to 
+//     convert to lower case. Because almost all printable ASCII characters 
+//     already have the 5th bit set, this works in many cases.
 //
 // Issues:
 //   * Doesn't work for non-printable chars <0x20

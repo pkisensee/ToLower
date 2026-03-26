@@ -207,6 +207,7 @@
     <ClCompile Include="LowerOriginal.h" />
     <ClCompile Include="OpenCLContext.cpp" />
     <ClCompile Include="Profiler.cpp" />
+    <ClCompile Include="ToLowerInner.h" />
     <ClCompile Include="ToLowerPtrNoStrlen.h" />
     <ClCompile Include="ToLowerSSE5thBit.h" />
     <ClCompile Include="ToLowerSpan.h" />
@@ -215,7 +216,7 @@
     <ClCompile Include="ToLowerSSE.h" />
     <ClCompile Include="ToLowerAVX2.h" />
     <ClCompile Include="ToLowerOpenCL.h" />
-    <ClCompile Include="GetLowerByValue.h" />
+    <ClCompile Include="GetLower.h" />
     <ClCompile Include="GetRandomStr.h" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
@@ -242,8 +243,6 @@
     <ClInclude Include="ToLowerAuto.h" />
     <ClInclude Include="ToLowerAutoConstexpr.h" />
     <ClInclude Include="ToLowerExecPolicy.h" />
-    <ClInclude Include="ToLower5thBit.h" />
-    <ClInclude Include="ToLowerLookupTable.h" />
     <ClInclude Include="ToLowerThreads.h" />
     <ClInclude Include="ToLowerThreadPool.h" />
   </ItemGroup>

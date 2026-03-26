@@ -31,7 +31,7 @@ template <CharRange Str>
 constexpr Str&& ToLowerRangeBasedFor( Str&& s ) noexcept
 {
   for( char& c : s )
-    c = GetLowerChar( c );
+    c = GetLowerCharCondMove( c );
 
   return std::forward<Str>( s );
 }

@@ -5,13 +5,12 @@
 // Notes: 
 //   * Same flexible interface
 //   * AVX2 vectorized solution
-//   * Uses bit 5 trick
 //   * 32 characters at a time
 //   * Simpler than SSE solution; fewer instructions
 //
 // Issues:
 //   * Unreadable
-//   * Doesn't handle @, [, ], ^, _, and '\'
+//   * Can't be constexpr because AVX requires intrinsics
 //
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.
@@ -34,7 +33,7 @@
 
 // Convert char sequence to lower case in place. Returns modified sequence.
 template <CharRange Str>
-constexpr Str&& ToLowerAVX2( Str&& s ) noexcept
+Str&& ToLowerAVX2( Str&& s ) noexcept
 { 
   if ( !HasSIMDSupport( SIMDLevel::AVX2 ) )
     return ToLowerSSE( s ); // fallback
@@ -56,7 +55,7 @@ constexpr Str&& ToLowerAVX2( Str&& s ) noexcept
 
   // Convert any remaining <kAVX2bytes chars directly
   for( ; len > 0; ++data, --len )
-    *data = GetLowerChar5thBit( *data );
+    *data = GetLowerCharCondMove( *data );
 
   return std::forward<Str>( s );
 }
