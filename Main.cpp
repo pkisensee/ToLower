@@ -47,6 +47,7 @@
 #include "LowerOriginal.h"
 #include "OpenCLKernels.h"
 #include "Profiler.h"
+#include "ToLower.h"
 #include "ToLowerAuto.h"
 #include "ToLowerAutoConstexpr.h"
 #include "ToLowerAVX2.h"
@@ -81,7 +82,7 @@ static std::string_view kOpenCLKernelName = "OpenCLKernels.cl"sv;
 std::string Profiler::validateStr_ = GetRandomStr( kValidateStrSize );
 std::string Profiler::measureStr_ = GetRandomStr( kMeasureStrSize );
 std::ofstream Profiler::outputFile;
-size_t Profiler::measurementRunCount_ = 1000;
+size_t Profiler::measurementRunCount_ = 10;
 
 // Aliases
 namespace execution = std::execution;
@@ -142,8 +143,9 @@ void ValidateAndMeasure()
 
   std::vector<Profiler> profilers =
   { {
-    //{ "original",             LowerOriginal,         0.001             },
-    //{ "strlen hoisted out",   ToLowerPtrNoStrlen                       },
+//  { "original",             LowerOriginal         }, // 10,156,452,893 us = 169.3 minutes = ~3 hours
+    { "strlen hoisted out",   ToLowerPtrNoStrlen    },
+    { "ToLower",              ToLower<std::string&> },
 
     // Evaluate different GetLowerChar versions
     { "inner tolower",        ToLowerInnerDefault     <std::string&>   },
@@ -152,7 +154,6 @@ void ValidateAndMeasure()
     { "inner lookup table",   ToLowerInnerLookupTable <std::string&>   },
     { "inner bit 5",          ToLowerInner5thBit      <std::string&>   },
 
-    /*
     { "span<char>",           ToLowerSpan                              },
     { "std::string&",         ToLowerStrRef                            },
     { "range based for",      ToLowerRangeBasedFor    <std::string&>   },
@@ -198,7 +199,6 @@ void ValidateAndMeasure()
     { "CUDA branch",     ToLowerCUDA<std::string&>, &cudaContext, ToLowerCUDABranch      },
     { "CUDA cond move",  ToLowerCUDA<std::string&>, &cudaContext, ToLowerCUDACondMove    },
 #endif
-*/
   } };
 
   std::println( "Validating implementations" );

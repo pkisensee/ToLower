@@ -50,7 +50,7 @@ constexpr char* ToLowerPtrNoStrlen( char* s, size_t count ) noexcept
   
   for( size_t i = 0; s[i] != '\0' && i < count; ++i )
   {
-    s[ i ] = GetLowerCharCondMove( s[ i ] );
+    s[ i ] = GetLowerChar( s[ i ] );
   }
   return s;
 }
