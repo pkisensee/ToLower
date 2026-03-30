@@ -9,6 +9,8 @@
 //   * Threads are created within the function
 //   * Allocates memory
 //   * Can't be noexcept, because vector can throw
+//   * Better solution would chunk boundaries to cache size to prevent
+//     false sharing
 //
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.

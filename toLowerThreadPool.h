@@ -10,6 +10,11 @@
 // Issues:
 //   * Default version still calling GetLowerChar, which calls tolower()
 //   * Can't be noexcept; jthread ctor could throw
+//   * Better solution would chunk boundaries to cache size to prevent
+//     false sharing
+//   * Better solution would initialize all the threads in the pool prior
+//     to this function, and the worker function would wait on a
+//     std::condition_variable to actually do the work -- much more complex
 //
 // Copyright © Pete Isensee (PKIsensee@msn.com).
 // All rights reserved worldwide.
