@@ -34,7 +34,7 @@ constexpr CharRange auto&& ToLowerAutoConstexpr( CharRange auto&& s ) noexcept
 {
   std::ranges::transform( s, std::begin( s ), []( char c )
   {
-    return GetLowerCharCondMove( c );
+    return GetLowerCharBranch( c );
   } );
   return std::forward<decltype( s )>( s );
 }

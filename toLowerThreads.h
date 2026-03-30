@@ -41,7 +41,7 @@ constexpr Str&& ToLowerThreads( Str&& s )
   {
     std::ranges::transform( substr, substr.begin(), []( auto c )
     {
-      return GetLowerCharCondMove( c );
+      return GetLowerCharBranch( c );
     } );
   };
 

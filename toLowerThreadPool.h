@@ -66,13 +66,13 @@ constexpr Str&& ToLowerThreadPoolWithWorker( Str&& s,
 }
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-// Uses ToLowerSSE().
+// Uses ToLowerInnerBranch().
 template <CharRange Str, typename ThreadPool>
-Str&& ToLowerThreadPoolSSE( Str&& s, ThreadPool&& threadPool )
+constexpr Str&& ToLowerThreadPool( Str&& s, ThreadPool&& threadPool )
 {
   return ToLowerThreadPoolWithWorker( s, threadPool, []( auto&& substr )
   {
-    ToLowerSSE( substr );
+    ToLowerInnerBranch( substr );
   } );
 }
 
@@ -88,13 +88,13 @@ constexpr Str&& ToLowerThreadPool5thBit( Str&& s, ThreadPool&& threadPool )
 }
 
 // Convert char sequence to lower case in place. Returns modified sequence.
-// Uses ToLowerInnerCondMove().
+// Uses ToLowerSSE().
 template <CharRange Str, typename ThreadPool>
-constexpr Str&& ToLowerThreadPool( Str&& s, ThreadPool&& threadPool )
+Str&& ToLowerThreadPoolSSE( Str&& s, ThreadPool&& threadPool )
 {
   return ToLowerThreadPoolWithWorker( s, threadPool, []( auto&& substr )
   {
-    ToLowerInnerCondMove( substr );
+    ToLowerSSE( substr );
   } );
 }
 

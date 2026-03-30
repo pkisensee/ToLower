@@ -34,7 +34,7 @@ constexpr char* ToLowerSpan( std::span<char> s ) noexcept
   size_t i = 0;
   for( char c : s )
   {
-    s[ i++ ] = GetLowerCharCondMove( c );
+    s[ i++ ] = GetLowerCharBranch( c );
   }
   return s.data();
 }

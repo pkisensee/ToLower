@@ -84,7 +84,7 @@ Str&& ToLowerSSE( Str&& s ) noexcept
 
   // Convert any remaining <kSSEbytes chars directly
   for( ; len > 0; ++data, --len )
-    *data = GetLowerCharCondMove( *data );
+    *data = GetLowerCharBranch( *data );
 
   return std::forward<Str>( s );
 }

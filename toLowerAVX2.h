@@ -55,7 +55,7 @@ Str&& ToLowerAVX2( Str&& s ) noexcept
 
   // Convert any remaining <kAVX2bytes chars directly
   for( ; len > 0; ++data, --len )
-    *data = GetLowerCharCondMove( *data );
+    *data = GetLowerCharBranch( *data );
 
   return std::forward<Str>( s );
 }
