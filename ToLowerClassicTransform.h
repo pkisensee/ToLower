@@ -32,7 +32,7 @@
 // Convert char sequence to lower case in place. Returns modified sequence.
 constexpr CharRange auto&& ToLowerClassicTransform( CharRange auto&& s ) noexcept
 {
-  std::transform( std::begin( s ), std::end( s ), std::begin(s), []( char c )
+  std::transform( std::begin( s ), std::end( s ), std::begin( s ), []( char c )
   {
     return GetLowerCharBranch( c );
   } );

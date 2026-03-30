@@ -39,7 +39,7 @@ constexpr Str&& ToLowerThreads( Str&& s )
 {
   auto toLowerWorker = []( auto substr )
   {
-    std::ranges::transform( substr, substr.begin(), []( auto c )
+    std::ranges::transform( substr, std::begin( substr ), []( char c )
     {
       return GetLowerCharBranch( c );
     } );

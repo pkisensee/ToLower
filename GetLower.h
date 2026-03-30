@@ -25,13 +25,12 @@
 #pragma once
 #include <string>
 #include "Concepts.h"
-#include "ToLowerAutoConstexpr.h"
+#include "ToLowerSSE.h"
 
 // Returns a copy of the input character sequence converted to lower case.
 inline std::string GetLower( const CharRange auto& s )
 {
-  std::string working{ s };
-  return ToLowerAutoConstexpr( working );
+  return ToLowerSSE( std::string{ s } );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

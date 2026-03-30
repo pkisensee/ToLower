@@ -25,17 +25,19 @@
 // warranties.
 
 #pragma once
+#include <algorithm>
+#include <ranges>
 #include <span>
+#include <utility>
 #include "GetLowerChar.h"
 
 // Convert char sequence to lower case in place. Returns modified sequence.
 constexpr char* ToLowerSpan( std::span<char> s ) noexcept
 {
-  size_t i = 0;
-  for( char c : s )
+  std::ranges::transform( s, std::begin( s ), []( char c )
   {
-    s[ i++ ] = GetLowerCharBranch( c );
-  }
+    return GetLowerCharBranch( c );
+  } );
   return s.data();
 }
 

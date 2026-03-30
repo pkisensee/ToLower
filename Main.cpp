@@ -26,8 +26,8 @@
 // Note: std::coroutines could be useful if input was async, but that's not true in
 // this case
 
-//#define ENABLE_OPENCL 1
-//#define ENABLE_CUDA 1
+// #define ENABLE_OPENCL 1
+// #define ENABLE_CUDA 1
 
 #include <cassert>
 #include <clocale>
@@ -130,7 +130,7 @@ void ValidateAndMeasure()
   std::println( "\nLoading OpenCL kernels" );
   std::array<std::string, 5> openCLkernels =
   { {
-    { kOpenCLKernelSIMD },
+    { kOpenCLKernelVector },
     { kOpenCLKernelLookupTable },
     { kOpenCLKernelBranch },
     { kOpenCLKernel5thBit },
@@ -154,55 +154,59 @@ void ValidateAndMeasure()
 
     // Evaluate different GetLowerChar versions
     /*
-    { "inner tolower",        ToLowerInnerDefault     <std::string&>   },
-    { "inner branch",         ToLowerInnerBranch      <std::string&>   },
-    { "inner cond move",      ToLowerInnerCondMove    <std::string&>   },
-    { "inner lookup table",   ToLowerInnerLookupTable <std::string&>   },
-    { "inner bit 5",          ToLowerInner5thBit      <std::string&>   },
+    { "inner tolower",        ToLowerInnerDefault     <std::string&> },
+    { "inner lookup table",   ToLowerInnerLookupTable <std::string&> },
+    { "inner cond move",      ToLowerInnerCondMove    <std::string&> },
+    { "inner bit 5",          ToLowerInner5thBit      <std::string&> },
+    { "inner branch",         ToLowerInnerBranch      <std::string&> },
     */
 
-    // Evaluate std::algorithm choices
-    { "classic for_each",     ToLowerClassicForEach   <std::string&>   },
-    { "range for_each",       ToLowerRangesForEach    <std::string&>   },
-    { "classic transform",    ToLowerClassicTransform <std::string&>   },
-    { "range transform",      ToLowerRangesTransform  <std::string&>   },
+    // Evaluate looping choices
+    /*
+    { "classic for_each",     ToLowerClassicForEach   <std::string&> },
+    { "ranges for_each",      ToLowerRangesForEach    <std::string&> },
+    { "classic transform",    ToLowerClassicTransform <std::string&> },
+    { "ranges transform",     ToLowerRangesTransform  <std::string&> },
+    { "range-based for",      ToLowerRangeBasedFor    <std::string&> },
+    */
 
     // Evaluate different interfaces
     /*
-    { "span<char>",           ToLowerSpan                              },
-    { "std::string&",         ToLowerStrRef                            },
-    { "range based for",      ToLowerRangeBasedFor    <std::string&>   },
-    { "auto&&",               ToLowerAuto             <std::string&>   },
-    { "auto&& no return",     ToLowerNoReturn         <std::string&>   },
-    { "templatized",          ToLowerTemplatized      <std::string&>   },
-    { "constexpr noexcept",   ToLowerAutoConstexpr    <std::string&>   },
+    { "span<char>",           ToLowerSpan                         },
+    { "std::string&",         ToLowerStrRef                       },
+    { "auto&&",               ToLowerAuto          <std::string&> },
+    { "auto&& no return",     ToLowerNoReturn      <std::string&> },
+    { "templatized",          ToLowerTemplatized   <std::string&> },
+    { "constexpr noexcept",   ToLowerAutoConstexpr <std::string&> },
     */
 
     // Multithreading
     /*
-    { "threads",              ToLowerThreads          <std::string&>   },
-    { "thread pool",          ToLowerThreadPool       <std::string&, ThreadPoolType&>, &threadPool },
-    { "thread pool bit 5",    ToLowerThreadPool5thBit <std::string&, ThreadPoolType&>, &threadPool },
+    { "threads",           ToLowerThreads          <std::string&>   },
+    { "thread pool",       ToLowerThreadPool       <std::string&, ThreadPoolType&>, &threadPool },
+    { "thread pool bit 5", ToLowerThreadPool5thBit <std::string&, ThreadPoolType&>, &threadPool },
     */
 
     // Execution policies
-    { "execution::seq",       ToLowerExecPolicy       <std::string&, const SeqPolicy&>, execution::seq            },
-    { "execution::par",       ToLowerExecPolicy       <std::string&, const ParPolicy&>, execution::par            },
-    { "execution::unseq",     ToLowerExecPolicy       <std::string&, const UnseqPolicy&>, execution::unseq        },
-    { "execution::par_unseq", ToLowerExecPolicy       <std::string&, const ParUnseqPolicy&>, execution::par_unseq },
+    /*
+    { "execution::seq",       ToLowerExecPolicy <std::string&, const SeqPolicy&>, execution::seq            },
+    { "execution::par",       ToLowerExecPolicy <std::string&, const ParPolicy&>, execution::par            },
+    { "execution::unseq",     ToLowerExecPolicy <std::string&, const UnseqPolicy&>, execution::unseq        },
+    { "execution::par_unseq", ToLowerExecPolicy <std::string&, const ParUnseqPolicy&>, execution::par_unseq },
+    */
 
 #if defined( ENABLE_OPENCL )
     { "OpenCL CPU branch",    ToLowerOpenCL<std::string&>, &openCLContextCPU, kOpenCLKernelBranch      },
     { "OpenCL CPU cond move", ToLowerOpenCL<std::string&>, &openCLContextCPU, kOpenCLKernelCondMove    },
     { "OpenCL CPU lookup",    ToLowerOpenCL<std::string&>, &openCLContextCPU, kOpenCLKernelLookupTable },
     { "OpenCL CPU bit 5",     ToLowerOpenCL<std::string&>, &openCLContextCPU, kOpenCLKernel5thBit      },
-    { "OpenCL CPU SIMD",      ToLowerOpenCL<std::string&>, &openCLContextCPU, kOpenCLKernelSIMD        },
+    { "OpenCL CPU vector",    ToLowerOpenCL<std::string&>, &openCLContextCPU, kOpenCLKernelVector      },
 
     { "OpenCL GPU branch",    ToLowerOpenCL<std::string&>, &openCLContextGPU, kOpenCLKernelBranch      },
     { "OpenCL GPU cond move", ToLowerOpenCL<std::string&>, &openCLContextGPU, kOpenCLKernelCondMove    },
     { "OpenCL GPU lookup",    ToLowerOpenCL<std::string&>, &openCLContextGPU, kOpenCLKernelLookupTable },
     { "OpenCL GPU bit 5",     ToLowerOpenCL<std::string&>, &openCLContextGPU, kOpenCLKernel5thBit      },
-    { "OpenCL GPU SIMD",      ToLowerOpenCL<std::string&>, &openCLContextGPU, kOpenCLKernelSIMD        },
+    { "OpenCL GPU vector",    ToLowerOpenCL<std::string&>, &openCLContextGPU, kOpenCLKernelVector      },
 #endif
 
 #if defined( ENABLE_CUDA )
@@ -212,17 +216,18 @@ void ValidateAndMeasure()
     { "CUDA cond move",  ToLowerCUDA<std::string&>, &cudaContext, ToLowerCUDACondMove    },
 #endif
 
-  /*
     // SIMD
-    { "SSE",                  ToLowerSSE              <std::string&>    },
-    { "SSE bit 5",            ToLowerSSE5thBit        <std::string&>    },
-    { "SSE bit 5 aligned",    ToLowerSSE5thBitAligned <std::string&>    },
-    { "thread pool SSE",      ToLowerThreadPoolSSE    <std::string&, ThreadPoolType&>, &threadPool },
+    /*
+    { "SSE",               ToLowerSSE              <std::string&>    },
+    { "SSE bit 5",         ToLowerSSE5thBit        <std::string&>    },
+    { "SSE bit 5 aligned", ToLowerSSE5thBitAligned <std::string&>    },
+    { "AVX2 with bit 5",   ToLowerAVX2             <std::string&>    },
+    { "AVX512 bit 5",      ToLowerAVX512           <std::string&>    }, // "bit 5" because of fall back to AVX2
+    { "thread pool SSE",   ToLowerThreadPoolSSE    <std::string&, ThreadPoolType&>, &threadPool },
+    */
 
-    { "AVX2 with bit 5",      ToLowerAVX2             <std::string&>    },
-    { "AVX512 bit 5",         ToLowerAVX512           <std::string&>    }, // "bit 5" because of fall back to AVX2
-    { "return by value",      GetLower                <std::string&>   },
-  */
+    // Return by value
+    // { "return by value",   GetLower                <std::string&>   },
   } };
 
   std::println( "Validating implementations" );

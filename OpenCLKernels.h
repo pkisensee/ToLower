@@ -22,6 +22,6 @@ static inline std::string kOpenCLKernelBranch      = "GetLowerChar_OpenCLBranch"
 static inline std::string kOpenCLKernelCondMove    = "GetLowerChar_OpenCLCondMove";
 static inline std::string kOpenCLKernelLookupTable = "GetLowerChar_OpenCLLookupTable";
 static inline std::string kOpenCLKernel5thBit      = "GetLowerChar_OpenCL5thBit";
-static inline std::string kOpenCLKernelSIMD        = "GetLowerChar_OpenCLSIMD";
+static inline std::string kOpenCLKernelVector      = "GetLowerChar_OpenCLVector";
 
 ///////////////////////////////////////////////////////////////////////////////
