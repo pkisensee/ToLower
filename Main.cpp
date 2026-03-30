@@ -26,8 +26,8 @@
 // Note: std::coroutines could be useful if input was async, but that's not true in
 // this case
 
-// #define ENABLE_OPENCL 1
-// #define ENABLE_CUDA 1
+//#define ENABLE_OPENCL 1
+//#define ENABLE_CUDA 1
 
 #include <cassert>
 #include <clocale>
@@ -181,19 +181,17 @@ void ValidateAndMeasure()
     */
 
     // Multithreading
-    /*
     { "threads",           ToLowerThreads          <std::string&>   },
     { "thread pool",       ToLowerThreadPool       <std::string&, ThreadPoolType&>, &threadPool },
+    /*
     { "thread pool bit 5", ToLowerThreadPool5thBit <std::string&, ThreadPoolType&>, &threadPool },
     */
 
     // Execution policies
-    /*
-    { "execution::seq",       ToLowerExecPolicy <std::string&, const SeqPolicy&>, execution::seq            },
+    //{ "execution::seq",       ToLowerExecPolicy <std::string&, const SeqPolicy&>, execution::seq            },
     { "execution::par",       ToLowerExecPolicy <std::string&, const ParPolicy&>, execution::par            },
-    { "execution::unseq",     ToLowerExecPolicy <std::string&, const UnseqPolicy&>, execution::unseq        },
-    { "execution::par_unseq", ToLowerExecPolicy <std::string&, const ParUnseqPolicy&>, execution::par_unseq },
-    */
+    //{ "execution::unseq",     ToLowerExecPolicy <std::string&, const UnseqPolicy&>, execution::unseq        },
+    //{ "execution::par_unseq", ToLowerExecPolicy <std::string&, const ParUnseqPolicy&>, execution::par_unseq },
 
 #if defined( ENABLE_OPENCL )
     { "OpenCL CPU branch",    ToLowerOpenCL<std::string&>, &openCLContextCPU, kOpenCLKernelBranch      },
@@ -227,7 +225,7 @@ void ValidateAndMeasure()
     */
 
     // Return by value
-    // { "return by value",   GetLower                <std::string&>   },
+    //{ "return by value",   GetLower                <std::string&>   },
   } };
 
   std::println( "Validating implementations" );

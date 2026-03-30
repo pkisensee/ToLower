@@ -37,7 +37,7 @@
 // Helper that accepts the worker function
 template <CharRange Str, typename ThreadPool, typename Worker>
 constexpr Str&& ToLowerThreadPoolWithWorker( Str&& s,
-  ThreadPool&& threadPool, Worker&& toLowerWorker )
+  ThreadPool& threadPool, Worker toLowerWorker )
 {
   assert( !threadPool.empty() );
 
@@ -68,9 +68,9 @@ constexpr Str&& ToLowerThreadPoolWithWorker( Str&& s,
 // Convert char sequence to lower case in place. Returns modified sequence.
 // Uses ToLowerInnerBranch().
 template <CharRange Str, typename ThreadPool>
-constexpr Str&& ToLowerThreadPool( Str&& s, ThreadPool&& threadPool )
+constexpr Str&& ToLowerThreadPool( Str&& s, ThreadPool& threadPool )
 {
-  return ToLowerThreadPoolWithWorker( s, threadPool, []( auto&& substr )
+  return ToLowerThreadPoolWithWorker( s, threadPool, []( auto substr )
   {
     ToLowerInnerBranch( substr );
   } );
@@ -79,9 +79,9 @@ constexpr Str&& ToLowerThreadPool( Str&& s, ThreadPool&& threadPool )
 // Convert char sequence to lower case in place. Returns modified sequence.
 // Uses ToLower5thBit().
 template <CharRange Str, typename ThreadPool>
-constexpr Str&& ToLowerThreadPool5thBit( Str&& s, ThreadPool&& threadPool )
+constexpr Str&& ToLowerThreadPool5thBit( Str&& s, ThreadPool& threadPool )
 {
-  return ToLowerThreadPoolWithWorker( s, threadPool, []( auto&& substr )
+  return ToLowerThreadPoolWithWorker( s, threadPool, []( auto substr )
   { 
     ToLowerInner5thBit( substr ); 
   } );
@@ -90,9 +90,9 @@ constexpr Str&& ToLowerThreadPool5thBit( Str&& s, ThreadPool&& threadPool )
 // Convert char sequence to lower case in place. Returns modified sequence.
 // Uses ToLowerSSE().
 template <CharRange Str, typename ThreadPool>
-Str&& ToLowerThreadPoolSSE( Str&& s, ThreadPool&& threadPool )
+Str&& ToLowerThreadPoolSSE( Str&& s, ThreadPool& threadPool )
 {
-  return ToLowerThreadPoolWithWorker( s, threadPool, []( auto&& substr )
+  return ToLowerThreadPoolWithWorker( s, threadPool, []( auto substr )
   {
     ToLowerSSE( substr );
   } );

@@ -8,8 +8,6 @@
 // Issues:
 //   * Threads are created within the function
 //   * Allocates memory
-//   * In practice, this function should create the jthread vector and
-//     then invoke toLowerD
 //   * Can't be noexcept, because vector can throw
 //
 // Copyright © Pete Isensee (PKIsensee@msn.com).
@@ -51,19 +49,19 @@ constexpr Str&& ToLowerThreads( Str&& s )
 
   // Kick off all but last thread to do case conversion
   size_t strOffset = 0;
-  std::vector<std::jthread> threadPool{ threadCount };
-  auto pool = threadPool | std::views::take( threadCount - 1 );
-  for ( auto& thread : pool )
+  std::vector<std::jthread> threadPool;
+  threadPool.reserve( threadCount );
+  for( size_t thread = 0; thread < threadCount - 1; ++thread )
   {
     std::span substr{ s.data() + strOffset, substrLen };
-    thread = std::jthread{ toLowerWorker, substr };
+    threadPool.emplace_back( toLowerWorker, substr );
     strOffset += substrLen;
   }
 
   // Last thread handles final segment plus any remaining letters
   const size_t remainingLetterCount = s.size() % threadCount;
   std::span substr{ s.data() + strOffset, substrLen + remainingLetterCount };
-  threadPool.back() = std::jthread{ toLowerWorker, substr };
+  threadPool.emplace_back( toLowerWorker, substr );
 
   // jthreads automatically join when thread vector exits scope,
   // so conversion is complete upon function return
