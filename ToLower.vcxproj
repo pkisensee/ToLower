@@ -235,10 +235,14 @@
     <ClInclude Include="SIMDSupport.h" />
     <ClInclude Include="Stopwatch.h" />
     <ClInclude Include="ToLower.h" />
+    <ClInclude Include="ToLowerClassicForEach.h" />
+    <ClInclude Include="ToLowerClassicTransform.h" />
     <ClInclude Include="ToLowerNoReturn.h" />
     <ClInclude Include="ToLowerAVX512.h" />
     <ClInclude Include="ToLowerCUDA.h" />
     <ClInclude Include="ToLowerRangeBasedFor.h" />
+    <ClInclude Include="ToLowerRangesForEach.h" />
+    <ClInclude Include="ToLowerRangesTransform.h" />
     <ClInclude Include="ToLowerSSE5thBitAligned.h" />
     <ClInclude Include="ToLowerTemplatized.h" />
     <ClInclude Include="ToLowerAuto.h" />

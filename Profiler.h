@@ -36,6 +36,7 @@ class Profiler
 public:
 
   // Policy aliases
+  using SeqPolicy = std::execution::sequenced_policy;
   using ParPolicy = std::execution::parallel_policy;
   using UnseqPolicy = std::execution::unsequenced_policy;
   using ParUnseqPolicy = std::execution::parallel_unsequenced_policy;
@@ -60,6 +61,7 @@ public:
   using ToLowerLookupTableFn = std::string& ( std::string& );
   using ToLowerLookupTableFnPtr = ToLowerLookupTableFn*;
 
+  using ToLowerExecPolicySeqFn = std::string& ( std::string&, const SeqPolicy& );
   using ToLowerExecPolicyParFn = std::string& ( std::string&, const ParPolicy& );
   using ToLowerExecPolicyUnseqFn = std::string& ( std::string&, const UnseqPolicy& );
   using ToLowerExecPolicyParUnseqFn = std::string& ( std::string&, const ParUnseqPolicy& );
@@ -90,7 +92,9 @@ public:
     name_( name ),
     func_( func )
   {
-    if constexpr ( std::is_same_v<Policy, ParPolicy> )
+    if constexpr ( std::is_same_v<Policy, SeqPolicy> )
+      seqPolicy_ = policy;
+    else if constexpr ( std::is_same_v<Policy, ParPolicy> )
       parPolicy_ = policy;
     else if constexpr ( std::is_same_v<Policy, UnseqPolicy> )
       unseqPolicy_ = policy;
@@ -122,6 +126,7 @@ private:
     std::function< ToLowerAutoNoReturnFn >,
     std::function< GetLowerByValueFn >,
     std::function< ToLowerLookupTableFn >,
+    std::function< ToLowerExecPolicySeqFn >,
     std::function< ToLowerExecPolicyParFn >,
     std::function< ToLowerExecPolicyUnseqFn >,
     std::function< ToLowerExecPolicyParUnseqFn >,
@@ -135,8 +140,9 @@ private:
   double scale_ = 1.0; // decrease for slow funcs; increase to improve Measure() speed
 
   // For std::algorithms with policies
-  ParPolicy      parPolicy_ = std::execution::par;
-  UnseqPolicy    unseqPolicy_ = std::execution::unseq;
+  SeqPolicy      seqPolicy_      = std::execution::seq;
+  ParPolicy      parPolicy_      = std::execution::par;
+  UnseqPolicy    unseqPolicy_    = std::execution::unseq;
   ParUnseqPolicy parunseqPolicy_ = std::execution::par_unseq;
 
   ThreadPoolType* threadPool_ = nullptr; // For functions that accept a threadPool

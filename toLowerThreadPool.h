@@ -4,7 +4,7 @@
 //
 // Notes: 
 //   * Thread pool passed as parameter
-//   * No memory allocation
+//   * No vector memory allocation
 //   * Explicitly joins all threads before exit
 //
 // Issues:

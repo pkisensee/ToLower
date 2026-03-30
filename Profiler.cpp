@@ -208,6 +208,8 @@ void Profiler::InvokeFunction( std::string& input ) const // private
       std::span span{ input };
       func( span );
     }
+    else if constexpr ( std::is_invocable_v<Func, std::string&, const SeqPolicy&> )
+      func( input, seqPolicy_ );
     else if constexpr ( std::is_invocable_v<Func, std::string&, const ParPolicy&> )
       func( input, parPolicy_ );
     else if constexpr ( std::is_invocable_v<Func, std::string&, const UnseqPolicy&> )

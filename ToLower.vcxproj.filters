@@ -43,6 +43,10 @@
     <ClInclude Include="Concepts.h" />
     <ClInclude Include="OpenCLKernels.h" />
     <ClInclude Include="ToLower.h" />
+    <ClInclude Include="ToLowerClassicForEach.h" />
+    <ClInclude Include="ToLowerRangesForEach.h" />
+    <ClInclude Include="ToLowerClassicTransform.h" />
+    <ClInclude Include="ToLowerRangesTransform.h" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="CUDAKernels.cu" />
