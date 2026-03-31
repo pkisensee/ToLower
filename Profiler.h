@@ -118,6 +118,7 @@ private:
   void Validate( std::string& input, const std::string& expectedOutput ) const;
   std::string GetMeasureInput() const;
   void InvokeFunction( std::string& ) const;
+  static double GetSpeedupFactor( double );
 
   using FunctionVariant = std::variant<
     std::function< LowerOriginalFn >,

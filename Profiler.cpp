@@ -18,6 +18,7 @@
 #pragma once
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 #include <print>
 #include <ranges>
 #include "GetLower.h"
@@ -154,7 +155,10 @@ void Profiler::Measure() const
     measurements.push_back( microSecs );
   }
   double minRuntimeMicroSecs = std::ranges::min( measurements );
-  std::println( "{:{}.0f} microsecs", minRuntimeMicroSecs, kTimeColumnWidth );
+
+  // Compute speedup factor
+  std::println( "{:{}.0f} microsecs ({:.1f}X)", minRuntimeMicroSecs, kTimeColumnWidth, 
+    GetSpeedupFactor( minRuntimeMicroSecs ) );
 
   if ( outputFile.is_open() )
     outputFile << name_ << ", " << minRuntimeMicroSecs << '\n';
@@ -229,6 +233,23 @@ void Profiler::InvokeFunction( std::string& input ) const // private
   };
 
   std::visit( visitorOp, func_ );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// 
+// Computes the speedup factor, assuming the first call to this function is
+// the baseline measurement
+
+double Profiler::GetSpeedupFactor( double x ) // static
+{
+  static bool isBaselineFunction = true; // assume first function is baseline
+  static double baselineMicroSecs = 1.0;
+  if ( isBaselineFunction )
+  {
+    baselineMicroSecs = x;
+    isBaselineFunction = false;
+  }
+  return baselineMicroSecs / x;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
